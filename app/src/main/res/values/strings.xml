@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">OurProject</string>
+    <string name="food_size">Food Size:</string>
+    <string name="food_content">Food Content:</string>
+    <string name="meat">Meat</string>
+    <string name="eggs">Eggs</string>
+    <string name="dairy">Dairy</string>
+    <string name="dry">Dry</string>
+    <string name="iced">Iced</string>
+    <string name="produce">Produce</string>
+    <string name="beverages">Beverages</string>
+    <string name="backed_goods">Backed goods</string>
+    <string name="non_perishable">Non-Perishable</string>
+    <string name="request">Request</string>
+    <string name="donation">Donation</string>
+    <string name="search_icon">search icon</string>
+    <string name="arrowbackicon">arrow back</string>
+    <string name="locationIcon">location icon</string>
+    <string name="menuIcon">menu icon</string>
+    <string name="small">S</string>
+    <string name="medium">M</string>
+    <string name="large">L</string>
+    <string name="x_large">XL</string>
+    <string name="enter_weight">Enter weight(optional)</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="have_account">Already have account?</string>
+    <string name="signin">sign in</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="con_password">Confirm password</string>
+</resources>
