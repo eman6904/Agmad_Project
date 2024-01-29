@@ -1,4 +1,4 @@
-package com.example.ourproject.screens
+package com.example.ourproject.FrontEnd.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,11 +9,11 @@ import androidx.compose.ui.Modifier
 
 
 @Composable
-fun homeScreen(){
+fun historyScreen(){
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ){
-        Text(text = "hello in home")
+        Text(text = "hello in history")
     }
 }

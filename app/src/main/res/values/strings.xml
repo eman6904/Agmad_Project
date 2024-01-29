@@ -31,4 +31,14 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="con_password">Confirm password</string>
+    <string name="signi_in">Sign in</string>
+    <string name="dont_have_account">don\'t have an account?</string>
+    <string name="signup">sign up</string>
+    <string name="remember_me">Remember me</string>
+    <string name="forget_your_password">Forget Your Password?</string>
+    <string name="enter_email">Enter your email</string>
+    <string name="send">Send</string>
+    <string name="sure_data_correct">Make sure your data is correct</string>
+    <string name="error_occurred">Error Occurred</string>
+    <string name="verify_email">Please verify your email</string>
 </resources>
