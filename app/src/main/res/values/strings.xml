@@ -36,9 +36,21 @@
     <string name="signup">sign up</string>
     <string name="remember_me">Remember me</string>
     <string name="forget_your_password">Forget Your Password?</string>
-    <string name="enter_email">Enter your email</string>
+    <string name="enter_email">Enter Your Email, Please</string>
     <string name="send">Send</string>
     <string name="sure_data_correct">Make sure your data is correct</string>
     <string name="error_occurred">Error Occurred</string>
     <string name="verify_email">Please verify your email</string>
+    <string name="food_ssver">Food Saver</string>
+    <string name="intro1">If You Can\'t Feed A Hundred People,</string>
+    <string name="intro2">Then You Can Feed One.</string>
+    <string name="tax_number">Tax Number</string>
+    <string name="location">Location</string>
+    <string name="or_sign_up">Organization Sign Up</string>
+    <string name="donor_sign_up">Donor Sign Up</string>
+    <string name="registeras">Register As</string>
+    <string name="donor">Donor</string>
+    <string name="organization">Organization</string>
+    <string name="home">Home</string>
+    <string name="foodContent">Food Content</string>
 </resources>

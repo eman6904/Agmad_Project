@@ -8,6 +8,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -18,51 +21,64 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.ourproject.FrontEnd.BottomBarScreen
 import com.example.ourproject.R
-import com.example.ourproject.bottomNavGraph
+import com.example.ourproject.appNavGraph
+
 
 @Composable
 fun mainScreen(navController: NavHostController) {
+
+    val navController = rememberNavController()
+    var showBottomBar by rememberSaveable { mutableStateOf(false) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    showBottomBar = when (navBackStackEntry?.destination?.route) {
+        "signIn" -> false
+        "signUp" -> false
+        "registerAs"->false
+        "faceScreen"->false
+        "Or_Sign_Up"->false
+        "foodContent"->false
+        else -> true
+    }
     Scaffold(
         bottomBar = {
-            val screens = listOf(
-                BottomBarScreen.Home,
-                BottomBarScreen.Donation,
-                BottomBarScreen.ShoppingAssistant,
-                BottomBarScreen.History,
-            )
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
-            Card(
-                modifier = Modifier
-                    .background(color = Color.White),
-                shape = RoundedCornerShape(
-                    topEnd = 20.dp,
-                    topStart =20.dp,
-                    bottomEnd = 0.dp,
-                    bottomStart = 0.dp
-                ),
-                backgroundColor = MaterialTheme.colors.surface,
-                elevation = 10.dp
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
+            if(showBottomBar){
+                val screens = listOf(
+                    BottomBarScreen.Home,
+                    BottomBarScreen.Donation,
+                    BottomBarScreen.History,
+                )
+                val currentDestination = navBackStackEntry?.destination
+                Card(
                     modifier = Modifier
-                        .background(Color.White)
-                        .clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
+                        .background(color = Color.White),
+                    shape = RoundedCornerShape(
+                        topEnd = 20.dp,
+                        topStart =20.dp,
+                        bottomEnd = 0.dp,
+                        bottomStart = 0.dp
+                    ),
+                    backgroundColor = MaterialTheme.colors.surface,
+                    elevation = 20.dp
                 ) {
-                    BottomNavigation(contentColor = colorResource(id = R.color.mainColor)) {
-                        screens.forEach() {
-                            addItem(it, currentDestination, navController)
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        modifier = Modifier
+                            .background(Color.White)
+                            .clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
+                    ) {
+                        BottomNavigation(contentColor = colorResource(id = R.color.mainColor)) {
+                            screens.forEach() {
+                                addItem(it, currentDestination, navController)
+                            }
                         }
                     }
                 }
             }
         }
-    ) {
-        bottomNavGraph(navController = navController)
-    }
+    ) { appNavGraph(navController = navController) }
 }
 @Composable
 fun RowScope.addItem(

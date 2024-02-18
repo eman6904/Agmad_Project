@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -19,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -86,10 +88,10 @@ fun signIn(navController: NavHostController) {
                 .fillMaxSize()
         ) {
             Image(
-                painterResource(R.drawable.login),
+                painterResource(R.drawable.sign_ph),
                 contentDescription = "",
                 // contentScale = ContentScale.Crop,
-                // modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxWidth()
             )
             emailField(email)
             passwordField(password)
@@ -111,7 +113,9 @@ fun signIn(navController: NavHostController) {
                     navController
                 )
                 Box(
-                    modifier = Modifier.width(330.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp),
                     contentAlignment = Alignment.TopStart
                 ) {
                     checkBox(item = stringResource(R.string.remember_me))
@@ -120,23 +124,32 @@ fun signIn(navController: NavHostController) {
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
                 Divider(
                     modifier = Modifier
-                        .width(135.dp)
-                        .padding(end = 10.dp, start = 4.dp),
+                        .weight(1f)
+                        .padding(start = 4.dp),
                     color = colorResource(id = R.color.mainColor)
                 )
-                ClickableText(text = AnnotatedString(stringResource(R.string.forget_your_password)),
-                    onClick =
-                    {
-                        shoutDownDialogR.value = true
-                    })
+                Box(
+                    modifier = Modifier
+                        .weight(2f)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ClickableText(text = AnnotatedString(stringResource(R.string.forget_your_password)),
+                        onClick =
+                        {
+                            shoutDownDialogR.value = true
+                        }
+                    )
+                }
                 Divider(
                     modifier = Modifier
-                        .width(150.dp)
-                        .padding(start = 10.dp, end = 4.dp),
+                        .weight(1f)
+                        .padding(end = 4.dp),
                     color = colorResource(id = R.color.mainColor)
                 )
             }
@@ -177,8 +190,9 @@ fun buttonSignIn(
                 )
             },
             modifier = Modifier
-                .width(330.dp)
-                .height(50.dp),
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(start = 20.dp, end = 20.dp),
             shape = RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp),
             colors = ButtonDefaults.buttonColors(
                 contentColor = Color.White,
@@ -209,23 +223,20 @@ fun DialogForResetPassword(shoutDownDialog: MutableState<Boolean>) {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    TextField(
-                        modifier = Modifier.padding(5.dp),
+                    OutlinedTextField(
                         value = email.value,
                         onValueChange = { email.value = it },
-                        placeholder = {
-                            Text(
-                                text = stringResource(R.string.enter_email),
-                                color = Color.Gray
-                            )
-                        },
+                        modifier = Modifier.padding(20.dp),
+                        label = { Text(text = stringResource(id = R.string.enter_email)) },
                         colors = TextFieldDefaults.textFieldColors(
-                            unfocusedIndicatorColor = colorResource(id = R.color.mainColor),
+                            backgroundColor = Color.White,
                             focusedIndicatorColor = colorResource(id = R.color.mainColor),
-                            cursorColor = colorResource(id = R.color.mainColor),
-                            backgroundColor = Color.White
-
-                        )
+                            focusedLabelColor = colorResource(id = R.color.mainColor),
+                            unfocusedIndicatorColor = colorResource(id = R.color.mainColor),
+                            unfocusedLabelColor = Color.Gray,
+                            cursorColor = colorResource(id = R.color.mainColor)
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
                     )
                     Button(
                         onClick = {
@@ -234,8 +245,11 @@ fun DialogForResetPassword(shoutDownDialog: MutableState<Boolean>) {
                                 .addOnCompleteListener { task ->
                                     if (task.isSuccessful) {
                                         Log.d("msg", "Email sent.")
+                                    } else {
+                                        Log.d("msg", "an error ocurred")
                                     }
                                 }
+
                         },
                         content = {
                             Text(
