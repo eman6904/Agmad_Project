@@ -19,6 +19,7 @@ import androidx.navigation.NavHostController
 import com.example.ourproject.BackEnd.DataClasses.RequestItems
 import com.example.ourproject.BackEnd.Files.getOrganizations
 import com.example.ourproject.BackEnd.Files.getRequests
+import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.R
 
 
@@ -32,7 +33,7 @@ fun homeScreen(navController: NavHostController) {
 
         var requestsNumber = rememberSaveable { mutableStateOf(0) }
         requestsNumber.value=requestsList.size
-        HomeTopBar(requestsNumber)
+        HomeTopBar(requestsNumber,navController)
         Column() {
 
         }
@@ -40,7 +41,7 @@ fun homeScreen(navController: NavHostController) {
 }
 
 @Composable
-fun HomeTopBar(requestNumber: MutableState<Int>) {
+fun HomeTopBar(requestNumber: MutableState<Int>,navController: NavHostController) {
 
     var showNotification = rememberSaveable { mutableStateOf(false) }
     showNotification.value = (requestNumber.value > 0)
@@ -76,6 +77,7 @@ fun HomeTopBar(requestNumber: MutableState<Int>) {
                     actions = {
                         IconButton(onClick = {
                             requestNumber.value = 0
+                            navController.navigate(ScreensRoute.RequestsScreen.route)
                         }) {
                             BadgedBox(badge = {
                                 if (showNotification.value) {

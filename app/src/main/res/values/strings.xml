@@ -53,4 +53,5 @@
     <string name="organization">Organization</string>
     <string name="home">Home</string>
     <string name="foodContent">Food Content</string>
+    <string name="requests">Requests</string>
 </resources>

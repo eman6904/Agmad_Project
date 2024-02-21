@@ -9,5 +9,7 @@ data class RequestItems(
     var foodContent:String="",
     var mealNumber:String="",
     var  comment:String="",
+    var status:String="",
+    var date_time:String="",
     var imagesList:List<String> = emptyList()
 )

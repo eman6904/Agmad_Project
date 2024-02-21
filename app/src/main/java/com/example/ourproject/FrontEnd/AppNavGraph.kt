@@ -27,6 +27,7 @@ fun appNavGraph(navController: NavHostController) {
         composable(route = BottomBarScreen.Home.route) { homeScreen(navController) }
         composable(route = BottomBarScreen.Donation.route) { donationScreen(navController) }
         composable(route = BottomBarScreen.History.route) { historyScreen(navController) }
+        composable(route = ScreensRoute.RequestsScreen.route) { requests(navController) }
 
     }
 }

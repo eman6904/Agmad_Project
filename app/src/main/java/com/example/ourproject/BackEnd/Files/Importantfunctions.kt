@@ -21,6 +21,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
 import java.util.*
 
 fun Donor_signUp(
@@ -192,6 +193,13 @@ fun sendRequest(
      comment:MutableState<String>,
      imagesList:List<String>
 ){
+    val sdf = SimpleDateFormat("'Date: 'dd-MM-yyyy'   Time: 'HH:mm")
+    var calendar=Calendar.getInstance()
+    var currentTime= if(calendar.get(Calendar.AM_PM) == Calendar.AM)
+        "AM"
+    else
+        "PM"
+    var date_time=sdf.format(Date())+" $currentTime"
     var donorObj = FirebaseDatabase.getInstance().getReference("Donors")
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
 
@@ -203,7 +211,7 @@ fun sendRequest(
                 var requestObj = FirebaseDatabase.getInstance().getReference("Requests")
 
                 var request=RequestItems(donor!!.name,donor.phone,organizationName,foodState,
-                    location,foodContent.value,mealNumber.value,comment.value,imagesList)
+                    location,foodContent.value,mealNumber.value,comment.value,"unknown",date_time,imagesList)
 
                 requestObj.push().setValue(request)
             }

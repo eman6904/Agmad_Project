@@ -7,4 +7,5 @@ sealed class ScreensRoute (val route:String){
     object RegisterAs: ScreensRoute(route="registerAs")
     object OrganizationSignUp: ScreensRoute(route="Or_Sign_Up")
     object FoodContentImages: ScreensRoute(route="foodContent")
+    object RequestsScreen: ScreensRoute(route="requests")
 }

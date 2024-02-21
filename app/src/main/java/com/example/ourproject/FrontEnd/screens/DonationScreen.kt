@@ -78,10 +78,11 @@ fun donationScreen(navController:NavHostController) {
            horizontalAlignment = Alignment.CenterHorizontally
        ) {
 
-           val options = listOf<String>("organization", "location", "food state")
+           val foodStateList = listOf<String>("Fresh Prepared Food", "Leftovers")
+           val locationList = listOf<String>("My Location", "New Location")
            spinner(orgList, selectOrganization, { selectOrganization = it })
-           spinner(options, selectLocation, { selectLocation = it })
-           spinner(options, selectFoodState, { selectFoodState = it })
+           spinner(locationList, selectLocation, { selectLocation = it })
+           spinner(foodStateList, selectFoodState, { selectFoodState = it })
            editText(foodContent,"Food Content")
            floatingActionButton(navController = navController,showImages)
            editText(mealsNumber,"Estimated Meals Number")
