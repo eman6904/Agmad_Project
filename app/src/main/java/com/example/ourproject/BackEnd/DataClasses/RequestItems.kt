@@ -1,6 +1,7 @@
 package com.example.ourproject.BackEnd.DataClasses
 
 data class RequestItems(
+    var requestId:String="",
     var donorName:String="",
     var donorPhone:String="",
     var organizationName:String="",
@@ -8,8 +9,9 @@ data class RequestItems(
     var location:String="",
     var foodContent:String="",
     var mealNumber:String="",
-    var  comment:String="",
+    var comment:String="",
     var status:String="",
     var date_time:String="",
+    var organizationResponse:String="",
     var imagesList:List<String> = emptyList()
 )

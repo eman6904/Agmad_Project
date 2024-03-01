@@ -1,6 +1,5 @@
 package com.example.ourproject.FrontEnd.screens
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,31 +8,30 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.ourproject.BackEnd.DataClasses.RequestItems
-import com.example.ourproject.BackEnd.Files.getOrganizations
 import com.example.ourproject.BackEnd.Files.getRequests
 import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.R
 
 
 @Composable
-fun homeScreen(navController: NavHostController) {
+fun organizationHome(navController: NavHostController) {
 
     var requestsList by remember { mutableStateOf(emptyList<RequestItems>()) }
+    var requestsNumber = rememberSaveable { mutableStateOf(0) }
     requestsList = getRequests()
 
     Column() {
 
-        var requestsNumber = rememberSaveable { mutableStateOf(0) }
         requestsNumber.value=requestsList.size
-        HomeTopBar(requestsNumber,navController)
+        orHomeTopBar(requestsNumber,navController)
         Column() {
 
         }
@@ -41,9 +39,11 @@ fun homeScreen(navController: NavHostController) {
 }
 
 @Composable
-fun HomeTopBar(requestNumber: MutableState<Int>,navController: NavHostController) {
+fun orHomeTopBar(requestNumber: MutableState<Int>, navController: NavHostController) {
 
     var showNotification = rememberSaveable { mutableStateOf(false) }
+    var showMenu = rememberSaveable { mutableStateOf(false) }
+        menuItems(navController,showMenu)
     showNotification.value = (requestNumber.value > 0)
     Card(
         modifier = Modifier
@@ -77,7 +77,7 @@ fun HomeTopBar(requestNumber: MutableState<Int>,navController: NavHostController
                     actions = {
                         IconButton(onClick = {
                             requestNumber.value = 0
-                            navController.navigate(ScreensRoute.RequestsScreen.route)
+                            navController.navigate(ScreensRoute.RequestsScreen.route+"/Requests")
                         }) {
                             BadgedBox(badge = {
                                 if (showNotification.value) {
@@ -103,7 +103,11 @@ fun HomeTopBar(requestNumber: MutableState<Int>,navController: NavHostController
                                 tint = Color.White
                             )
                         }
-                        IconButton(onClick = {}) {
+                        IconButton(
+                            onClick = {
+                                showMenu.value=!showMenu.value
+                            }
+                        ) {
                             Icon(
                                 imageVector = Icons.Default.Menu,
                                 contentDescription = "menu icon",
@@ -117,5 +121,48 @@ fun HomeTopBar(requestNumber: MutableState<Int>,navController: NavHostController
                 )
             }
         ) {}
+    }
+}
+@Composable
+fun menuItems(navController:NavHostController,showMenu:MutableState<Boolean>){
+
+    if(showMenu.value){
+        DropdownMenu(
+            expanded = showMenu.value,
+            onDismissRequest = { showMenu.value=false },
+            offset = DpOffset(x = (160).dp, y = (5).dp)
+        )
+        {
+           DropdownMenuItem(
+               onClick = {navController.navigate(ScreensRoute.RequestsScreen.route+"/Accepted Requests")}
+           ) {
+               Row(){
+                   Icon(
+                       imageVector = Icons.Default.Done,
+                       contentDescription = null,
+                       tint = Color.Green
+                   )
+                   Text(
+                       text = "Accepted Requests",
+                       modifier = Modifier.padding(start=4.dp)
+                   )
+               }
+           }
+            DropdownMenuItem(
+                onClick = {navController.navigate(ScreensRoute.RequestsScreen.route+"/Rejected Requests") }
+            ) {
+                Row(){
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = null,
+                        tint = Color.Red
+                    )
+                    Text(
+                        text = "Rejected Requests",
+                        modifier = Modifier.padding(start=4.dp)
+                    )
+                }
+            }
+        }
     }
 }

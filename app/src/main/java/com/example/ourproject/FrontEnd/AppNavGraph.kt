@@ -2,10 +2,8 @@ package com.example.ourproject
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.example.ourproject.FrontEnd.BottomBarScreen
 import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.FrontEnd.screens.*
@@ -18,16 +16,32 @@ fun appNavGraph(navController: NavHostController) {
         startDestination = ScreensRoute.FaceScreen.route
 
     ) {
-        composable(route = ScreensRoute.SignUP.route) { DonorSignUp(navController) }
+        composable(route = ScreensRoute.DonorSignUp.route) { DonorSignUp(navController) }
         composable(route = ScreensRoute.SignIn.route) { signIn(navController) }
         composable(route = ScreensRoute.FaceScreen.route) { face(navController) }
         composable(route = ScreensRoute.RegisterAs.route) { registerAs(navController) }
         composable(route = ScreensRoute.FoodContentImages.route) { foodContent(navController) }
         composable(route = ScreensRoute.OrganizationSignUp.route) { organizationSignUp(navController) }
-        composable(route = BottomBarScreen.Home.route) { homeScreen(navController) }
+        composable(route = BottomBarScreen.OrganizationHome.route) { organizationHome(navController) }
         composable(route = BottomBarScreen.Donation.route) { donationScreen(navController) }
         composable(route = BottomBarScreen.History.route) { historyScreen(navController) }
-        composable(route = ScreensRoute.RequestsScreen.route) { requests(navController) }
+        composable(route = ScreensRoute.DonorHome.route) { donorHome(navController) }
+        composable(route = ScreensRoute.RequestsScreen.route+"/{type}") {
+
+            val type=it.arguments?.getString("type")
+            requests(navController,type.toString())
+        }
+        composable(route = ScreensRoute.Response.route+"/{type}") {
+
+            val type=it.arguments?.getString("type")
+            response(navController,type.toString())
+        }
+        composable(route = ScreensRoute.RequestImages.route+ "/{id}/{requestType}") { it->
+
+            val requestId=it.arguments?.getString("id")
+            val requestType=it.arguments?.getString("requestType")
+            requestImages(navController,requestId.toString(),requestType.toString())
+        }
 
     }
 }

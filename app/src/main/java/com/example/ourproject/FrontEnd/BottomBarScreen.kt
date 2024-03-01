@@ -10,7 +10,7 @@ sealed class BottomBarScreen(
     val title:String,
     val icon:ImageVector
 ){
-    object Home: BottomBarScreen(
+    object OrganizationHome: BottomBarScreen(
         route="home",
         title="Home",
         icon= Icons.Default.Home

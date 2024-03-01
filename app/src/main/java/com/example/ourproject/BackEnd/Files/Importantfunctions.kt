@@ -153,8 +153,9 @@ private fun verifyEmailAddress(
     //for verify email
     var Auth = FirebaseAuth.getInstance()
     if (Auth?.currentUser!!.isEmailVerified) {
+
         shoutDownProgress.value = false
-        navController.navigate(BottomBarScreen.Home.route)
+        userType(navController)
     } else {
         shoutDownProgress.value = false
         showMsgV.value = true
@@ -210,10 +211,10 @@ fun sendRequest(
             if(donor!=null){
                 var requestObj = FirebaseDatabase.getInstance().getReference("Requests")
 
-                var request=RequestItems(donor!!.name,donor.phone,organizationName,foodState,
-                    location,foodContent.value,mealNumber.value,comment.value,"unknown",date_time,imagesList)
-
-                requestObj.push().setValue(request)
+                var id=requestObj.push().key
+                var request=RequestItems(id.toString(),donor!!.name,donor.phone,organizationName,foodState,
+                    location,foodContent.value,mealNumber.value,comment.value,"unknown",date_time,"",imagesList)
+                requestObj.child(id.toString()).setValue(request)
             }
         }
         override fun onCancelled(error: DatabaseError) {
@@ -296,8 +297,179 @@ fun getRequests():List<RequestItems>{
             for(request in snapshot.children){
 
                 var requestData=request.getValue(RequestItems::class.java)
-                if(requestData?.organizationName==orName.value)
+                if(requestData?.organizationName==orName.value&&requestData?.status=="unknown")
                  requestList2.add(requestData!!)
+            }
+            requestList1=requestList2
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            TODO("Not yet implemented")
+        }
+
+    })
+    return requestList1
+}
+@Composable
+fun getRejectedRequested():List<RequestItems>{
+
+    var requestList1 by remember { mutableStateOf(emptyList<RequestItems>()) }
+    var orName= rememberSaveable() { mutableStateOf("")}
+    var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
+
+    var organizationObj = FirebaseDatabase.getInstance().getReference("Organizations")
+    organizationObj.child(currentUserId).addValueEventListener(object :ValueEventListener{
+        override fun onDataChange(snapshot: DataSnapshot) {
+
+            val organizationData=snapshot.getValue(OrganizationItems::class.java)
+            if(organizationData!=null)
+                orName.value=organizationData!!.name
+
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            TODO("Not yet implemented")
+        }
+
+    })
+
+    var requestObj=FirebaseDatabase.getInstance().getReference("Requests")
+    requestObj.addValueEventListener(object :ValueEventListener{
+        override fun onDataChange(snapshot: DataSnapshot) {
+
+            val requestList2 = mutableListOf<RequestItems>()
+            for(request in snapshot.children){
+
+                var requestData=request.getValue(RequestItems::class.java)
+                if(requestData?.organizationName==orName.value&&requestData?.status=="Rejected")
+                    requestList2.add(requestData!!)
+            }
+            requestList1=requestList2
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            TODO("Not yet implemented")
+        }
+
+    })
+    return requestList1
+}
+@Composable
+fun getAcceptedRequested():List<RequestItems>{
+
+    var requestList1 by remember { mutableStateOf(emptyList<RequestItems>()) }
+    var orName= rememberSaveable() { mutableStateOf("")}
+    var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
+
+    var organizationObj = FirebaseDatabase.getInstance().getReference("Organizations")
+    organizationObj.child(currentUserId).addValueEventListener(object :ValueEventListener{
+        override fun onDataChange(snapshot: DataSnapshot) {
+
+            val organizationData=snapshot.getValue(OrganizationItems::class.java)
+            if(organizationData!=null)
+                orName.value=organizationData!!.name
+
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            TODO("Not yet implemented")
+        }
+
+    })
+
+    var requestObj=FirebaseDatabase.getInstance().getReference("Requests")
+    requestObj.addValueEventListener(object :ValueEventListener{
+        override fun onDataChange(snapshot: DataSnapshot) {
+
+            val requestList2 = mutableListOf<RequestItems>()
+            for(request in snapshot.children){
+
+                var requestData=request.getValue(RequestItems::class.java)
+                if(requestData?.organizationName==orName.value&&requestData?.status=="Accepted")
+                    requestList2.add(requestData!!)
+            }
+            requestList1=requestList2
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            TODO("Not yet implemented")
+        }
+
+    })
+    return requestList1
+}
+fun updateRequest(status:String, requestId:String, organizationResponse:String){
+
+    var requestObj = FirebaseDatabase.getInstance().getReference("Requests").child(requestId)
+    val hashMap: HashMap<String, Any> = HashMap()
+    hashMap.put("status",status)
+    hashMap.put("organizationResponse",organizationResponse)
+    requestObj?.updateChildren(hashMap as Map<String, Any>)?.addOnSuccessListener {
+
+    }?.addOnFailureListener {
+
+    }
+}
+
+fun userType(navController:NavHostController){
+
+        var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
+        var organizationObj = FirebaseDatabase.getInstance().getReference("Organizations")
+        var Auth = FirebaseAuth.getInstance()
+        if (Auth?.currentUser!!.isEmailVerified) {
+            organizationObj.child(currentUserId).addValueEventListener(object :
+                ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+
+                    val organizationData=snapshot.getValue(OrganizationItems::class.java)
+
+                    if(organizationData!=null)
+                        navController.navigate(BottomBarScreen.OrganizationHome.route)
+                    else
+                        navController.navigate(ScreensRoute.DonorHome.route)
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+
+            })
+        }
+}
+@Composable
+fun myRequests(type:String):List<RequestItems>{
+
+    var requestList1 by remember { mutableStateOf(emptyList<RequestItems>()) }
+    var donorPhone= rememberSaveable() { mutableStateOf("")}
+    var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
+
+    var donorObj = FirebaseDatabase.getInstance().getReference("Donors")
+    donorObj.child(currentUserId).addValueEventListener(object :ValueEventListener{
+        override fun onDataChange(snapshot: DataSnapshot) {
+
+            val donorData=snapshot.getValue(DonorItems::class.java)
+            if(donorData!=null)
+                donorPhone.value=donorData!!.phone
+
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            TODO("Not yet implemented")
+        }
+
+    })
+
+    var requestObj=FirebaseDatabase.getInstance().getReference("Requests")
+    requestObj.addValueEventListener(object :ValueEventListener{
+        override fun onDataChange(snapshot: DataSnapshot) {
+
+            val requestList2 = mutableListOf<RequestItems>()
+            for(request in snapshot.children){
+
+                var requestData=request.getValue(RequestItems::class.java)
+                if(requestData?.donorPhone==donorPhone.value&&requestData?.status==type)
+                    requestList2.add(requestData!!)
             }
             requestList1=requestList2
         }

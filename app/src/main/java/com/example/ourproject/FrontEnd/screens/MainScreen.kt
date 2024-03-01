@@ -22,7 +22,9 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.ourproject.BackEnd.Files.userType
 import com.example.ourproject.FrontEnd.BottomBarScreen
+import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.R
 import com.example.ourproject.appNavGraph
 
@@ -34,19 +36,17 @@ fun mainScreen(navController: NavHostController) {
     var showBottomBar by rememberSaveable { mutableStateOf(false) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     showBottomBar = when (navBackStackEntry?.destination?.route) {
-        "signIn" -> false
-        "signUp" -> false
-        "registerAs"->false
-        "faceScreen"->false
-        "Or_Sign_Up"->false
-        "foodContent"->false
-        else -> true
+        BottomBarScreen.History.route->true
+        BottomBarScreen.OrganizationHome.route->true
+        BottomBarScreen.Donation.route->true
+        ScreensRoute.DonorHome.route->true
+        else->false
     }
     Scaffold(
         bottomBar = {
             if(showBottomBar){
                 val screens = listOf(
-                    BottomBarScreen.Home,
+                    BottomBarScreen.OrganizationHome,
                     BottomBarScreen.Donation,
                     BottomBarScreen.History,
                 )
@@ -86,6 +86,7 @@ fun RowScope.addItem(
     currentDestination: NavDestination?,
     navController: NavHostController
 ) {
+
     if(screen== BottomBarScreen.History) {
         BottomNavigationItem(
             modifier = Modifier.background(Color.White),
@@ -93,6 +94,20 @@ fun RowScope.addItem(
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.history_icon),
+                    contentDescription = "navigation icon"
+                )
+            },
+            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+            onClick = { navController.navigate(screen.route) }
+        )
+    }
+    else if(screen== BottomBarScreen.Donation){
+        BottomNavigationItem(
+            modifier = Modifier.background(Color.White),
+            label = { Text(text = screen.title, color = Color.Black) },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.food_donation_icon2),
                     contentDescription = "navigation icon"
                 )
             },
@@ -107,7 +122,9 @@ fun RowScope.addItem(
                 Icon(screen.icon, contentDescription = "navigation icon")
             },
             selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-            onClick = { navController.navigate(screen.route) }
+            onClick = {
+             userType(navController)
+            }
         )
     }
 }

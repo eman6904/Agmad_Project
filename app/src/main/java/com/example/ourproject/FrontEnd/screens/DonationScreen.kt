@@ -27,9 +27,11 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.example.ourproject.BackEnd.DataClasses.DonorItems
 import com.example.ourproject.BackEnd.DataClasses.OrganizationItems
@@ -60,8 +62,8 @@ fun donationScreen(navController:NavHostController) {
     val mealsNumber= rememberSaveable() { mutableStateOf("")}
     var showImages= rememberSaveable() { mutableStateOf(false)}
     var selectOrganization by rememberSaveable() { mutableStateOf("Organization") }
-    var selectLocation by rememberSaveable() { mutableStateOf("Food state") }
-    var selectFoodState by rememberSaveable() { mutableStateOf("Location") }
+    var selectLocation by rememberSaveable() { mutableStateOf("Location") }
+    var selectFoodState by rememberSaveable() { mutableStateOf("Food State") }
 
 
    Column(
