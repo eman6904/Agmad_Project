@@ -89,12 +89,11 @@ fun requestItem(index:Int,requests:List<RequestItems>,navController: NavHostCont
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
         ){
-            Image(
-                painterResource(R.drawable.food_donation_icon2),
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(5.dp),
-                contentDescription = "",
+            Icon(
+                painter = painterResource(id = R.drawable.food_donation_icon2),
+                contentDescription = "navigation icon",
+                tint= colorResource(id = R.color.mainColor),
+                modifier = Modifier.weight(1f).padding(10.dp)
             )
             Column (
                    modifier = Modifier
@@ -110,7 +109,7 @@ fun requestItem(index:Int,requests:List<RequestItems>,navController: NavHostCont
                     modifier = Modifier
                 )
                 Text(
-                    text=requests[index].date_time,
+                    text=requests[index].date_timeOfRequest,
                     modifier = Modifier,
                     color= Color.Gray
                 )
@@ -366,7 +365,9 @@ fun organizationResponse(shoutDownDialog: MutableState<Boolean>,
                             contentColor = Color.White,
                             backgroundColor = colorResource(id = R.color.mainColor)
                         ),
-                        modifier = Modifier.fillMaxWidth().padding(start=10.dp,end=10.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 10.dp, end = 10.dp)
                     ) {
                         Text(text="Done")
                     }

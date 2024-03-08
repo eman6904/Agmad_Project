@@ -11,7 +11,8 @@ data class RequestItems(
     var mealNumber:String="",
     var comment:String="",
     var status:String="",
-    var date_time:String="",
+    var date_timeOfRequest:String="",
+    var date_timeOfResponse:String="",
     var organizationResponse:String="",
     var imagesList:List<String> = emptyList()
 )

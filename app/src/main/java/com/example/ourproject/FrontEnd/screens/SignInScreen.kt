@@ -3,6 +3,7 @@ package com.example.ourproject.FrontEnd.screens
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -25,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
-import com.example.ourproject.BackEnd.Files.isOrganization
 import com.example.ourproject.BackEnd.Files.userSignIn
 import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.R
@@ -42,6 +42,18 @@ fun signIn(navController: NavHostController) {
     var shoutDownDialogE = rememberSaveable() { mutableStateOf(false) }
     var shoutDownDialogV = rememberSaveable() { mutableStateOf(false) }
     val shoutDownDialogR = rememberSaveable() { mutableStateOf(false) }
+    var emptyPassword = rememberSaveable() { mutableStateOf(false)}
+    var emptyEmail = rememberSaveable() { mutableStateOf(false)}
+
+    val modifierForEmptyField = Modifier
+        .fillMaxWidth()
+        .padding(start = 20.dp, end = 20.dp)
+        .height(55.dp)
+        .border(2.dp, Color.Red, RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp))
+    val modifierForNotEmptyField = Modifier
+        .fillMaxWidth()
+        .padding(start = 20.dp, end = 20.dp)
+        .height(55.dp)
 
     Box(
         Modifier
@@ -93,8 +105,16 @@ fun signIn(navController: NavHostController) {
                 // contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxWidth()
             )
-            emailField(email)
-            passwordField(password)
+            if(emptyEmail.value==false||email.value.isNotEmpty())
+                emailField(email,modifierForNotEmptyField)
+            else
+                emailField(email,modifierForEmptyField)
+
+            if(emptyPassword.value==false||password.value.isNotEmpty())
+                passwordField(password,modifierForNotEmptyField)
+            else
+                passwordField(password,modifierForEmptyField)
+
             ErrorDialog(shoutDownDialog = shoutDownDialogE)
             DataDialog(shoutDownDialog = shoutDownDialogD)
             DialogForResetPassword(shoutDownDialogR)
@@ -110,7 +130,9 @@ fun signIn(navController: NavHostController) {
                     shoutDownDialogD,
                     shoutDownDialogE,
                     shoutDownDialogV,
-                    navController
+                    navController,
+                    emptyEmail,
+                    emptyPassword
                 )
                 Box(
                     modifier = Modifier
@@ -178,19 +200,39 @@ fun buttonSignIn(
     showMsgD: MutableState<Boolean>,
     showError: MutableState<Boolean>,
     showMsgV: MutableState<Boolean>,
-    navController: NavHostController
+    navController: NavHostController,
+    emptyEmail:MutableState<Boolean>,
+    emptyPassword:MutableState<Boolean>
 ) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxWidth()
     ) {
+
         Button(
             onClick = {
-                shoutDownProgress.value = true
-                userSignIn(
-                    email, password, shoutDownProgress,
-                    showMsgD, showError, showMsgV, navController
-                )
+
+                if(password.value.isEmpty()){
+
+                    emptyPassword.value=true
+                }
+                else
+                    emptyPassword.value=false
+
+                if(email.value.isEmpty()){
+
+                    emptyEmail.value=true
+                }else{
+                    emptyEmail.value=false
+                }
+
+                if(email.value.isNotEmpty()&&password.value.isNotEmpty()){
+                    shoutDownProgress.value = true
+                    userSignIn(
+                        email, password, shoutDownProgress,
+                        showMsgD, showError, showMsgV, navController
+                    )
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()

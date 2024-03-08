@@ -1,5 +1,6 @@
 package com.example.ourproject.FrontEnd.screens
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,7 +32,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.example.ourproject.BackEnd.Files.Donor_signUp
-import com.example.ourproject.FrontEnd.BottomBarScreen
 import com.example.ourproject.R
 import com.example.ourproject.FrontEnd.ScreensRoute
 import com.owlbuddy.www.countrycodechooser.CountryCodeChooser
@@ -51,6 +51,30 @@ fun DonorSignUp(navController: NavHostController) {
     var shoutDownDialogD = rememberSaveable() { mutableStateOf(false) }
     var shoutDownDialogE = rememberSaveable() { mutableStateOf(false) }
     var shoutDownDialogV = rememberSaveable() { mutableStateOf(false) }
+    var emptyPassword = rememberSaveable() { mutableStateOf(false)}
+    var emptyPhone = rememberSaveable() { mutableStateOf(false)}
+    var emptyEmail = rememberSaveable() { mutableStateOf(false)}
+    var emptyConPassword = rememberSaveable() { mutableStateOf(false)}
+    var emptyName = rememberSaveable() { mutableStateOf(false)}
+    var emptyLocation = rememberSaveable() { mutableStateOf(false)}
+    var emptyGender = rememberSaveable() { mutableStateOf(false)}
+
+    val modifierForEmptyField = Modifier
+        .fillMaxWidth()
+        .padding(start = 20.dp, end = 20.dp)
+        .height(55.dp)
+        .border(2.dp, Color.Red, RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp))
+    val modifierForNotEmptyField = Modifier
+        .fillMaxWidth()
+        .padding(start = 20.dp, end = 20.dp)
+        .height(55.dp)
+    val modifierForEmptyPhoneField = Modifier
+        .fillMaxWidth()
+        .height(55.dp)
+        .border(2.dp, Color.Red, RoundedCornerShape(0.dp, 10.dp, 10.dp, 0.dp))
+    val modifierForNotEmptyPhoneField = Modifier
+        .fillMaxWidth()
+        .height(55.dp)
 
     Box(
         Modifier
@@ -101,21 +125,52 @@ fun DonorSignUp(navController: NavHostController) {
                 fontSize = 25.sp,
                 textDecoration = TextDecoration.Underline
             )
-            nameField(name)
-            emailField(email)
-            passwordField(password)
-            confirmPasswordField(conPassword)
-            SelectCountryWithCountryCode(phone)
+            if(emptyName.value==false||name.value.isNotEmpty())
+            nameField(name,modifierForNotEmptyField)
+            else
+            nameField(name,modifierForEmptyField)
+
+            if(emptyEmail.value==false||email.value.isNotEmpty())
+               emailField(email,modifierForNotEmptyField)
+            else
+               emailField(email,modifierForEmptyField)
+
+            if(emptyPassword.value==false||password.value.isNotEmpty())
+               passwordField(password,modifierForNotEmptyField)
+            else
+                passwordField(password,modifierForEmptyField)
+
+            if(emptyConPassword.value==false)
+               confirmPasswordField(conPassword,modifierForNotEmptyField)
+            else
+                confirmPasswordField(conPassword,modifierForEmptyField)
+            if(emptyPhone.value==false||phone.value.isNotEmpty())
+               SelectCountryWithCountryCode(phone,modifierForNotEmptyPhoneField)
+            else
+               SelectCountryWithCountryCode(phone,modifierForEmptyPhoneField)
             val Gender =
                 listOf<String>(stringResource(R.string.male), stringResource(R.string.female))
+
+            if(emptyGender.value==false||selectedGender!="Gender")
             GenderSpinner(
                 itemList = Gender,
                 selectedGender = selectedGender,
-                onGenderSelected = { selectedGender = it })
-            location(location)
+                onGenderSelected = { selectedGender = it },modifierForNotEmptyField)
+            else
+                GenderSpinner(
+                    itemList = Gender,
+                    selectedGender = selectedGender,
+                    onGenderSelected = { selectedGender = it },modifierForEmptyField)
+
+            if(emptyLocation.value==false||location.value.isNotEmpty())
+                  location(location,modifierForNotEmptyField)
+            else
+                  location(location,modifierForEmptyField)
+
             ButtonSignUpDo(
-                stringResource(R.string.sign_up), name, email, password, phone, selectedGender,
-                showProgress, shoutDownDialogD, shoutDownDialogE, shoutDownDialogV,location,navController
+                stringResource(R.string.sign_up), name, email, password,conPassword, phone, selectedGender,
+                showProgress, shoutDownDialogD, shoutDownDialogE, shoutDownDialogV,location,navController,emptyPassword,
+                emptyConPassword,emptyName,emptyPhone,emptyEmail,emptyLocation,emptyGender
             )
             progressBar(showProgress)
             ErrorDialog(shoutDownDialog = shoutDownDialogE)
@@ -135,13 +190,10 @@ fun DonorSignUp(navController: NavHostController) {
 }
 
 @Composable
-fun nameField(name: MutableState<String>) {
+fun nameField(name: MutableState<String>,modifier: Modifier) {
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 20.dp,end=20.dp)
-            .height(55.dp),
+        modifier = modifier,
         shape = RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp),
         elevation = 3.dp,
     ) {
@@ -165,13 +217,10 @@ fun nameField(name: MutableState<String>) {
 }
 
 @Composable
-fun emailField(email: MutableState<String>) {
+fun emailField(email: MutableState<String>,modifier: Modifier) {
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 20.dp,end=20.dp)
-            .height(55.dp),
+        modifier =modifier,
         shape = RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp),
         elevation = 3.dp,
     ) {
@@ -201,14 +250,11 @@ fun emailField(email: MutableState<String>) {
 }
 
 @Composable
-fun passwordField(password: MutableState<String>) {
+fun passwordField(password: MutableState<String>,modifier:Modifier) {
 
     var passwordVisible = rememberSaveable { mutableStateOf(false) }
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 20.dp,end=20.dp)
-            .height(55.dp),
+        modifier=modifier,
         shape = RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp),
         elevation = 3.dp,
     ) {
@@ -255,14 +301,11 @@ fun passwordField(password: MutableState<String>) {
 }
 
 @Composable
-fun confirmPasswordField(conpassword: MutableState<String>) {
+fun confirmPasswordField(conpassword: MutableState<String>,modifier: Modifier) {
 
     var passwordVisible = rememberSaveable { mutableStateOf(false) }
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 20.dp,end=20.dp)
-            .height(55.dp),
+        modifier =modifier,
         shape = RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp),
         elevation = 3.dp,
     ) {
@@ -306,22 +349,20 @@ fun GenderSpinner(
     itemList: List<String>,
     selectedGender: String,
     onGenderSelected: (selectedGender: String) -> Unit,
+    modifier:Modifier
     // through that we can change value of selectedItem,
 
 ) {
     var expanded by rememberSaveable() { mutableStateOf(false) }
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(start=20.dp,end=20.dp),
+            .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
         Column(
         ) {
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(55.dp),
+                modifier = modifier,
                 shape = RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp),
                 elevation = 3.dp,
             ) {
@@ -379,6 +420,7 @@ fun ButtonSignUpDo(
     name: MutableState<String>,
     email: MutableState<String>,
     password: MutableState<String>,
+    conPassword: MutableState<String>,
     phone: MutableState<String>,
     gender: String,
     shoutDownProgress: MutableState<Boolean>,
@@ -386,19 +428,80 @@ fun ButtonSignUpDo(
     showError: MutableState<Boolean>,
     showMsgV: MutableState<Boolean>,
     location: MutableState<String>,
-    navController: NavHostController
+    navController: NavHostController,
+    emptyPassword:MutableState<Boolean>,
+    emptyConPassword:MutableState<Boolean>,
+    emptyName:MutableState<Boolean>,
+    emptyPhone:MutableState<Boolean>,
+    emptyEmail:MutableState<Boolean>,
+    emptyLocation:MutableState<Boolean>,
+    emptyGender:MutableState<Boolean>
 ) {
+
     Button(
         onClick = {
-            shoutDownProgress.value = true
-            Donor_signUp(
-                name, email, password, phone, gender, shoutDownProgress,
-                showMsgD, showError, showMsgV,location, navController
-            )
+
+            if(password.value.isEmpty()){
+                emptyPassword.value=true
+
+            }
+            else
+                emptyPassword.value=false
+
+            if(conPassword.value.isEmpty()||conPassword.value!=password.value){
+                emptyConPassword.value=true
+
+            }else{
+                emptyConPassword.value=false
+            }
+
+            if(phone.value.isEmpty()){
+                emptyPhone.value=true
+
+            }else{
+                emptyPhone.value=false
+            }
+
+            if(email.value.isEmpty()){
+                emptyEmail.value=true
+
+            }else{
+                emptyEmail.value=false
+            }
+
+            if(location.value.isEmpty()){
+                emptyLocation.value=true;
+
+            }else{
+                emptyLocation.value=false
+            }
+
+            if(gender=="Gender"){
+                emptyGender.value=true;
+
+            }else{
+                emptyGender.value=false
+            }
+
+            if(name.value.isEmpty()){
+                emptyName.value=true;
+
+            }else{
+                emptyName.value=false
+            }
+           if(name.value.isNotEmpty()&&email.value.isNotEmpty()&&password.value.isNotEmpty()
+                   &&conPassword.value.isNotEmpty()&&phone.value.isNotEmpty()&&location.value.isNotEmpty()&&gender.isNotEmpty()
+               &&conPassword.value==password.value){
+               shoutDownProgress.value = true
+               Donor_signUp(
+                   name, email, password, phone, gender, shoutDownProgress,
+                   showMsgD, showError, showMsgV,location, navController
+               )
+           }
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp,end=20.dp)
+            .padding(start = 20.dp, end = 20.dp)
             .height(50.dp),
         shape = RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp),
         colors = ButtonDefaults.buttonColors(
@@ -423,7 +526,7 @@ fun progressBar(show: MutableState<Boolean>) {
 }
 
 @Composable
-fun SelectCountryWithCountryCode(phone: MutableState<String>) {
+fun SelectCountryWithCountryCode(phone: MutableState<String>,modifier:Modifier) {
 
     val countryCode = remember { mutableStateOf("+20") }
     Box(
@@ -435,9 +538,7 @@ fun SelectCountryWithCountryCode(phone: MutableState<String>) {
     ) {
         Row() {
             Card(
-                modifier = Modifier
-                    .height(55.dp)
-                    .weight(1f),
+                modifier = Modifier.weight(1f).height(55.dp),
                 shape = RoundedCornerShape(10.dp, 0.dp, 0.dp, 10.dp),
                 elevation = 3.dp,
             ) {
@@ -454,8 +555,7 @@ fun SelectCountryWithCountryCode(phone: MutableState<String>) {
                 )
             }
             Card(
-                modifier = Modifier
-                    .height(55.dp)
+                modifier =modifier
                     .weight(4f),
                 shape = RoundedCornerShape(0.dp, 10.dp, 10.dp, 0.dp),
                 elevation = 3.dp,

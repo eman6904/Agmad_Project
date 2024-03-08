@@ -1,7 +1,8 @@
 package com.example.ourproject.FrontEnd.screens
 
+import android.content.Context
 import android.net.Uri
-import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -20,6 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -27,28 +29,16 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
-import com.example.ourproject.BackEnd.DataClasses.DonorItems
-import com.example.ourproject.BackEnd.DataClasses.OrganizationItems
-import com.example.ourproject.BackEnd.DataClasses.RequestItems
-import com.example.ourproject.BackEnd.Files.getImages
-import com.example.ourproject.BackEnd.Files.getOrganizations
-import com.example.ourproject.BackEnd.Files.sendRequest
-import com.example.ourproject.BackEnd.Files.uploadImage
+import com.example.ourproject.BackEnd.Files.*
 import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.R
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.tasks.await
 
 @Composable
 fun donationScreen(navController:NavHostController) {
@@ -60,10 +50,13 @@ fun donationScreen(navController:NavHostController) {
     val foodContent= rememberSaveable() { mutableStateOf("")}
     val comment= rememberSaveable() { mutableStateOf("")}
     val mealsNumber= rememberSaveable() { mutableStateOf("")}
-    var showImages= rememberSaveable() { mutableStateOf(false)}
     var selectOrganization by rememberSaveable() { mutableStateOf("Organization") }
     var selectLocation by rememberSaveable() { mutableStateOf("Location") }
     var selectFoodState by rememberSaveable() { mutableStateOf("Food State") }
+    var organization = rememberSaveable() { mutableStateOf("") }
+    var location =rememberSaveable() { mutableStateOf("") }
+    var foodState = rememberSaveable() { mutableStateOf("") }
+    val context= LocalContext.current
 
 
    Column(
@@ -82,22 +75,23 @@ fun donationScreen(navController:NavHostController) {
 
            val foodStateList = listOf<String>("Fresh Prepared Food", "Leftovers")
            val locationList = listOf<String>("My Location", "New Location")
-           spinner(orgList, selectOrganization, { selectOrganization = it })
-           spinner(locationList, selectLocation, { selectLocation = it })
-           spinner(foodStateList, selectFoodState, { selectFoodState = it })
+           spinner(orgList, selectOrganization, { selectOrganization = it },organization)
+           spinner(locationList, selectLocation, { selectLocation = it },location)
+           spinner(foodStateList, selectFoodState, { selectFoodState = it },foodState)
            editText(foodContent,"Food Content")
-           floatingActionButton(navController = navController,showImages)
+           floatingActionButton(navController = navController)
            editText(mealsNumber,"Estimated Meals Number")
            editText(comment,"Any Comment?")
            requestButton(
                stringResource(R.string.request),
                navController,
-               selectOrganization,
-               selectFoodState,
-               selectLocation,
+               organization.value,
+               foodState.value,
+               location.value,
                foodContent,
                mealsNumber,
                comment,
+               context
            )
 
        }
@@ -170,10 +164,28 @@ fun spinner(
     itemList: List<String>,
     selectedItem: String,
     onItemSelected: (selectedItem: String) -> Unit,
+    value:MutableState<String>
     // through that we can change value of selectedItem,
 
 ) {
     var expanded by rememberSaveable() { mutableStateOf(false) }
+    var location = rememberSaveable() { mutableStateOf("") }
+    var shoutDown= remember { mutableStateOf(false)}
+
+    value.value=location.value
+    if(selectedItem=="New Location"){
+
+        if(location.value.isEmpty())
+         shoutDown.value=true
+
+        newLocation(shoutDown = shoutDown, newLocation = location)
+    }else if(selectedItem=="My Location"){
+
+        location.value= getMyLocation()
+    }else{
+        location.value=selectedItem
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -195,7 +207,7 @@ fun spinner(
                     verticalAlignment =Alignment.CenterVertically,
                 ){
                     Text(
-                        text = selectedItem,
+                        text = location.value,
                         modifier = Modifier
                             .weight(8f)
                             .height(35.dp),
@@ -309,8 +321,12 @@ fun requestButton(
     foodContent:MutableState<String>,
     mealsNumber:MutableState<String>,
     comment:MutableState<String>,
+    appContext: Context
 ) {
     var imagesList by remember { mutableStateOf(emptyList<String>()) }
+    var ok= remember { mutableStateOf(false)}
+    if(ok.value)
+        deleteImages()
     imagesList= getImages()
     Box(
         contentAlignment = Alignment.Center,
@@ -320,6 +336,7 @@ fun requestButton(
     ) {
         Button(
             onClick = {
+                Toast.makeText(appContext,"Your request has been sent successfully",Toast.LENGTH_LONG).show()
                 sendRequest(
                 organizationName,
                 foodState,
@@ -327,7 +344,9 @@ fun requestButton(
                 foodContent,
                 mealsNumber,
                 comment,
-                imagesList)},
+                imagesList)
+                ok.value=true
+                      },
             modifier = Modifier
                 .fillMaxWidth(),
             shape = RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp),
@@ -384,11 +403,11 @@ fun editText(content: MutableState<String>,hint:String) {
 }
 @Composable
 fun floatingActionButton(
- navController:NavHostController,
- showImages:MutableState<Boolean>)
+ navController:NavHostController)
 {
 
     val selectedImage = remember{ mutableStateListOf<Uri?>() }
+    var showImages = remember{ mutableStateOf(false) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) {
         selectedImage.apply {
             clear()
@@ -399,8 +418,8 @@ fun floatingActionButton(
 
 
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
-    val listRef = FirebaseStorage.getInstance().getReference().child(currentUserId+"/")
-    listRef.listAll().addOnSuccessListener { listResult ->
+    val imageList = FirebaseStorage.getInstance().getReference().child(currentUserId+"/")
+    imageList.listAll().addOnSuccessListener { listResult ->
         for (file in listResult.items) {
             showImages.value = true
         }
@@ -416,7 +435,7 @@ fun floatingActionButton(
        ){
            FloatingActionButton(
                onClick = {
-                           launcher.launch("image/jpeg")
+                           launcher.launch("image/*")
                          },
                modifier=Modifier.padding(5.dp),
                backgroundColor = colorResource(id = R.color.mainColor)
@@ -440,4 +459,59 @@ fun floatingActionButton(
           )
        }
    }
+}
+@Composable
+fun newLocation(shoutDown: MutableState<Boolean>,newLocation:MutableState<String>) {
+
+    val location = rememberSaveable() { mutableStateOf("") }
+    newLocation.value=location.value
+    if (shoutDown.value) {
+        Dialog(
+            onDismissRequest = { shoutDown.value = false }
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(10.dp),
+                shape = RoundedCornerShape(16.dp),
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    OutlinedTextField(
+                        value = location.value,
+                        onValueChange = { location.value = it },
+                        modifier = Modifier.padding(20.dp),
+                        label = { Text(text = "Enter new location") },
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color.White,
+                            focusedIndicatorColor = colorResource(id = R.color.mainColor),
+                            focusedLabelColor = colorResource(id = R.color.mainColor),
+                            unfocusedIndicatorColor = colorResource(id = R.color.mainColor),
+                            unfocusedLabelColor = Color.Gray,
+                            cursorColor = colorResource(id = R.color.mainColor)
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
+                    )
+                    Button(
+                        onClick = {
+                            shoutDown.value = false
+                        },
+                        content = {
+                            Text(
+                                text ="Done",
+                                color = Color.White
+                            )
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = colorResource(id = R.color.mainColor)
+                        ),
+                        modifier = Modifier.padding(5.dp)
+                    )
+                }
+            }
+        }
+    }
 }

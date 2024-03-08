@@ -1,10 +1,8 @@
 package com.example.ourproject.FrontEnd.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -44,7 +43,7 @@ fun response(navController: NavHostController, responseType:String){
 
         ) {
             itemsIndexed(items = requestsList){ index,request->
-                requestItem(
+                responseItem(
                     index,
                     requestsList,
                     navController,
@@ -95,5 +94,53 @@ fun responseTopBar(navController: NavHostController,title:String) {
                 )
             }
         ) {}
+    }
+}
+@Composable
+fun responseItem(index:Int,requests:List<RequestItems>,navController: NavHostController,requestType:String){
+
+    var currRequest = remember { mutableStateOf(RequestItems())}
+    val shoutDownDialog= remember { mutableStateOf(false)}
+    if(shoutDownDialog.value)
+        requestDisplay(shoutDownDialog = shoutDownDialog, request = currRequest, navController, requestType)
+    Card(
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+            .clickable {
+                currRequest.value = requests[index]
+                shoutDownDialog.value = true
+            },
+        shape = RoundedCornerShape(10.dp),
+        elevation = 10.dp
+    ){
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+        ){
+            Icon(
+                painter = painterResource(id = R.drawable.or_icon),
+                contentDescription = "navigation icon",
+                tint= colorResource(id = R.color.mainColor),
+                modifier = Modifier.weight(1f).padding(10.dp)
+            )
+            Column (
+                modifier = Modifier
+                    .weight(5f)
+                    .padding(5.dp),
+                verticalArrangement = Arrangement.Center
+            ){
+                Text(
+                    text=requests[index].organizationName,
+                    modifier = Modifier.padding(2.dp)
+                )
+                Text(
+                    text=requests[index].date_timeOfResponse,
+                    modifier = Modifier.padding(4.dp),
+                    color=Color.Gray
+                )
+            }
+        }
     }
 }

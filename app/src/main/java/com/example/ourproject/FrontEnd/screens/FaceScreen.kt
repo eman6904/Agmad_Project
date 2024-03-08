@@ -93,33 +93,49 @@ fun face(navController:NavHostController) {
 //                    orgORdo(navController)
                 navController.navigate(ScreensRoute.SignIn.route)
             }
-            Text(text= stringResource(R.string.food_ssver),
-                color= colorResource(id = R.color.mainColor),
-                fontFamily = FontFamily(Font(R.font.font4)),
-                fontSize = 45.sp,
-                modifier = Modifier.scale(scale.value),
-                textDecoration = TextDecoration.Underline,
-            )
-            Image(
-                painterResource(R.drawable.logo),
-                modifier = Modifier.fillMaxWidth(),
-                contentDescription = "",
-            )
-           Column(
-               modifier = Modifier.fillMaxWidth(),
-               horizontalAlignment = Alignment.CenterHorizontally,
-               verticalArrangement = Arrangement.Center
+            Box(
+                modifier = Modifier
+                    .weight(1f).fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ){
+                Text(text= stringResource(R.string.food_ssver),
+                    color= colorResource(id = R.color.mainColor),
+                    fontFamily = FontFamily(Font(R.font.font4)),
+                    fontSize = 45.sp,
+                    modifier = Modifier.scale(scale.value),
+                    textDecoration = TextDecoration.Underline,
+                )
+            }
+            Box(
+                modifier = Modifier.weight(1f)
+            ){
+                Image(
+                    painterResource(R.drawable.logo),
+                    modifier = Modifier.fillMaxSize(),
+                    contentDescription = "",
+                )
+            }
+           Box(
+               modifier = Modifier.weight(1f)
            ){
-               Text(text= stringResource(R.string.intro1),
-                   color= colorResource(id = R.color.mainColor),
-                   fontFamily = FontFamily(Font(R.font.font2)),
-                   modifier = Modifier.scale(scale.value)
-               )
-               Text(text= stringResource(R.string.intro2),
-                   color= colorResource(id = R.color.mainColor),
-                   fontFamily = FontFamily(Font(R.font.font2)),
-                   modifier = Modifier.scale(scale.value),
-               )
+               Column(
+                   modifier = Modifier.fillMaxSize(),
+                   horizontalAlignment = Alignment.CenterHorizontally,
+                   verticalArrangement = Arrangement.Center
+               ){
+                   Text(text= stringResource(R.string.intro1),
+                       color= colorResource(id = R.color.mainColor),
+                       fontFamily = FontFamily(Font(R.font.font2)),
+                       modifier = Modifier.scale(scale.value),
+
+                   )
+                   Text(text= stringResource(R.string.intro2),
+                       color= colorResource(id = R.color.mainColor),
+                       fontFamily = FontFamily(Font(R.font.font2)),
+                       modifier = Modifier.scale(scale.value),
+
+                   )
+               }
            }
         }
     }

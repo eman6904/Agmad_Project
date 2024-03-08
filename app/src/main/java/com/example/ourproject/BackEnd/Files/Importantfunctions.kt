@@ -5,8 +5,8 @@ import android.util.Log
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.navigation.NavHostController
-import com.example.ourproject.BackEnd.DataClasses.OrganizationItems
 import com.example.ourproject.BackEnd.DataClasses.DonorItems
+import com.example.ourproject.BackEnd.DataClasses.OrganizationItems
 import com.example.ourproject.BackEnd.DataClasses.RequestItems
 import com.example.ourproject.FrontEnd.BottomBarScreen
 import com.example.ourproject.FrontEnd.ScreensRoute
@@ -23,6 +23,7 @@ import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 fun Donor_signUp(
     name: MutableState<String>, email: MutableState<String>,
@@ -213,7 +214,7 @@ fun sendRequest(
 
                 var id=requestObj.push().key
                 var request=RequestItems(id.toString(),donor!!.name,donor.phone,organizationName,foodState,
-                    location,foodContent.value,mealNumber.value,comment.value,"unknown",date_time,"",imagesList)
+                    location,foodContent.value,mealNumber.value,comment.value,"unknown",date_time,"","",imagesList)
                 requestObj.child(id.toString()).setValue(request)
             }
         }
@@ -400,9 +401,18 @@ fun getAcceptedRequested():List<RequestItems>{
 }
 fun updateRequest(status:String, requestId:String, organizationResponse:String){
 
+    val sdf = SimpleDateFormat("'Date: 'dd-MM-yyyy'   Time: 'HH:mm")
+    var calendar=Calendar.getInstance()
+    var currentTime= if(calendar.get(Calendar.AM_PM) == Calendar.AM)
+        "AM"
+    else
+        "PM"
+    var date_time=sdf.format(Date())+" $currentTime"
+
     var requestObj = FirebaseDatabase.getInstance().getReference("Requests").child(requestId)
     val hashMap: HashMap<String, Any> = HashMap()
     hashMap.put("status",status)
+    hashMap.put("date_timeOfResponse",date_time)
     hashMap.put("organizationResponse",organizationResponse)
     requestObj?.updateChildren(hashMap as Map<String, Any>)?.addOnSuccessListener {
 
@@ -480,4 +490,50 @@ fun myRequests(type:String):List<RequestItems>{
 
     })
     return requestList1
+}
+@Composable
+fun getMyLocation():String{
+
+    var myLocation= rememberSaveable() { mutableStateOf("")}
+    var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
+
+    var donorObj = FirebaseDatabase.getInstance().getReference("Donors")
+    donorObj.child(currentUserId).addValueEventListener(object :ValueEventListener{
+        override fun onDataChange(snapshot: DataSnapshot) {
+
+            val donorData=snapshot.getValue(DonorItems::class.java)
+            if(donorData!=null)
+                myLocation.value=donorData!!.location
+
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            TODO("Not yet implemented")
+        }
+
+    })
+
+    return myLocation.value
+}
+@Composable
+fun deleteImages(){
+
+
+    var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
+
+
+    LaunchedEffect(true) {
+        val storageRef = FirebaseStorage.getInstance().reference.child(currentUserId+"/")
+        storageRef.listAll().await().items.forEach { imageRef ->
+            val uri = imageRef.downloadUrl.await().toString()
+            val photoRef: StorageReference = FirebaseStorage.getInstance().getReferenceFromUrl(uri)
+
+            photoRef.delete().addOnSuccessListener { // File deleted successfully
+                Log.d("TAG", "onSuccess: deleted file")
+            }.addOnFailureListener { // Uh-oh, an error occurred!
+                Log.d("TAG", "onFailure: did not delete file")
+            }
+        }
+    }
+
 }
