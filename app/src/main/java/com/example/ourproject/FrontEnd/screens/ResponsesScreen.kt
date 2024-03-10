@@ -27,10 +27,13 @@ fun response(navController: NavHostController, responseType:String){
 
     var requestsList by remember { mutableStateOf(emptyList<RequestItems>()) }
 
+    val accepted_requests=stringResource(id = R.string.acceptedRequests)
+    val rejected_requests=stringResource(id = R.string.rejectedRequests)
+
     when(responseType){
 
-        "Accepted Requests"-> requestsList = myRequests(type = "Accepted")
-        "Rejected Requests"-> requestsList = myRequests(type = "Rejected")
+        accepted_requests-> requestsList = myRequests(type = R.string.accepted.toString())
+        rejected_requests-> requestsList = myRequests(type = R.string.rejected.toString())
     }
 
     Column(

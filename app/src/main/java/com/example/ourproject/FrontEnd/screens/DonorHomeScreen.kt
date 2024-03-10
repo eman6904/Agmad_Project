@@ -29,13 +29,16 @@ import com.example.ourproject.R
 @Composable
 fun donorHome(navController: NavHostController){
 
+    val accepted= stringResource(id = R.string.accepted)
+    val rejected= stringResource(id = R.string.rejected)
+
     Column {
 
         val acceptedRequestedNumber= rememberSaveable{ mutableStateOf(0)}
         val rejectedRequestedNumber= rememberSaveable{ mutableStateOf(0)}
 
-        val accList= myRequests(type = "Accepted")
-        val rejList= myRequests(type = "Rejected")
+        val accList= myRequests(type = accepted)
+        val rejList= myRequests(type = rejected)
 
         acceptedRequestedNumber.value=accList.size
         rejectedRequestedNumber.value=rejList.size
@@ -49,6 +52,8 @@ fun donorHome(navController: NavHostController){
 @Composable
 fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNumber: MutableState<Int>, navController: NavHostController) {
 
+    val accepted_requests=stringResource(id = R.string.acceptedRequests)
+    val rejected_requests=stringResource(id = R.string.rejectedRequests)
     var showNotificationForAcc = rememberSaveable { mutableStateOf(false) }
     var showNotificationForRej = rememberSaveable { mutableStateOf(false) }
     var showMenu = rememberSaveable { mutableStateOf(false) }
@@ -87,7 +92,7 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
                     actions = {
                         IconButton(onClick = {
                             rejectedRequestedNumber.value = 0
-                            navController.navigate(ScreensRoute.Response.route+"/Rejected Requests")
+                            navController.navigate(ScreensRoute.Response.route+"/$rejected_requests")
                         }) {
                             BadgedBox(badge = {
                                 if (showNotificationForRej.value) {
@@ -110,7 +115,7 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
                         }
                         IconButton(onClick = {
                             acceptedRequestedNumber.value = 0
-                            navController.navigate(ScreensRoute.Response.route+"/Accepted Requests")
+                            navController.navigate(ScreensRoute.Response.route+"/$accepted_requests")
                         }) {
                             BadgedBox(badge = {
                                     if(showNotificationForAcc.value){

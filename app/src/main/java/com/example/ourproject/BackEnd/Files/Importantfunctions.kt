@@ -4,12 +4,14 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.example.ourproject.BackEnd.DataClasses.DonorItems
 import com.example.ourproject.BackEnd.DataClasses.OrganizationItems
 import com.example.ourproject.BackEnd.DataClasses.RequestItems
 import com.example.ourproject.FrontEnd.BottomBarScreen
 import com.example.ourproject.FrontEnd.ScreensRoute
+import com.example.ourproject.R
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -186,6 +188,7 @@ fun uploadImage(imagesLocalUri: MutableList<Uri?>) {
 
     }
 }
+
 fun sendRequest(
      organizationName:String,
      foodState:String ,
@@ -195,7 +198,8 @@ fun sendRequest(
      comment:MutableState<String>,
      imagesList:List<String>
 ){
-    val sdf = SimpleDateFormat("'Date: 'dd-MM-yyyy'   Time: 'HH:mm")
+
+    val sdf = SimpleDateFormat("dd-MM-yyyy'   'HH:mm")
     var calendar=Calendar.getInstance()
     var currentTime= if(calendar.get(Calendar.AM_PM) == Calendar.AM)
         "AM"
@@ -214,7 +218,7 @@ fun sendRequest(
 
                 var id=requestObj.push().key
                 var request=RequestItems(id.toString(),donor!!.name,donor.phone,organizationName,foodState,
-                    location,foodContent.value,mealNumber.value,comment.value,"unknown",date_time,"","",imagesList)
+                    location,foodContent.value,mealNumber.value,comment.value,"",date_time,"","",imagesList)
                 requestObj.child(id.toString()).setValue(request)
             }
         }
@@ -298,7 +302,7 @@ fun getRequests():List<RequestItems>{
             for(request in snapshot.children){
 
                 var requestData=request.getValue(RequestItems::class.java)
-                if(requestData?.organizationName==orName.value&&requestData?.status=="unknown")
+                if(requestData?.organizationName==orName.value&&requestData?.status=="")
                  requestList2.add(requestData!!)
             }
             requestList1=requestList2
@@ -314,6 +318,8 @@ fun getRequests():List<RequestItems>{
 @Composable
 fun getRejectedRequested():List<RequestItems>{
 
+    val rejected= stringResource(id = R.string.rejected)
+
     var requestList1 by remember { mutableStateOf(emptyList<RequestItems>()) }
     var orName= rememberSaveable() { mutableStateOf("")}
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
@@ -342,7 +348,7 @@ fun getRejectedRequested():List<RequestItems>{
             for(request in snapshot.children){
 
                 var requestData=request.getValue(RequestItems::class.java)
-                if(requestData?.organizationName==orName.value&&requestData?.status=="Rejected")
+                if(requestData?.organizationName==orName.value&&requestData?.status==rejected)
                     requestList2.add(requestData!!)
             }
             requestList1=requestList2
@@ -358,6 +364,8 @@ fun getRejectedRequested():List<RequestItems>{
 @Composable
 fun getAcceptedRequested():List<RequestItems>{
 
+    val accepted= stringResource(id = R.string.accepted)
+
     var requestList1 by remember { mutableStateOf(emptyList<RequestItems>()) }
     var orName= rememberSaveable() { mutableStateOf("")}
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
@@ -386,7 +394,7 @@ fun getAcceptedRequested():List<RequestItems>{
             for(request in snapshot.children){
 
                 var requestData=request.getValue(RequestItems::class.java)
-                if(requestData?.organizationName==orName.value&&requestData?.status=="Accepted")
+                if(requestData?.organizationName==orName.value&&requestData?.status==accepted)
                     requestList2.add(requestData!!)
             }
             requestList1=requestList2
@@ -401,7 +409,7 @@ fun getAcceptedRequested():List<RequestItems>{
 }
 fun updateRequest(status:String, requestId:String, organizationResponse:String){
 
-    val sdf = SimpleDateFormat("'Date: 'dd-MM-yyyy'   Time: 'HH:mm")
+    val sdf = SimpleDateFormat("dd-MM-yyyy'    'HH:mm")
     var calendar=Calendar.getInstance()
     var currentTime= if(calendar.get(Calendar.AM_PM) == Calendar.AM)
         "AM"

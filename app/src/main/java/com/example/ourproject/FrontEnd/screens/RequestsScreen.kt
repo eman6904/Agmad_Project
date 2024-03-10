@@ -39,11 +39,15 @@ fun requests(navController:NavHostController,type:String){
 
     var requestsList by remember { mutableStateOf(emptyList<RequestItems>()) }
 
+    val requests=stringResource(id = R.string.requests)
+    val accepted_requests=stringResource(id = R.string.acceptedRequests)
+    val rejected_requests=stringResource(id = R.string.rejectedRequests)
+
     when(type){
 
-        "Requests"-> requestsList = getRequests()
-        "Accepted Requests"-> requestsList = getAcceptedRequested()
-        "Rejected Requests"-> requestsList = getRejectedRequested()
+        requests-> requestsList = getRequests()
+        accepted_requests-> requestsList = getAcceptedRequested()
+        rejected_requests-> requestsList = getRejectedRequested()
     }
 
     Column(
@@ -93,7 +97,9 @@ fun requestItem(index:Int,requests:List<RequestItems>,navController: NavHostCont
                 painter = painterResource(id = R.drawable.food_donation_icon2),
                 contentDescription = "navigation icon",
                 tint= colorResource(id = R.color.mainColor),
-                modifier = Modifier.weight(1f).padding(10.dp)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(10.dp)
             )
             Column (
                    modifier = Modifier
@@ -175,6 +181,9 @@ fun requestDisplay(
     if(showDialogForOrganizationResponse.value)
         organizationResponse(showDialogForOrganizationResponse,hint,requestStatus,request.value.requestId)
     val scrollState = rememberScrollState()
+    val rejectedReason=stringResource(id = R.string.ReasonForRejectedRequest)
+    val accepted=stringResource(id = R.string.accepted)
+    val rejected=stringResource(id = R.string.rejected)
     Dialog(
         onDismissRequest = { shoutDownDialog.value = false }
     ) {
@@ -189,7 +198,7 @@ fun requestDisplay(
                     modifier = Modifier.padding(15.dp)
                 ) {
                     Text(
-                        text = "Name: ",
+                        text = stringResource(R.string.namee),
                         fontFamily = FontFamily(Font(R.font.bold))
                     )
                     Text(request.value.donorName)
@@ -198,7 +207,7 @@ fun requestDisplay(
                     modifier = Modifier.padding(15.dp)
                 ) {
                     Text(
-                        text = "Phone: ",
+                        text = stringResource(R.string.phone),
                         fontFamily = FontFamily(Font(R.font.bold))
                     )
                     Text(request.value.donorPhone)
@@ -207,7 +216,7 @@ fun requestDisplay(
                     modifier = Modifier.padding(15.dp)
                 ) {
                     Text(
-                        text = "Location: ",
+                        text = stringResource(R.string.locationn),
                         fontFamily = FontFamily(Font(R.font.bold))
                     )
                     Text(request.value.location)
@@ -216,7 +225,7 @@ fun requestDisplay(
                     modifier = Modifier.padding(15.dp)
                 ) {
                     Text(
-                        text = "Meals Number: ",
+                        text = stringResource(R.string.mealsNumber),
                         fontFamily = FontFamily(Font(R.font.bold))
                     )
                     Text(request.value.mealNumber)
@@ -225,7 +234,7 @@ fun requestDisplay(
                     modifier = Modifier.padding(15.dp)
                 ) {
                     Text(
-                        text = "Food Content: ",
+                        text = stringResource(R.string.foodContentt),
                         fontFamily = FontFamily(Font(R.font.bold))
                     )
                     Text(request.value.foodContent)
@@ -234,11 +243,11 @@ fun requestDisplay(
                     modifier = Modifier.padding(15.dp)
                 ) {
                     Text(
-                        text = "Image List: ",
+                        text = stringResource(R.string.imageListt),
                         fontFamily = FontFamily(Font(R.font.bold))
                     )
                     ClickableText(
-                        AnnotatedString("Food Content"),
+                        AnnotatedString(stringResource(id = R.string.foodContent)),
                         onClick = {
                                   navController.navigate(ScreensRoute.RequestImages.route+"/"+request.value.requestId+"/"+requestsType)
                         },
@@ -248,26 +257,26 @@ fun requestDisplay(
                         )
                     )
                 }
-                Row(
-                    modifier = Modifier.padding(15.dp)
-                ) {
-                    Text(
-                        text = "Status: ",
-                        fontFamily = FontFamily(Font(R.font.bold))
-                    )
-                    if(requestStatus.value=="Accepted")
-                       Text(requestStatus.value,color=Color.Green)
-                    else if(requestStatus.value=="Rejected")
-                        Text(requestStatus.value,color=Color.Red)
-                    else
-                        Text(requestStatus.value)
-                }
+               if(request.value.status!=""){
+                   Row(
+                       modifier = Modifier.padding(15.dp)
+                   ) {
+                       Text(
+                           text = stringResource(R.string.statuss),
+                           fontFamily = FontFamily(Font(R.font.bold))
+                       )
+                       if(requestStatus.value==accepted)
+                           Text(requestStatus.value,color=Color.Green)
+                       else
+                           Text(requestStatus.value,color=Color.Red)
+                   }
+               }
                 if(request.value.organizationResponse.isNotEmpty()){
                     Row(
                         modifier = Modifier.padding(15.dp)
                     ) {
                         Text(
-                            text = "Organization Response: ",
+                            text = stringResource(R.string.organizationResponse),
                             fontFamily = FontFamily(Font(R.font.bold))
                         )
                         Text(request.value.organizationResponse)
@@ -277,12 +286,12 @@ fun requestDisplay(
                     modifier = Modifier.padding(15.dp)
                 ) {
                     Text(
-                        text = "Comment: ",
+                        text = stringResource(R.string.comment),
                         fontFamily = FontFamily(Font(R.font.bold)),
                     )
                     Text(request.value.comment)
                 }
-               if(request.value.status=="unknown"){
+               if(request.value.status==""){
                    Row(
                        modifier = Modifier
                            .padding(10.dp)
@@ -292,8 +301,8 @@ fun requestDisplay(
                    ){
                        Button(
                            onClick = {
-                               requestStatus.value="Rejected"
-                               hint.value="Enter reason for request rejection"
+                               requestStatus.value=rejected
+                               hint.value= rejectedReason
                                showDialogForOrganizationResponse.value=true
                            },
                            colors = ButtonDefaults.buttonColors(
@@ -301,12 +310,12 @@ fun requestDisplay(
                                backgroundColor =Color.Red),
                            modifier = Modifier.padding(5.dp)
                        ) {
-                           Text(text="Reject")
+                           Text(text= stringResource(R.string.reject))
                        }
                        Button(
                            onClick = {
-                               requestStatus.value="Accepted"
-                               hint.value="Enter date and time for receive request"
+                               requestStatus.value=accepted
+                               hint.value= R.string.dateTimeForReceiveFood.toString()
                                showDialogForOrganizationResponse.value=true
                            },
                            colors = ButtonDefaults.buttonColors(
@@ -314,7 +323,7 @@ fun requestDisplay(
                                backgroundColor = colorResource(id = R.color.green)),
                            modifier = Modifier.padding(5.dp)
                        ) {
-                           Text(text="Accept")
+                           Text(text= stringResource(R.string.accept))
                        }
                    }
 
@@ -369,7 +378,7 @@ fun organizationResponse(shoutDownDialog: MutableState<Boolean>,
                             .fillMaxWidth()
                             .padding(start = 10.dp, end = 10.dp)
                     ) {
-                        Text(text="Done")
+                        Text(text= stringResource(id = R.string.done))
                     }
                 }
             }

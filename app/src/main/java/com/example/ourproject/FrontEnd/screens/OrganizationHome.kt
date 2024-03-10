@@ -1,5 +1,6 @@
 package com.example.ourproject.FrontEnd.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -44,6 +45,8 @@ fun orHomeTopBar(requestNumber: MutableState<Int>, navController: NavHostControl
     var showNotification = rememberSaveable { mutableStateOf(false) }
     var showMenu = rememberSaveable { mutableStateOf(false) }
         menuItems(navController,showMenu)
+    val requests=stringResource(id = R.string.requests)
+
     showNotification.value = (requestNumber.value > 0)
     Card(
         modifier = Modifier
@@ -77,7 +80,7 @@ fun orHomeTopBar(requestNumber: MutableState<Int>, navController: NavHostControl
                     actions = {
                         IconButton(onClick = {
                             requestNumber.value = 0
-                            navController.navigate(ScreensRoute.RequestsScreen.route+"/Requests")
+                            navController.navigate(ScreensRoute.RequestsScreen.route+"/${requests}")
                         }) {
                             BadgedBox(badge = {
                                 if (showNotification.value) {
@@ -126,6 +129,10 @@ fun orHomeTopBar(requestNumber: MutableState<Int>, navController: NavHostControl
 @Composable
 fun menuItems(navController:NavHostController,showMenu:MutableState<Boolean>){
 
+
+    val accepted_requests=stringResource(id = R.string.acceptedRequests)
+    val rejected_requests=stringResource(id = R.string.rejectedRequests)
+
     if(showMenu.value){
         DropdownMenu(
             expanded = showMenu.value,
@@ -134,7 +141,7 @@ fun menuItems(navController:NavHostController,showMenu:MutableState<Boolean>){
         )
         {
            DropdownMenuItem(
-               onClick = {navController.navigate(ScreensRoute.RequestsScreen.route+"/Accepted Requests")}
+               onClick = {navController.navigate(ScreensRoute.RequestsScreen.route+"/${accepted_requests}")}
            ) {
                Row(){
                    Icon(
@@ -143,13 +150,13 @@ fun menuItems(navController:NavHostController,showMenu:MutableState<Boolean>){
                        tint = Color.Green
                    )
                    Text(
-                       text = "Accepted Requests",
+                       text = stringResource(R.string.acceptedRequests),
                        modifier = Modifier.padding(start=4.dp)
                    )
                }
            }
             DropdownMenuItem(
-                onClick = {navController.navigate(ScreensRoute.RequestsScreen.route+"/Rejected Requests") }
+                onClick = {navController.navigate(ScreensRoute.RequestsScreen.route+"/${rejected_requests}") }
             ) {
                 Row(){
                     Icon(
@@ -158,7 +165,7 @@ fun menuItems(navController:NavHostController,showMenu:MutableState<Boolean>){
                         tint = Color.Red
                     )
                     Text(
-                        text = "Rejected Requests",
+                        text = stringResource(R.string.rejectedRequests),
                         modifier = Modifier.padding(start=4.dp)
                     )
                 }

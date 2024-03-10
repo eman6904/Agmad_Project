@@ -46,13 +46,16 @@ fun donationScreen(navController:NavHostController) {
 
     var orgList by remember { mutableStateOf(emptyList<String>()) }
      orgList= getOrganizations()
+    var org= stringResource(id = R.string.organization)
+    var loca= stringResource(id = R.string.location)
+    var foodst= stringResource(id = R.string.food_stste)
     val scrollState = rememberScrollState()
     val foodContent= rememberSaveable() { mutableStateOf("")}
     val comment= rememberSaveable() { mutableStateOf("")}
     val mealsNumber= rememberSaveable() { mutableStateOf("")}
-    var selectOrganization by rememberSaveable() { mutableStateOf("Organization") }
-    var selectLocation by rememberSaveable() { mutableStateOf("Location") }
-    var selectFoodState by rememberSaveable() { mutableStateOf("Food State") }
+    var selectOrganization by rememberSaveable() { mutableStateOf(org) }
+    var selectLocation by rememberSaveable() { mutableStateOf(loca) }
+    var selectFoodState by rememberSaveable() { mutableStateOf(foodst) }
     var organization = rememberSaveable() { mutableStateOf("") }
     var location =rememberSaveable() { mutableStateOf("") }
     var foodState = rememberSaveable() { mutableStateOf("") }
@@ -73,15 +76,15 @@ fun donationScreen(navController:NavHostController) {
            horizontalAlignment = Alignment.CenterHorizontally
        ) {
 
-           val foodStateList = listOf<String>("Fresh Prepared Food", "Leftovers")
-           val locationList = listOf<String>("My Location", "New Location")
+           val foodStateList = listOf<String>(stringResource(R.string.freshfood), stringResource(R.string.leftovers))
+           val locationList = listOf<String>(stringResource(R.string.myLocation), stringResource(R.string.new_location))
            spinner(orgList, selectOrganization, { selectOrganization = it },organization)
            spinner(locationList, selectLocation, { selectLocation = it },location)
            spinner(foodStateList, selectFoodState, { selectFoodState = it },foodState)
-           editText(foodContent,"Food Content")
+           editText(foodContent, stringResource(id = R.string.foodContent))
            floatingActionButton(navController = navController)
-           editText(mealsNumber,"Estimated Meals Number")
-           editText(comment,"Any Comment?")
+           editText(mealsNumber, stringResource(R.string.estimatedMealsNumber))
+           editText(comment, stringResource(R.string.anyComment))
            requestButton(
                stringResource(R.string.request),
                navController,
@@ -173,13 +176,13 @@ fun spinner(
     var shoutDown= remember { mutableStateOf(false)}
 
     value.value=location.value
-    if(selectedItem=="New Location"){
+    if(selectedItem=="New Location"||selectedItem=="إدخال مكان جديد"){
 
         if(location.value.isEmpty())
          shoutDown.value=true
 
         newLocation(shoutDown = shoutDown, newLocation = location)
-    }else if(selectedItem=="My Location"){
+    }else if(selectedItem=="My Location"||selectedItem=="المكان الأفتراضي"){
 
         location.value= getMyLocation()
     }else{
@@ -336,7 +339,7 @@ fun requestButton(
     ) {
         Button(
             onClick = {
-                Toast.makeText(appContext,"Your request has been sent successfully",Toast.LENGTH_LONG).show()
+                Toast.makeText(appContext, R.string.requestSentSuccessfully,Toast.LENGTH_LONG).show()
                 sendRequest(
                 organizationName,
                 foodState,
@@ -426,7 +429,7 @@ fun floatingActionButton(
     }
 
    Column() {
-       Text(text="Upload Image:",modifier=Modifier.padding(start=20.dp,top=10.dp))
+       Text(text= stringResource(R.string.uploadImage),modifier=Modifier.padding(start=20.dp,top=10.dp))
        Row(
            horizontalArrangement = Arrangement.Center,
            modifier = Modifier
@@ -452,7 +455,7 @@ fun floatingActionButton(
        }
        if(showImages.value){
           ClickableText(
-              text = AnnotatedString("Show Images"),
+              text = AnnotatedString(stringResource(R.string.showImages)),
               onClick ={navController.navigate(ScreensRoute.FoodContentImages.route)} ,
               modifier=Modifier.padding(start=20.dp,top=10.dp),
               style = TextStyle(color= colorResource(id = R.color.green))
@@ -484,7 +487,7 @@ fun newLocation(shoutDown: MutableState<Boolean>,newLocation:MutableState<String
                         value = location.value,
                         onValueChange = { location.value = it },
                         modifier = Modifier.padding(20.dp),
-                        label = { Text(text = "Enter new location") },
+                        label = { Text(text = stringResource(R.string.enterNewLocation)) },
                         colors = TextFieldDefaults.textFieldColors(
                             backgroundColor = Color.White,
                             focusedIndicatorColor = colorResource(id = R.color.mainColor),
@@ -501,7 +504,7 @@ fun newLocation(shoutDown: MutableState<Boolean>,newLocation:MutableState<String
                         },
                         content = {
                             Text(
-                                text ="Done",
+                                text = stringResource(R.string.done),
                                 color = Color.White
                             )
                         },

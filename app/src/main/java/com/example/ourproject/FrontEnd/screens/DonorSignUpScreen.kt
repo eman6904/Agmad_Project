@@ -47,7 +47,7 @@ fun DonorSignUp(navController: NavHostController) {
     val conPassword = rememberSaveable { mutableStateOf("") }
     val showProgress = rememberSaveable() { mutableStateOf(false) }
     val phone = rememberSaveable() { mutableStateOf("") }
-    var selectedGender by rememberSaveable() { mutableStateOf("Gender") }
+    var selectedGender by rememberSaveable() { mutableStateOf(R.string.gender.toString()) }
     var shoutDownDialogD = rememberSaveable() { mutableStateOf(false) }
     var shoutDownDialogE = rememberSaveable() { mutableStateOf(false) }
     var shoutDownDialogV = rememberSaveable() { mutableStateOf(false) }

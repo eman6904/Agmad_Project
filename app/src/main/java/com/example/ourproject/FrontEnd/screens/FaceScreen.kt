@@ -12,6 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomCenter
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -24,6 +27,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.ourproject.FrontEnd.BottomBarScreen
 import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.R
 import kotlinx.coroutines.delay
@@ -126,14 +130,14 @@ fun face(navController:NavHostController) {
                    Text(text= stringResource(R.string.intro1),
                        color= colorResource(id = R.color.mainColor),
                        fontFamily = FontFamily(Font(R.font.font2)),
-                       modifier = Modifier.scale(scale.value),
-
+                       modifier = Modifier.scale(scale.value).align(CenterHorizontally),
+                       fontSize = 20.sp
                    )
                    Text(text= stringResource(R.string.intro2),
                        color= colorResource(id = R.color.mainColor),
                        fontFamily = FontFamily(Font(R.font.font2)),
-                       modifier = Modifier.scale(scale.value),
-
+                       modifier = Modifier.scale(scale.value).align(CenterHorizontally),
+                       fontSize = 20.sp
                    )
                }
            }
