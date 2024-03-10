@@ -95,7 +95,7 @@ fun face(navController:NavHostController) {
 //                   navController.navigate(ScreensRoute.RegisterAs.route)
 //                else
 //                    orgORdo(navController)
-                navController.navigate(ScreensRoute.SignIn.route)
+                navController.navigate(BottomBarScreen.Donation.route)
             }
             Box(
                 modifier = Modifier
@@ -111,7 +111,7 @@ fun face(navController:NavHostController) {
                 )
             }
             Box(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(2f)
             ){
                 Image(
                     painterResource(R.drawable.logo),

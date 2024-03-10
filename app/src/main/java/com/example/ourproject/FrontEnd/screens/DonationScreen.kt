@@ -2,17 +2,16 @@ package com.example.ourproject.FrontEnd.screens
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -53,14 +52,51 @@ fun donationScreen(navController:NavHostController) {
     val foodContent= rememberSaveable() { mutableStateOf("")}
     val comment= rememberSaveable() { mutableStateOf("")}
     val mealsNumber= rememberSaveable() { mutableStateOf("")}
+    val images= rememberSaveable() { mutableStateOf(false)}
     var selectOrganization by rememberSaveable() { mutableStateOf(org) }
     var selectLocation by rememberSaveable() { mutableStateOf(loca) }
     var selectFoodState by rememberSaveable() { mutableStateOf(foodst) }
     var organization = rememberSaveable() { mutableStateOf("") }
     var location =rememberSaveable() { mutableStateOf("") }
     var foodState = rememberSaveable() { mutableStateOf("") }
+    val emptyMealsNumber = rememberSaveable() { mutableStateOf(false)}
+    val emptyOrganization = rememberSaveable() { mutableStateOf(false)}
+    val emptyLocation = rememberSaveable() { mutableStateOf(false)}
+    val emptyFoodState = rememberSaveable() { mutableStateOf(false)}
+    val emptyImagesList = rememberSaveable() { mutableStateOf(false)}
+
+
     val context= LocalContext.current
 
+    val emptyFieldModifier= Modifier
+        .fillMaxWidth()
+        .padding(top = 20.dp, start = 20.dp, end = 20.dp)
+        .border(2.dp, Color.Red, RoundedCornerShape(20.dp, 0.dp, 20.dp, 0.dp))
+
+    val notEmptyFieldModifier= Modifier
+        .fillMaxWidth()
+        .padding(top = 20.dp, start = 20.dp, end = 20.dp)
+        .border(
+            2.dp,
+            colorResource(id = R.color.mainColor),
+            RoundedCornerShape(20.dp, 0.dp, 20.dp, 0.dp)
+        )
+
+    val emptySpinnerModifier= Modifier
+        .fillMaxWidth()
+        .padding(top = 20.dp, start = 20.dp, end = 20.dp)
+        .border(2.dp, Color.Red, RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp))
+    val notEmptySpinnerModifier= Modifier
+        .fillMaxWidth()
+        .padding(top = 20.dp, start = 20.dp, end = 20.dp)
+        .border(
+            2.dp,
+            colorResource(id = R.color.mainColor),
+            RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp)
+        )
+
+    val emptyImagesListModifier=Modifier.padding(5.dp).border(2.dp,Color.Red,shape= CircleShape)
+    val notEmptyImagesListModifier=Modifier.padding(5.dp)
 
    Column(
        modifier=Modifier.fillMaxSize(),
@@ -78,13 +114,31 @@ fun donationScreen(navController:NavHostController) {
 
            val foodStateList = listOf<String>(stringResource(R.string.freshfood), stringResource(R.string.leftovers))
            val locationList = listOf<String>(stringResource(R.string.myLocation), stringResource(R.string.new_location))
-           spinner(orgList, selectOrganization, { selectOrganization = it },organization)
-           spinner(locationList, selectLocation, { selectLocation = it },location)
-           spinner(foodStateList, selectFoodState, { selectFoodState = it },foodState)
-           editText(foodContent, stringResource(id = R.string.foodContent))
-           floatingActionButton(navController = navController)
-           editText(mealsNumber, stringResource(R.string.estimatedMealsNumber))
-           editText(comment, stringResource(R.string.anyComment))
+           if(emptyOrganization.value==false)
+            spinner(orgList, selectOrganization, { selectOrganization = it },organization,notEmptySpinnerModifier)
+           else
+            spinner(orgList, selectOrganization, { selectOrganization = it },organization,emptySpinnerModifier)
+           if(emptyLocation.value==false)
+              spinner(locationList, selectLocation, { selectLocation = it },location,notEmptySpinnerModifier)
+           else
+               spinner(locationList, selectLocation, { selectLocation = it },location,emptySpinnerModifier)
+           if(emptyFoodState.value==false)
+            spinner(foodStateList, selectFoodState, { selectFoodState = it },foodState,notEmptySpinnerModifier)
+           else
+            spinner(foodStateList, selectFoodState, { selectFoodState = it },foodState,emptySpinnerModifier)
+           editText(foodContent, stringResource(id = R.string.foodContent),notEmptyFieldModifier)
+
+           if(emptyImagesList.value==false)
+              floatingActionButton(navController,images,notEmptyImagesListModifier)
+           else
+              floatingActionButton(navController,images,emptyImagesListModifier)
+
+           if(emptyMealsNumber.value==false||mealsNumber.value.isNotEmpty())
+              editText(mealsNumber, stringResource(R.string.estimatedMealsNumber),notEmptyFieldModifier)
+           else
+               editText(mealsNumber, stringResource(R.string.estimatedMealsNumber),emptyFieldModifier)
+           editText(comment, stringResource(R.string.anyComment),notEmptyFieldModifier)
+
            requestButton(
                stringResource(R.string.request),
                navController,
@@ -94,7 +148,13 @@ fun donationScreen(navController:NavHostController) {
                foodContent,
                mealsNumber,
                comment,
-               context
+               context,
+               emptyOrganization,
+               emptyLocation,
+               emptyFoodState,
+               emptyMealsNumber,
+               images,
+               emptyImagesList
            )
 
        }
@@ -167,37 +227,32 @@ fun spinner(
     itemList: List<String>,
     selectedItem: String,
     onItemSelected: (selectedItem: String) -> Unit,
-    value:MutableState<String>
+    value:MutableState<String>,
+    modifier:Modifier
     // through that we can change value of selectedItem,
 
 ) {
     var expanded by rememberSaveable() { mutableStateOf(false) }
-    var location = rememberSaveable() { mutableStateOf("") }
+    var result = rememberSaveable() { mutableStateOf("") }
     var shoutDown= remember { mutableStateOf(false)}
 
-    value.value=location.value
+    value.value=result.value
     if(selectedItem=="New Location"||selectedItem=="إدخال مكان جديد"){
 
-        if(location.value.isEmpty())
+        if(result.value.isEmpty())
          shoutDown.value=true
 
-        newLocation(shoutDown = shoutDown, newLocation = location)
+        newLocation(shoutDown = shoutDown, newLocation = result)
     }else if(selectedItem=="My Location"||selectedItem=="المكان الأفتراضي"){
 
-        location.value= getMyLocation()
+        result.value= getMyLocation()
     }else{
-        location.value=selectedItem
+        result.value=selectedItem
     }
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 20.dp, start = 20.dp, end = 20.dp),
+        modifier = modifier,
         shape = RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp),
-        border = BorderStroke(
-            2.dp,
-            color = colorResource(id = R.color.mainColor)
-        ),
         elevation = 3.dp,
     ) {
         Column() {
@@ -210,7 +265,7 @@ fun spinner(
                     verticalAlignment =Alignment.CenterVertically,
                 ){
                     Text(
-                        text = location.value,
+                        text = result.value,
                         modifier = Modifier
                             .weight(8f)
                             .height(35.dp),
@@ -319,14 +374,23 @@ fun textField() {
 fun requestButton(
     buttonName: String, navController: NavHostController,
     organizationName:String,
-    foodState:String ,
+    foodState:String,
     location:String,
     foodContent:MutableState<String>,
     mealsNumber:MutableState<String>,
     comment:MutableState<String>,
-    appContext: Context
+    appContext: Context,
+    emptyOrganization:MutableState<Boolean>,
+    emptyLocation:MutableState<Boolean>,
+    emptyFoodState:MutableState<Boolean>,
+    emptyMealsNumber:MutableState<Boolean>,
+    images: MutableState<Boolean>,
+    emptyImagesList:MutableState<Boolean>
 ) {
     var imagesList by remember { mutableStateOf(emptyList<String>()) }
+    val _organization= stringResource(id = R.string.organization)
+    val _location= stringResource(id = R.string.location)
+    val _foodState= stringResource(id = R.string.food_stste)
     var ok= remember { mutableStateOf(false)}
     if(ok.value)
         deleteImages()
@@ -339,16 +403,45 @@ fun requestButton(
     ) {
         Button(
             onClick = {
-                Toast.makeText(appContext, R.string.requestSentSuccessfully,Toast.LENGTH_LONG).show()
-                sendRequest(
-                organizationName,
-                foodState,
-                location,
-                foodContent,
-                mealsNumber,
-                comment,
-                imagesList)
-                ok.value=true
+
+                if(organizationName==_organization)
+                    emptyOrganization.value=true
+                else
+                    emptyOrganization.value=false
+
+                if(location==_location)
+                    emptyLocation.value=true
+                else
+                    emptyLocation.value=false
+
+                if(foodState==_foodState)
+                    emptyFoodState.value=true
+                else
+                    emptyFoodState.value=false
+
+                if(mealsNumber.value.isEmpty())
+                    emptyMealsNumber.value=true
+                else
+                    emptyMealsNumber.value=false
+
+                if(images.value==false)
+                    emptyImagesList.value=true
+                else
+                    emptyImagesList.value=false
+
+                if(location!=_location&&organizationName!=_organization&&foodState!=_foodState&&mealsNumber.value.isNotEmpty()
+                    &&images.value==true){
+                           Toast.makeText(appContext, R.string.requestSentSuccessfully,Toast.LENGTH_LONG).show()
+                           sendRequest(
+                               organizationName,
+                               foodState,
+                               location,
+                               foodContent,
+                               mealsNumber,
+                               comment,
+                               imagesList)
+                           ok.value=true
+                       }
                       },
             modifier = Modifier
                 .fillMaxWidth(),
@@ -363,13 +456,11 @@ fun requestButton(
     }
 }
 @Composable
-fun editText(content: MutableState<String>,hint:String) {
+fun editText(content: MutableState<String>,hint:String,modifier:Modifier) {
 
     val focusManager = LocalFocusManager.current
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 20.dp, start = 20.dp, end = 20.dp),
+        modifier =modifier,
         shape = RoundedCornerShape(20.dp, 0.dp, 20.dp, 0.dp),
         elevation = 5.dp,
     ) {
@@ -405,12 +496,12 @@ fun editText(content: MutableState<String>,hint:String) {
     }
 }
 @Composable
-fun floatingActionButton(
- navController:NavHostController)
-{
+fun floatingActionButton(navController: NavHostController,images:MutableState<Boolean>,modifier: Modifier){
 
     val selectedImage = remember{ mutableStateListOf<Uri?>() }
     var showImages = remember{ mutableStateOf(false) }
+
+
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) {
         selectedImage.apply {
             clear()
@@ -418,7 +509,6 @@ fun floatingActionButton(
             uploadImage(selectedImage)
         }
     }
-
 
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
     val imageList = FirebaseStorage.getInstance().getReference().child(currentUserId+"/")
@@ -429,7 +519,8 @@ fun floatingActionButton(
     }
 
    Column() {
-       Text(text= stringResource(R.string.uploadImage),modifier=Modifier.padding(start=20.dp,top=10.dp))
+
+         Text(text= stringResource(R.string.uploadImage),modifier=Modifier.padding(start=20.dp,top=10.dp))
        Row(
            horizontalArrangement = Arrangement.Center,
            modifier = Modifier
@@ -440,7 +531,7 @@ fun floatingActionButton(
                onClick = {
                            launcher.launch("image/*")
                          },
-               modifier=Modifier.padding(5.dp),
+               modifier=modifier,
                backgroundColor = colorResource(id = R.color.mainColor)
            ) {
                Icon(imageVector = Icons.Filled.Upload, contentDescription ="",tint=Color.White )
@@ -453,13 +544,15 @@ fun floatingActionButton(
                Icon(imageVector = Icons.Filled.CameraAlt, contentDescription ="",tint=Color.White )
            }
        }
-       if(showImages.value){
-          ClickableText(
-              text = AnnotatedString(stringResource(R.string.showImages)),
-              onClick ={navController.navigate(ScreensRoute.FoodContentImages.route)} ,
-              modifier=Modifier.padding(start=20.dp,top=10.dp),
-              style = TextStyle(color= colorResource(id = R.color.green))
-          )
+       if(selectedImage.isNotEmpty()||showImages.value){
+
+           images.value=true
+           ClickableText(
+               text = AnnotatedString(stringResource(R.string.showImages)),
+               onClick ={navController.navigate(ScreensRoute.FoodContentImages.route)} ,
+               modifier=Modifier.padding(start=20.dp,top=5.dp),
+               style = TextStyle(color= colorResource(id = R.color.green))
+           )
        }
    }
 }

@@ -30,7 +30,7 @@
     <string name="food_ssver">حافظ الطعام</string>
     <string name="intro1">إذا كنت لاتستطيع إطعام مئات من الناس</string>
     <string name="intro2">يمكنك إطعام شخص واحد علي الأقل.</string>
-    <string name="tax_number">Tax Number</string>
+    <string name="tax_number">رقم التاكس</string>
     <string name="location">الموقع</string>
     <string name="or_sign_up">إنشاء حساب كامنظمة</string>
     <string name="donor_sign_up">إنشاء حساب كامتبرع</string>
@@ -49,7 +49,7 @@
     <string name="estimatedMealsNumber">عدد الوجبات المقدرة</string>
     <string name="anyComment">أي تعليق؟</string>
     <string name="requestSentSuccessfully">تم إرسال طلبك بنجاح شكرا لك</string>
-    <string name="uploadImage">تحميل صورة:</string>
+    <string name="uploadImage">تحميل صور:</string>
     <string name="showImages">عرض الصور</string>
     <string name="enterNewLocation">أدخل المكان الجديد</string>
     <string name="done">تم</string>
