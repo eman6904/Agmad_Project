@@ -164,8 +164,8 @@ private fun verifyEmailAddress(
         showMsgV.value = true
     }
 }
-
-fun uploadImage(imagesLocalUri: MutableList<Uri?>) {
+@Composable
+fun uploadImage(imagesLocalUri: MutableList<Uri?>,imagesId:MutableState<List<String>>) {
 
     var storage: StorageReference? = null
     storage = FirebaseStorage.getInstance().reference
@@ -174,9 +174,13 @@ fun uploadImage(imagesLocalUri: MutableList<Uri?>) {
 
     if (imagesLocalUri != null) {
 
+        val imagesIdList = mutableListOf<String>()
         for (image in imagesLocalUri) {
 
-            storage?.child(currentUserId+"/"+UUID.randomUUID().toString())?.putFile(image!!)
+            var imagePath=UUID.randomUUID().toString()
+            imagesIdList.add(imagePath)
+
+            storage?.child(currentUserId+"/"+imagePath)?.putFile(image!!)
                 ?.addOnSuccessListener {
                     //  Toast.makeText(requireContext(),"Uploaded",Toast.LENGTH_LONG).show()
 
@@ -185,6 +189,7 @@ fun uploadImage(imagesLocalUri: MutableList<Uri?>) {
             }
 
         }
+        imagesId.value=imagesIdList
 
     }
 }
@@ -217,7 +222,7 @@ fun sendRequest(
                 var requestObj = FirebaseDatabase.getInstance().getReference("Requests")
 
                 var id=requestObj.push().key
-                var request=RequestItems(id.toString(),donor!!.name,donor.phone,organizationName,foodState,
+                var request=RequestItems(currentUserId,id.toString(),donor!!.name,donor.phone,organizationName,foodState,
                     location,foodContent.value,mealNumber.value,comment.value,"",date_time,"","",imagesList)
                 requestObj.child(id.toString()).setValue(request)
             }
@@ -229,21 +234,24 @@ fun sendRequest(
     })
 }
 @Composable
-fun getImages():List<String>{
-
-    var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
+fun getImages(imagesId:List<String>,DonorId:String):List<String>{
 
     var imageUris by remember { mutableStateOf(emptyList<String>()) }
 
     LaunchedEffect(true) {
-        val storageRef = FirebaseStorage.getInstance().reference.child(currentUserId+"/")
+        val storageRef = FirebaseStorage.getInstance().reference.child(DonorId+"/")
         val images = mutableListOf<String>()
         storageRef.listAll().await().items.forEach { imageRef ->
-            val uri = imageRef.downloadUrl.await().toString()
-            images.add(uri)
+
+
+            if(imagesId.contains(imageRef.name)) {
+                val uri = imageRef.downloadUrl.await().toString()
+                images.add(uri)
+            }
         }
         imageUris = images
     }
+
     return imageUris
 }
 @Composable

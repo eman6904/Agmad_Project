@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -33,6 +34,7 @@ import com.example.ourproject.BackEnd.Files.getRequests
 import com.example.ourproject.BackEnd.Files.updateRequest
 import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.R
+import com.google.firebase.database.FirebaseDatabase
 
 @Composable
 fun requests(navController:NavHostController,type:String){
@@ -182,6 +184,7 @@ fun requestDisplay(
         organizationResponse(showDialogForOrganizationResponse,hint,requestStatus,request.value.requestId)
     val scrollState = rememberScrollState()
     val rejectedReason=stringResource(id = R.string.ReasonForRejectedRequest)
+    val acceptResponse=stringResource(id = R.string.dateTimeForReceiveFood)
     val accepted=stringResource(id = R.string.accepted)
     val rejected=stringResource(id = R.string.rejected)
     Dialog(
@@ -194,6 +197,19 @@ fun requestDisplay(
             shape = RoundedCornerShape(16.dp),
         ) {
             Column() {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.TopEnd
+                ){
+                    IconButton(onClick = {
+                        FirebaseDatabase.getInstance().getReference("Requests").child(request.value.requestId).removeValue()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = null,
+                        )
+                    }
+                }
                 Row(
                     modifier = Modifier.padding(15.dp)
                 ) {
@@ -315,7 +331,7 @@ fun requestDisplay(
                        Button(
                            onClick = {
                                requestStatus.value=accepted
-                               hint.value= R.string.dateTimeForReceiveFood.toString()
+                               hint.value= acceptResponse
                                showDialogForOrganizationResponse.value=true
                            },
                            colors = ButtonDefaults.buttonColors(

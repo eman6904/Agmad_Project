@@ -11,25 +11,22 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.ourproject.BackEnd.DataClasses.RequestItems
-import com.example.ourproject.BackEnd.Files.getAcceptedRequested
-import com.example.ourproject.BackEnd.Files.getImages
-import com.example.ourproject.BackEnd.Files.getRejectedRequested
-import com.example.ourproject.BackEnd.Files.getRequests
+import com.example.ourproject.BackEnd.Files.*
 import com.example.ourproject.R
 
 @Composable
-fun requestImages(navController: NavHostController,requestId:String,requestType:String){
+fun responseImages(navController: NavHostController,requestId:String,requestType:String){
 
     var requestsList by remember { mutableStateOf(emptyList<RequestItems>()) }
-    val requests= stringResource(id = R.string.requests)
     val accepted_requests= stringResource(id = R.string.acceptedRequests)
     val rejected_requests= stringResource(id = R.string.rejectedRequests)
+    val accept= stringResource(id = R.string.accepted)
+    val reject= stringResource(id = R.string.rejected)
 
     when(requestType){
 
-        requests-> requestsList = getRequests()
-        accepted_requests-> requestsList = getAcceptedRequested()
-        rejected_requests-> requestsList = getRejectedRequested()
+        accepted_requests-> requestsList= myRequests(type = accept)
+        rejected_requests->   requestsList= myRequests(type = reject)
     }
 
     var imageUris by remember { mutableStateOf(emptyList<String>()) }

@@ -95,7 +95,7 @@ fun face(navController:NavHostController) {
 //                   navController.navigate(ScreensRoute.RegisterAs.route)
 //                else
 //                    orgORdo(navController)
-                navController.navigate(BottomBarScreen.Donation.route)
+                navController.navigate(ScreensRoute.SignIn.route)
             }
             Box(
                 modifier = Modifier

@@ -1,6 +1,7 @@
 package com.example.ourproject.BackEnd.DataClasses
 
 data class RequestItems(
+    var donorId:String="",
     var requestId:String="",
     var donorName:String="",
     var donorPhone:String="",

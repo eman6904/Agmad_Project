@@ -64,6 +64,7 @@ fun donationScreen(navController:NavHostController) {
     val emptyLocation = rememberSaveable() { mutableStateOf(false)}
     val emptyFoodState = rememberSaveable() { mutableStateOf(false)}
     val emptyImagesList = rememberSaveable() { mutableStateOf(false)}
+    var imagesId =remember { mutableStateOf(emptyList<String>()) }
 
 
     val context= LocalContext.current
@@ -95,7 +96,9 @@ fun donationScreen(navController:NavHostController) {
             RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp)
         )
 
-    val emptyImagesListModifier=Modifier.padding(5.dp).border(2.dp,Color.Red,shape= CircleShape)
+    val emptyImagesListModifier= Modifier
+        .padding(5.dp)
+        .border(2.dp, Color.Red, shape = CircleShape)
     val notEmptyImagesListModifier=Modifier.padding(5.dp)
 
    Column(
@@ -129,9 +132,9 @@ fun donationScreen(navController:NavHostController) {
            editText(foodContent, stringResource(id = R.string.foodContent),notEmptyFieldModifier)
 
            if(emptyImagesList.value==false)
-              floatingActionButton(navController,images,notEmptyImagesListModifier)
+              floatingActionButton(navController,images,notEmptyImagesListModifier,imagesId)
            else
-              floatingActionButton(navController,images,emptyImagesListModifier)
+              floatingActionButton(navController,images,emptyImagesListModifier,imagesId)
 
            if(emptyMealsNumber.value==false||mealsNumber.value.isNotEmpty())
               editText(mealsNumber, stringResource(R.string.estimatedMealsNumber),notEmptyFieldModifier)
@@ -154,7 +157,8 @@ fun donationScreen(navController:NavHostController) {
                emptyFoodState,
                emptyMealsNumber,
                images,
-               emptyImagesList
+               emptyImagesList,
+               imagesId
            )
 
        }
@@ -385,16 +389,13 @@ fun requestButton(
     emptyFoodState:MutableState<Boolean>,
     emptyMealsNumber:MutableState<Boolean>,
     images: MutableState<Boolean>,
-    emptyImagesList:MutableState<Boolean>
+    emptyImagesList:MutableState<Boolean>,
+    imagesId:MutableState<List<String>>
 ) {
     var imagesList by remember { mutableStateOf(emptyList<String>()) }
     val _organization= stringResource(id = R.string.organization)
     val _location= stringResource(id = R.string.location)
     val _foodState= stringResource(id = R.string.food_stste)
-    var ok= remember { mutableStateOf(false)}
-    if(ok.value)
-        deleteImages()
-    imagesList= getImages()
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -439,8 +440,7 @@ fun requestButton(
                                foodContent,
                                mealsNumber,
                                comment,
-                               imagesList)
-                           ok.value=true
+                               imagesId.value)
                        }
                       },
             modifier = Modifier
@@ -496,27 +496,25 @@ fun editText(content: MutableState<String>,hint:String,modifier:Modifier) {
     }
 }
 @Composable
-fun floatingActionButton(navController: NavHostController,images:MutableState<Boolean>,modifier: Modifier){
+fun floatingActionButton(navController: NavHostController,images:MutableState<Boolean>,modifier: Modifier,
+imagesId:MutableState<List<String>>){
 
     val selectedImage = remember{ mutableStateListOf<Uri?>() }
-    var showImages = remember{ mutableStateOf(false) }
+    var upload = remember{ mutableStateOf(false) }
+    if(upload.value==true){
+        uploadImage(selectedImage,imagesId)
+        upload.value=false
+    }
 
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) {
         selectedImage.apply {
             clear()
             addAll(it)
-            uploadImage(selectedImage)
+            upload.value=true
         }
     }
 
-    var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
-    val imageList = FirebaseStorage.getInstance().getReference().child(currentUserId+"/")
-    imageList.listAll().addOnSuccessListener { listResult ->
-        for (file in listResult.items) {
-            showImages.value = true
-        }
-    }
 
    Column() {
 
@@ -544,7 +542,7 @@ fun floatingActionButton(navController: NavHostController,images:MutableState<Bo
                Icon(imageVector = Icons.Filled.CameraAlt, contentDescription ="",tint=Color.White )
            }
        }
-       if(selectedImage.isNotEmpty()||showImages.value){
+       if(selectedImage.isNotEmpty()){
 
            images.value=true
            ClickableText(
