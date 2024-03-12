@@ -40,6 +40,7 @@ import com.owlbuddy.www.countrycodechooser.utils.enums.CountryCodeType
 @Composable
 fun DonorSignUp(navController: NavHostController) {
 
+    val genderL= stringResource(id = R.string.gender)
     val name = rememberSaveable() { mutableStateOf("") }
     val email = rememberSaveable() { mutableStateOf("") }
     val password = rememberSaveable { mutableStateOf("") }
@@ -47,7 +48,7 @@ fun DonorSignUp(navController: NavHostController) {
     val conPassword = rememberSaveable { mutableStateOf("") }
     val showProgress = rememberSaveable() { mutableStateOf(false) }
     val phone = rememberSaveable() { mutableStateOf("") }
-    var selectedGender by rememberSaveable() { mutableStateOf(R.string.gender.toString()) }
+    var selectedGender by rememberSaveable() { mutableStateOf(genderL) }
     var shoutDownDialogD = rememberSaveable() { mutableStateOf(false) }
     var shoutDownDialogE = rememberSaveable() { mutableStateOf(false) }
     var shoutDownDialogV = rememberSaveable() { mutableStateOf(false) }
@@ -101,7 +102,9 @@ fun DonorSignUp(navController: NavHostController) {
             backgroundColor = colorResource(id = R.color.mainColor),
             elevation = 5.dp
         ) {}
-        IconButton(onClick = {}) {
+        IconButton(onClick = {
+            navController.popBackStack()
+        }) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = stringResource(R.string.arrowbackicon),
@@ -532,13 +535,15 @@ fun SelectCountryWithCountryCode(phone: MutableState<String>,modifier:Modifier) 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start=20.dp,end=20.dp)
+            .padding(start = 20.dp, end = 20.dp)
             .background(color = Color.White),
         contentAlignment = Alignment.Center
     ) {
         Row() {
             Card(
-                modifier = Modifier.weight(1f).height(55.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .height(55.dp),
                 shape = RoundedCornerShape(10.dp, 0.dp, 0.dp, 10.dp),
                 elevation = 3.dp,
             ) {
@@ -584,24 +589,67 @@ fun SelectCountryWithCountryCode(phone: MutableState<String>,modifier:Modifier) 
 @Composable
 fun DataDialog(shoutDownDialog: MutableState<Boolean>) {
 
+    val scrollState = rememberScrollState()
     if (shoutDownDialog.value) {
 
-        Dialog(onDismissRequest = { shoutDownDialog.value = false }) {
+        Dialog(
+            onDismissRequest = { shoutDownDialog.value = false }
+        ) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
-                    .padding(16.dp),
+                    .padding(30.dp)
+                    .verticalScroll(state = scrollState),
                 shape = RoundedCornerShape(16.dp),
             ) {
-                Text(
-                    text = stringResource(R.string.sure_data_correct),
+                Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .wrapContentSize(Alignment.Center),
-                    textAlign = TextAlign.Center,
-                )
+                        .padding(start=30.dp,end=30.dp,top=30.dp, bottom = 10.dp).fillMaxSize()
+                ) {
+
+                    Text(
+                        text = stringResource(R.string.sure_data_correct),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(3.dp)
+                            .wrapContentSize(Alignment.Center),
+                        textAlign = TextAlign.Center,
+                    )
+                    Text(
+                        text = stringResource(R.string.internet_connection),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(3.dp)
+                            .wrapContentSize(Alignment.Center),
+                        textAlign = TextAlign.Center,
+                    )
+                    Text(
+                        text = stringResource(R.string.already_have_an_account),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(3.dp)
+                            .wrapContentSize(Alignment.Center),
+                        textAlign = TextAlign.Center,
+                    )
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
+                        FloatingActionButton(
+                            onClick = {},
+                            modifier = Modifier.padding(10.dp),
+                            backgroundColor = Color.Red
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Clear,
+                                contentDescription = "",
+                                tint = Color.White
+                            )
+                        }
+                    }
+                }
             }
+
         }
     }
 }

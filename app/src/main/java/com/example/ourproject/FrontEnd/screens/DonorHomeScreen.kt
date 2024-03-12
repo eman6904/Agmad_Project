@@ -1,5 +1,7 @@
 package com.example.ourproject.FrontEnd.screens
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,6 +50,10 @@ fun donorHome(navController: NavHostController){
 
         }
     }
+//    val activity =Activity()
+//    BackHandler(true) {
+//        activity.finishAndRemoveTask()
+//    }
 }
 @Composable
 fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNumber: MutableState<Int>, navController: NavHostController) {
@@ -78,17 +84,6 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
             topBar = {
                 TopAppBar(
                     title = { Text(text = stringResource(R.string.home), color = Color.White) },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = {}
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBack,
-                                contentDescription = stringResource(R.string.arrowbackicon),
-                                tint = Color.White
-                            )
-                        }
-                    },
                     actions = {
                         IconButton(onClick = {
                             rejectedRequestedNumber.value = 0
@@ -163,3 +158,5 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
         ) {}
     }
 }
+
+

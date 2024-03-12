@@ -72,4 +72,6 @@
     <string name="accepted">مقبول</string>
     <string name="rejected">مرفوض</string>
     <string name="unknown">لم يتم الرد</string>
+    <string name="internet_connection">تأكد من اتصالك بالأنترنت</string>
+    <string name="already_have_an_account">أو ربما كان لديك حساب سابقا</string>
 </resources>

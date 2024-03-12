@@ -104,7 +104,7 @@ fun donationScreen(navController:NavHostController) {
    Column(
        modifier=Modifier.fillMaxSize(),
    ) {
-       DonationTopBar()
+       DonationTopBar(navController)
        Column(
            modifier = Modifier
                .padding(bottom = 45.dp)
@@ -166,7 +166,7 @@ fun donationScreen(navController:NavHostController) {
 }
 
 @Composable
-fun DonationTopBar() {
+fun DonationTopBar(navController: NavHostController) {
     Card(
         modifier = Modifier
             .background(color = Color.White)
@@ -186,7 +186,9 @@ fun DonationTopBar() {
                 TopAppBar(
                     title = { Text(text = stringResource(R.string.donation), color = Color.White) },
                     navigationIcon = {
-                        IconButton(onClick = {}) {
+                        IconButton(onClick = {
+                            navController.popBackStack()
+                        }) {
                             Icon(
                                 imageVector = Icons.Default.ArrowBack,
                                 contentDescription = stringResource(R.string.arrowbackicon),
@@ -547,7 +549,7 @@ imagesId:MutableState<List<String>>){
            images.value=true
            ClickableText(
                text = AnnotatedString(stringResource(R.string.showImages)),
-               onClick ={navController.navigate(ScreensRoute.FoodContentImages.route)} ,
+               onClick ={navController.navigate(ScreensRoute.FoodContentImages.route+"/${imagesId.value.joinToString(",")}")} ,
                modifier=Modifier.padding(start=20.dp,top=5.dp),
                style = TextStyle(color= colorResource(id = R.color.green))
            )

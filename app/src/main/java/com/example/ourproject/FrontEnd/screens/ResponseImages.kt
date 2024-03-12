@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -40,17 +42,34 @@ fun responseImages(navController: NavHostController,requestId:String,requestType
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        foodCintentTopBar(navController)
-        LazyColumn {
 
-            items(items=imageUris, itemContent = {item->
-                AsyncImage(
-                    modifier = Modifier.padding(20.dp),
-                    model = item,
-                    contentDescription = null
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-            })
+        foodCintentTopBar(navController)
+
+        if(imageUris.size==0){
+
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                Text(text = "Waiting...")
+            }
+        }else{
+
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxSize()
+            ){
+
+                items(items=imageUris, itemContent = {item->
+                    AsyncImage(
+                        modifier = Modifier.padding(20.dp),
+                        model = item,
+                        contentDescription = null
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                })
+            }
         }
 
     }

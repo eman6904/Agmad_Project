@@ -80,13 +80,6 @@ fun signIn(navController: NavHostController) {
             backgroundColor = colorResource(id = R.color.mainColor),
             elevation = 5.dp
         ) {}
-        IconButton(onClick = {}) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = stringResource(R.string.arrowbackicon),
-                tint = Color.White
-            )
-        }
     }
     Box(
         modifier = Modifier.fillMaxSize(),

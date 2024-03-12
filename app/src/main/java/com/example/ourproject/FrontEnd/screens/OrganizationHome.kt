@@ -66,17 +66,6 @@ fun orHomeTopBar(requestNumber: MutableState<Int>, navController: NavHostControl
             topBar = {
                 TopAppBar(
                     title = { Text(text = stringResource(R.string.home), color = Color.White) },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = {}
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBack,
-                                contentDescription = stringResource(R.string.arrowbackicon),
-                                tint = Color.White
-                            )
-                        }
-                    },
                     actions = {
                         IconButton(onClick = {
                             requestNumber.value = 0

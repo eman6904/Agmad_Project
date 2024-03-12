@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.ourproject.BackEnd.Files.getImages
 import com.example.ourproject.FrontEnd.BottomBarScreen
 import com.example.ourproject.R
 import com.google.firebase.auth.FirebaseAuth
@@ -33,41 +34,57 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 
 @Composable
-fun foodContent(navController: NavHostController) {
+fun foodContent(navController: NavHostController,imagesIdList:List<String>) {
 
 
-    var showProgressBar = rememberSaveable() { mutableStateOf(false) }
 
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
 
     var imageUris by remember { mutableStateOf(emptyList<String>()) }
 
     // Function to fetch image URIs from Firebase Storage
-    LaunchedEffect(true) {
-        val storageRef = FirebaseStorage.getInstance().reference.child(currentUserId+"/")
-        val images = mutableListOf<String>()
-        storageRef.listAll().await().items.forEach { imageRef ->
-            val uri = imageRef.downloadUrl.await().toString()
-            images.add(uri)
-        }
-        imageUris = images
-    }
+//    LaunchedEffect(true) {
+//        val storageRef = FirebaseStorage.getInstance().reference.child(currentUserId+"/")
+//        val images = mutableListOf<String>()
+//        storageRef.listAll().await().items.forEach { imageRef ->
+//            val uri = imageRef.downloadUrl.await().toString()
+//            images.add(uri)
+//        }
+//        imageUris = images
+//    }
+    imageUris= getImages(imagesId = imagesIdList, DonorId = currentUserId)
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         foodCintentTopBar(navController)
-        LazyColumn {
 
-            items(items=imageUris, itemContent = {item->
-                AsyncImage(
-                    modifier = Modifier.padding(20.dp),
-                    model = item,
-                    contentDescription = null
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-            })
+        if(imageUris.size==0) {
+
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "Waiting...")
+            }
+        }else{
+
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxSize()
+            ){
+
+                items(items=imageUris, itemContent = {item->
+                    AsyncImage(
+                        modifier = Modifier.padding(20.dp),
+                        model = item,
+                        contentDescription = null
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                })
+            }
+
         }
-
     }
 }
 

@@ -85,4 +85,6 @@
     <string name="accepted">Accepted</string>
     <string name="rejected">Rejected</string>
     <string name="unknown">unknown</string>
+    <string name="internet_connection">Make sure you are connected to the Internet</string>
+    <string name="already_have_an_account">Or maybe you have an account</string>
 </resources>

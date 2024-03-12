@@ -87,7 +87,9 @@ fun organizationSignUp(navController:NavHostController){
             backgroundColor = colorResource(id = R.color.mainColor),
             elevation = 5.dp
         ) {}
-        IconButton(onClick = {}) {
+        IconButton(onClick = {
+            navController.popBackStack()
+        }) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = stringResource(R.string.arrowbackicon),

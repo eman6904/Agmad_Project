@@ -3,6 +3,7 @@ package com.example.ourproject
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
 import com.example.ourproject.FrontEnd.screens.foodContent
@@ -20,4 +21,5 @@ class MainActivity : ComponentActivity() {
 
         }
     }
+
 }

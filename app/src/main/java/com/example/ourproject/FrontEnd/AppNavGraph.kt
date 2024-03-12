@@ -20,7 +20,12 @@ fun appNavGraph(navController: NavHostController) {
         composable(route = ScreensRoute.SignIn.route) { signIn(navController) }
         composable(route = ScreensRoute.FaceScreen.route) { face(navController) }
         composable(route = ScreensRoute.RegisterAs.route) { registerAs(navController) }
-        composable(route = ScreensRoute.FoodContentImages.route) { foodContent(navController) }
+        composable(route = ScreensRoute.FoodContentImages.route+"/{imagesId}") {
+
+            val arguments = requireNotNull(it.arguments)
+            val imagesIdList = arguments.getString("imagesId")?.split(",") ?: emptyList()
+            foodContent(navController,imagesIdList)
+        }
         composable(route = ScreensRoute.OrganizationSignUp.route) { organizationSignUp(navController) }
         composable(route = BottomBarScreen.OrganizationHome.route) { organizationHome(navController) }
         composable(route = BottomBarScreen.Donation.route) { donationScreen(navController) }
