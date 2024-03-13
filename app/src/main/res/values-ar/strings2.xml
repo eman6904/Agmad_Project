@@ -74,4 +74,7 @@
     <string name="unknown">لم يتم الرد</string>
     <string name="internet_connection">تأكد من اتصالك بالأنترنت</string>
     <string name="already_have_an_account">أو ربما كان لديك حساب سابقا</string>
+    <string name="am">ص</string>
+    <string name="pm">م</string>
+    <string name="history">السيرة الذاتية</string>
 </resources>

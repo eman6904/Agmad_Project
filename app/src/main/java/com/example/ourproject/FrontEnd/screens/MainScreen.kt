@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -87,10 +88,13 @@ fun RowScope.addItem(
     navController: NavHostController
 ) {
 
+    val home= stringResource(id = R.string.home)
+    val donation= stringResource(id = R.string.donation)
+    val history= stringResource(R.string.history)
     if(screen== BottomBarScreen.History) {
         BottomNavigationItem(
             modifier = Modifier.background(Color.White),
-            label = { Text(text = screen.title, color = Color.Black) },
+            label = { Text(text = history, color = Color.Black) },
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.history_icon),
@@ -104,10 +108,10 @@ fun RowScope.addItem(
     else if(screen== BottomBarScreen.Donation){
         BottomNavigationItem(
             modifier = Modifier.background(Color.White),
-            label = { Text(text = screen.title, color = Color.Black) },
+            label = { Text(text = donation, color = Color.Black) },
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.food_donation_icon2),
+                    painter = painterResource(id = R.drawable.donaton_icon),
                     contentDescription = "navigation icon"
                 )
             },
@@ -117,7 +121,7 @@ fun RowScope.addItem(
     }else{
         BottomNavigationItem(
             modifier = Modifier.background(Color.White),
-            label = { Text(text = screen.title, color = Color.Black) },
+            label = { Text(text = home, color = Color.Black) },
             icon = {
                 Icon(screen.icon, contentDescription = "navigation icon")
             },

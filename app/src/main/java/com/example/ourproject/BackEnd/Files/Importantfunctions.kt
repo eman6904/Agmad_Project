@@ -1,5 +1,6 @@
 package com.example.ourproject.BackEnd.Files
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.*
@@ -201,15 +202,16 @@ fun sendRequest(
      foodContent:MutableState<String>,
      mealNumber:MutableState<String>,
      comment:MutableState<String>,
-     imagesList:List<String>
+     imagesList:List<String>,
+     context: Context
 ){
 
     val sdf = SimpleDateFormat("dd-MM-yyyy'   'HH:mm")
     var calendar=Calendar.getInstance()
     var currentTime= if(calendar.get(Calendar.AM_PM) == Calendar.AM)
-        "AM"
+        context.getString(R.string.am)
     else
-        "PM"
+        context.getString(R.string.pm)
     var date_time=sdf.format(Date())+" $currentTime"
     var donorObj = FirebaseDatabase.getInstance().getReference("Donors")
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
@@ -415,14 +417,15 @@ fun getAcceptedRequested():List<RequestItems>{
     })
     return requestList1
 }
-fun updateRequest(status:String, requestId:String, organizationResponse:String){
+fun updateRequest(status:String, requestId:String, organizationResponse:String,context:Context){
 
     val sdf = SimpleDateFormat("dd-MM-yyyy'    'HH:mm")
     var calendar=Calendar.getInstance()
+
     var currentTime= if(calendar.get(Calendar.AM_PM) == Calendar.AM)
-        "AM"
+        context.getString(R.string.am)
     else
-        "PM"
+        context.getString(R.string.pm)
     var date_time=sdf.format(Date())+" $currentTime"
 
     var requestObj = FirebaseDatabase.getInstance().getReference("Requests").child(requestId)

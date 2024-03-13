@@ -67,6 +67,7 @@ fun donationScreen(navController:NavHostController) {
     var imagesId =remember { mutableStateOf(emptyList<String>()) }
 
 
+
     val context= LocalContext.current
 
     val emptyFieldModifier= Modifier
@@ -158,7 +159,8 @@ fun donationScreen(navController:NavHostController) {
                emptyMealsNumber,
                images,
                emptyImagesList,
-               imagesId
+               imagesId,
+               context
            )
 
        }
@@ -392,7 +394,8 @@ fun requestButton(
     emptyMealsNumber:MutableState<Boolean>,
     images: MutableState<Boolean>,
     emptyImagesList:MutableState<Boolean>,
-    imagesId:MutableState<List<String>>
+    imagesId:MutableState<List<String>>,
+    context: Context
 ) {
     var imagesList by remember { mutableStateOf(emptyList<String>()) }
     val _organization= stringResource(id = R.string.organization)
@@ -442,7 +445,8 @@ fun requestButton(
                                foodContent,
                                mealsNumber,
                                comment,
-                               imagesId.value)
+                               imagesId.value,
+                           context)
                        }
                       },
             modifier = Modifier

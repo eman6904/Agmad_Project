@@ -1,12 +1,11 @@
 package com.example.ourproject.FrontEnd.screens
 
 import android.app.Activity
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -14,12 +13,11 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -50,10 +48,11 @@ fun donorHome(navController: NavHostController){
 
         }
     }
-//    val activity =Activity()
-//    BackHandler(true) {
-//        activity.finishAndRemoveTask()
-//    }
+    val context=LocalContext.current
+     BackHandler() {
+        // Exit the app when the back button is pressed
+        (context as? Activity)?.finish()
+    }
 }
 @Composable
 fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNumber: MutableState<Int>, navController: NavHostController) {
@@ -83,7 +82,10 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = stringResource(R.string.home), color = Color.White) },
+                    title = { Text(text = stringResource(R.string.home),
+                        color = Color.White,
+                        modifier = Modifier.padding(start=10.dp))
+                            },
                     actions = {
                         IconButton(onClick = {
                             rejectedRequestedNumber.value = 0

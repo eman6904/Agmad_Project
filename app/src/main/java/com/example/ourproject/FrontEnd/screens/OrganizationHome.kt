@@ -1,6 +1,8 @@
 package com.example.ourproject.FrontEnd.screens
 
+import android.app.Activity
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
@@ -36,6 +39,11 @@ fun organizationHome(navController: NavHostController) {
         Column() {
 
         }
+    }
+    val context= LocalContext.current
+    BackHandler() {
+        // Exit the app when the back button is pressed
+        (context as? Activity)?.finish()
     }
 }
 
@@ -65,7 +73,8 @@ fun orHomeTopBar(requestNumber: MutableState<Int>, navController: NavHostControl
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = stringResource(R.string.home), color = Color.White) },
+                    title = { Text(text = stringResource(R.string.home), color = Color.White,
+                        modifier = Modifier.padding(start=10.dp)) },
                     actions = {
                         IconButton(onClick = {
                             requestNumber.value = 0

@@ -87,4 +87,7 @@
     <string name="unknown">unknown</string>
     <string name="internet_connection">Make sure you are connected to the Internet</string>
     <string name="already_have_an_account">Or maybe you have an account</string>
+    <string name="am">AM</string>
+    <string name="pm">PM</string>
+    <string name="history">History</string>
 </resources>

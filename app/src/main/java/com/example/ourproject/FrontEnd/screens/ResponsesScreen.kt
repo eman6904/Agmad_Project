@@ -1,5 +1,6 @@
 package com.example.ourproject.FrontEnd.screens
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -27,6 +29,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.example.ourproject.BackEnd.DataClasses.RequestItems
@@ -37,6 +40,8 @@ import com.google.firebase.database.FirebaseDatabase
 
 @Composable
 fun response(navController: NavHostController, responseType:String){
+
+    val context= LocalContext.current
 
     var requestsList by remember { mutableStateOf(emptyList<RequestItems>()) }
 
@@ -55,18 +60,29 @@ fun response(navController: NavHostController, responseType:String){
         modifier = Modifier.fillMaxSize()
     ) {
         responseTopBar(navController,responseType)
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
 
-        ) {
-            itemsIndexed(items = requestsList){ index,request->
-                responseItem(
-                    index,
-                    requestsList,
-                    navController,
-                    responseType
-                )
+        if(requestsList.isEmpty()){
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                Text(text = "No Items",color=Color.Gray, fontSize = 15.sp)
+            }
+        }else{
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+
+            ) {
+                itemsIndexed(items = requestsList){ index,request->
+                    responseItem(
+                        index,
+                        requestsList,
+                        navController,
+                        responseType,
+                        context
+                    )
+                }
             }
         }
     }
@@ -115,12 +131,12 @@ fun responseTopBar(navController: NavHostController,title:String) {
     }
 }
 @Composable
-fun responseItem(index:Int,requests:List<RequestItems>,navController: NavHostController,requestType:String){
+fun responseItem(index:Int,requests:List<RequestItems>,navController: NavHostController,requestType:String,context:Context){
 
     var currRequest = remember { mutableStateOf(RequestItems())}
     val shoutDownDialog= remember { mutableStateOf(false)}
     if(shoutDownDialog.value)
-        responseDisplay(shoutDownDialog = shoutDownDialog, request = currRequest, navController, requestType)
+        responseDisplay(shoutDownDialog = shoutDownDialog, request = currRequest, navController, requestType,context)
     Card(
         modifier = Modifier
             .padding(10.dp)
@@ -167,14 +183,15 @@ fun responseDisplay(
     shoutDownDialog:MutableState<Boolean>,
     request:MutableState<RequestItems>,
     navController: NavHostController,
-    requestsType:String
+    requestsType:String,
+    context:Context
 ) {
 
     var requestStatus= rememberSaveable{ mutableStateOf(request.value.status)}
     var hint= rememberSaveable{ mutableStateOf("")}
     var showDialogForOrganizationResponse= rememberSaveable{ mutableStateOf(false)}
     if(showDialogForOrganizationResponse.value)
-        organizationResponse(showDialogForOrganizationResponse,hint,requestStatus,request.value.requestId)
+        organizationResponse(showDialogForOrganizationResponse,hint,requestStatus,request.value.requestId,context)
     val scrollState = rememberScrollState()
     val rejectedReason=stringResource(id = R.string.ReasonForRejectedRequest)
     val acceptResponse=stringResource(id = R.string.dateTimeForReceiveFood)

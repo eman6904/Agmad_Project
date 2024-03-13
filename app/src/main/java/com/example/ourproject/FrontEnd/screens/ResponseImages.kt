@@ -8,6 +8,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -51,7 +52,7 @@ fun responseImages(navController: NavHostController,requestId:String,requestType
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ){
-                Text(text = "Waiting...")
+                Text(text = "Waiting...",color= Color.Gray)
             }
         }else{
 
