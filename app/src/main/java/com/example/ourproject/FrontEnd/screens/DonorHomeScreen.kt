@@ -1,36 +1,45 @@
 package com.example.ourproject.FrontEnd.screens
 
 import android.app.Activity
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.OnBackPressedDispatcher
+import android.content.Context
+import android.content.Intent
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.example.ourproject.BackEnd.Files.myRequests
 import com.example.ourproject.FrontEnd.ScreensRoute
+import com.example.ourproject.MainActivity
+import com.example.ourproject.MainActivity.Companion.SELECTED_LANGUAGE
+import com.example.ourproject.MainActivity.Companion.sharedPreferences
 import com.example.ourproject.R
+import java.util.*
+
 
 @Composable
 fun donorHome(navController: NavHostController){
 
     val accepted= stringResource(id = R.string.accepted)
     val rejected= stringResource(id = R.string.rejected)
+    val context=LocalContext.current
 
     Column {
 
@@ -43,26 +52,44 @@ fun donorHome(navController: NavHostController){
         acceptedRequestedNumber.value=accList.size
         rejectedRequestedNumber.value=rejList.size
 
-        doHomeTopBar(acceptedRequestedNumber,rejectedRequestedNumber,navController)
+        doHomeTopBar(acceptedRequestedNumber,rejectedRequestedNumber,navController,context)
         Column() {
 
         }
     }
-    val context=LocalContext.current
+
      BackHandler() {
         // Exit the app when the back button is pressed
         (context as? Activity)?.finish()
     }
 }
 @Composable
-fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNumber: MutableState<Int>, navController: NavHostController) {
+fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNumber: MutableState<Int>,
+                 navController: NavHostController,_context: Context) {
 
     val accepted_requests=stringResource(id = R.string.acceptedRequests)
     val rejected_requests=stringResource(id = R.string.rejectedRequests)
+    var language = rememberSaveable { mutableStateOf("") }
     var showNotificationForAcc = rememberSaveable { mutableStateOf(false) }
     var showNotificationForRej = rememberSaveable { mutableStateOf(false) }
     var showMenu = rememberSaveable { mutableStateOf(false) }
-    menuItems(navController,showMenu)
+    var selectLanguage = rememberSaveable { mutableStateOf(false) }
+
+    if(selectLanguage.value==true){
+
+        languageDialog(selectLanguage,language)
+        if(language.value.isNotEmpty())
+        sharedPreferences.edit().putString(SELECTED_LANGUAGE, language.value).apply()
+    }
+    // Load the saved language and apply it
+
+    if(language.value.isNotEmpty()){
+
+        setLocale1(lang = language.value)
+    }
+
+    menuItems2(showMenu,selectLanguage)
+
     showNotificationForAcc.value = (acceptedRequestedNumber.value > 0)
     showNotificationForRej.value = (rejectedRequestedNumber.value > 0)
     Card(
@@ -133,7 +160,10 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
                                 )
                             }
                         }
-                        IconButton(onClick = {}) {
+                        IconButton(onClick = {
+
+                            selectLanguage.value=true
+                        }) {
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = "search icon",
@@ -142,7 +172,7 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
                         }
                         IconButton(
                             onClick = {
-                             //   showMenu.value=!showMenu.value
+                               showMenu.value=!showMenu.value
                             }
                         ) {
                             Icon(
@@ -158,6 +188,93 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
                 )
             }
         ) {}
+    }
+}
+
+@Composable
+fun setLocale1(lang: String?) {
+    val context = LocalContext.current
+    val configuration = LocalConfiguration.current
+    val systemLocale = configuration.locale
+
+    // Create a Locale object based on the provided language code
+    val newLocale = if (lang != null) Locale(lang) else systemLocale
+
+    // Apply the new locale to the configuration
+    val newConfiguration = Configuration(configuration).apply {
+        locale = newLocale
+    }
+
+    // Update the configuration
+    context.resources.updateConfiguration(newConfiguration, context.resources.displayMetrics)
+
+    // Restart the activity to apply changes
+    // Note: You may need to adjust this part according to your specific app structure
+    // For instance, using a Composable function to launch an activity
+    // or navigate to a different screen instead of restarting the current activity.
+    val refreshIntent = Intent(context,MainActivity::class.java)
+    refreshIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+    context.startActivity(refreshIntent)
+}
+@Composable
+fun languageDialog(shoutDownDialog: MutableState<Boolean>,selectedLan:MutableState<String>) {
+
+    val scrollState = rememberScrollState()
+    if (shoutDownDialog.value) {
+
+        Dialog(
+            onDismissRequest = { shoutDownDialog.value = false }
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(30.dp)
+                    .verticalScroll(state = scrollState),
+                shape = RoundedCornerShape(16.dp),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(10.dp).fillMaxSize()
+                ) {
+
+                   radioButton(selectedLan)
+                }
+            }
+
+        }
+    }
+}
+@Composable
+fun menuItems2(showMenu:MutableState<Boolean>,selectLan:MutableState<Boolean>) {
+
+
+    if (showMenu.value) {
+        DropdownMenu(
+            expanded = showMenu.value,
+            onDismissRequest = { showMenu.value = false },
+            offset = DpOffset(x = (160).dp, y = (5).dp)
+        )
+        {
+            DropdownMenuItem(
+                onClick = {
+                    selectLan.value=true
+                    showMenu.value=false
+                }
+            ) {
+                Row() {
+                    Icon(
+                        imageVector = Icons.Default.Language,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
+                    Text(
+                        text = stringResource(R.string.language),
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+            }
+
+        }
     }
 }
 

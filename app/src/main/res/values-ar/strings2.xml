@@ -30,7 +30,7 @@
     <string name="food_ssver">حافظ الطعام</string>
     <string name="intro1">إذا كنت لاتستطيع إطعام مئات من الناس</string>
     <string name="intro2">يمكنك إطعام شخص واحد علي الأقل.</string>
-    <string name="tax_number">رقم التاكس</string>
+    <string name="tax_number">الرقم الضريبي</string>
     <string name="location">الموقع</string>
     <string name="or_sign_up">إنشاء حساب كامنظمة</string>
     <string name="donor_sign_up">إنشاء حساب كامتبرع</string>
@@ -77,4 +77,7 @@
     <string name="am">ص</string>
     <string name="pm">م</string>
     <string name="history">السيرة الذاتية</string>
+    <string name="images_are_uploaded">تم رفع الصور بنجاح</string>
+    <string name="english">إنجليزي</string>
+    <string name="arabic">عربي</string>
 </resources>

@@ -43,16 +43,19 @@ fun foodContent(navController: NavHostController,imagesIdList:List<String>) {
     var imageUris by remember { mutableStateOf(emptyList<String>()) }
 
     // Function to fetch image URIs from Firebase Storage
-//    LaunchedEffect(true) {
-//        val storageRef = FirebaseStorage.getInstance().reference.child(currentUserId+"/")
-//        val images = mutableListOf<String>()
-//        storageRef.listAll().await().items.forEach { imageRef ->
-//            val uri = imageRef.downloadUrl.await().toString()
-//            images.add(uri)
-//        }
-//        imageUris = images
-//    }
-    imageUris= getImages(imagesId = imagesIdList, DonorId = currentUserId)
+    LaunchedEffect(true) {
+        val storageRef = FirebaseStorage.getInstance().reference.child(currentUserId+"/")
+        val images = mutableListOf<String>()
+        storageRef.listAll().await().items.forEach { imageRef ->
+
+            if(imagesIdList.contains(imageRef.name)) {
+                val uri = imageRef.downloadUrl.await().toString()
+                images.add(uri)
+            }
+        }
+        imageUris = images
+    }
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -64,7 +67,7 @@ fun foodContent(navController: NavHostController,imagesIdList:List<String>) {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "Waiting...")
+                Text(text = "Waiting...",color=Color.Gray)
             }
         }else{
 

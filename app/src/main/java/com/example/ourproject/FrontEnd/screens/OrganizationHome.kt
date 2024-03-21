@@ -1,7 +1,6 @@
 package com.example.ourproject.FrontEnd.screens
 
 import android.app.Activity
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -52,7 +51,7 @@ fun orHomeTopBar(requestNumber: MutableState<Int>, navController: NavHostControl
 
     var showNotification = rememberSaveable { mutableStateOf(false) }
     var showMenu = rememberSaveable { mutableStateOf(false) }
-        menuItems(navController,showMenu)
+        menuItems1(navController,showMenu)
     val requests=stringResource(id = R.string.requests)
 
     showNotification.value = (requestNumber.value > 0)
@@ -125,7 +124,7 @@ fun orHomeTopBar(requestNumber: MutableState<Int>, navController: NavHostControl
     }
 }
 @Composable
-fun menuItems(navController:NavHostController,showMenu:MutableState<Boolean>){
+fun menuItems1(navController:NavHostController, showMenu:MutableState<Boolean>){
 
 
     val accepted_requests=stringResource(id = R.string.acceptedRequests)
@@ -139,7 +138,10 @@ fun menuItems(navController:NavHostController,showMenu:MutableState<Boolean>){
         )
         {
            DropdownMenuItem(
-               onClick = {navController.navigate(ScreensRoute.RequestsScreen.route+"/${accepted_requests}")}
+               onClick = {
+                   navController.navigate(ScreensRoute.RequestsScreen.route+"/${accepted_requests}")
+                   showMenu.value=false
+               }
            ) {
                Row(){
                    Icon(
@@ -154,7 +156,10 @@ fun menuItems(navController:NavHostController,showMenu:MutableState<Boolean>){
                }
            }
             DropdownMenuItem(
-                onClick = {navController.navigate(ScreensRoute.RequestsScreen.route+"/${rejected_requests}") }
+                onClick = {
+                    navController.navigate(ScreensRoute.RequestsScreen.route+"/${rejected_requests}")
+                    showMenu.value=false
+                }
             ) {
                 Row(){
                     Icon(

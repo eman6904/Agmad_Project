@@ -225,7 +225,8 @@ fun responseDisplay(
                 ) {
                     Text(
                         text = stringResource(R.string.namee),
-                        fontFamily = FontFamily(Font(R.font.bold))
+                        fontFamily = FontFamily(Font(R.font.bold)),
+                        modifier=Modifier.padding(end=5.dp)
                     )
                     Text(request.value.donorName)
                 }
@@ -234,7 +235,8 @@ fun responseDisplay(
                 ) {
                     Text(
                         text = stringResource(R.string.phone),
-                        fontFamily = FontFamily(Font(R.font.bold))
+                        fontFamily = FontFamily(Font(R.font.bold)),
+                        modifier=Modifier.padding(end=5.dp)
                     )
                     Text(request.value.donorPhone)
                 }
@@ -243,7 +245,8 @@ fun responseDisplay(
                 ) {
                     Text(
                         text = stringResource(R.string.locationn),
-                        fontFamily = FontFamily(Font(R.font.bold))
+                        fontFamily = FontFamily(Font(R.font.bold)),
+                        modifier=Modifier.padding(end=5.dp)
                     )
                     Text(request.value.location)
                 }
@@ -252,7 +255,8 @@ fun responseDisplay(
                 ) {
                     Text(
                         text = stringResource(R.string.mealsNumber),
-                        fontFamily = FontFamily(Font(R.font.bold))
+                        fontFamily = FontFamily(Font(R.font.bold)),
+                        modifier=Modifier.padding(end=5.dp)
                     )
                     Text(request.value.mealNumber)
                 }
@@ -261,7 +265,8 @@ fun responseDisplay(
                 ) {
                     Text(
                         text = stringResource(R.string.foodContentt),
-                        fontFamily = FontFamily(Font(R.font.bold))
+                        fontFamily = FontFamily(Font(R.font.bold)),
+                        modifier=Modifier.padding(end=5.dp)
                     )
                     Text(request.value.foodContent)
                 }
@@ -270,7 +275,8 @@ fun responseDisplay(
                 ) {
                     Text(
                         text = stringResource(R.string.imageListt),
-                        fontFamily = FontFamily(Font(R.font.bold))
+                        fontFamily = FontFamily(Font(R.font.bold)),
+                        modifier=Modifier.padding(end=5.dp)
                     )
                     ClickableText(
                         AnnotatedString(stringResource(id = R.string.foodContent)),
@@ -289,7 +295,8 @@ fun responseDisplay(
                     ) {
                         Text(
                             text = stringResource(R.string.statuss),
-                            fontFamily = FontFamily(Font(R.font.bold))
+                            fontFamily = FontFamily(Font(R.font.bold)),
+                            modifier=Modifier.padding(end=5.dp)
                         )
                         if(requestStatus.value==accepted)
                             Text(requestStatus.value,color=Color.Green)
@@ -303,7 +310,8 @@ fun responseDisplay(
                     ) {
                         Text(
                             text = stringResource(R.string.organizationResponse),
-                            fontFamily = FontFamily(Font(R.font.bold))
+                            fontFamily = FontFamily(Font(R.font.bold)),
+                            modifier=Modifier.padding(end=5.dp)
                         )
                         Text(request.value.organizationResponse)
                     }
@@ -314,6 +322,7 @@ fun responseDisplay(
                     Text(
                         text = stringResource(R.string.comment),
                         fontFamily = FontFamily(Font(R.font.bold)),
+                        modifier=Modifier.padding(end=5.dp)
                     )
                     Text(request.value.comment)
                 }

@@ -2,7 +2,6 @@ package com.example.ourproject.FrontEnd.screens
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -10,7 +9,6 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -19,13 +17,12 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.DpOffset
@@ -34,10 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.example.ourproject.BackEnd.Files.*
-import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.R
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.storage.FirebaseStorage
 
 @Composable
 fun donationScreen(navController:NavHostController) {
@@ -133,9 +127,9 @@ fun donationScreen(navController:NavHostController) {
            editText(foodContent, stringResource(id = R.string.foodContent),notEmptyFieldModifier)
 
            if(emptyImagesList.value==false)
-              floatingActionButton(navController,images,notEmptyImagesListModifier,imagesId)
+              floatingActionButton(context,images,notEmptyImagesListModifier,imagesId)
            else
-              floatingActionButton(navController,images,emptyImagesListModifier,imagesId)
+              floatingActionButton(context,images,emptyImagesListModifier,imagesId)
 
            if(emptyMealsNumber.value==false||mealsNumber.value.isNotEmpty())
               editText(mealsNumber, stringResource(R.string.estimatedMealsNumber),notEmptyFieldModifier)
@@ -311,18 +305,20 @@ fun spinner(
    }
 
 @Composable
-fun radioButton() {
-    val radioButtons = listOf<String>(
-        stringResource(R.string.small), stringResource(R.string.medium), stringResource(
-            R.string.large
-        ), stringResource(R.string.x_large)
-    )
+fun radioButton(selectedLan:MutableState<String>) {
+    val languages = listOf<String>(stringResource(R.string.english),
+            stringResource(R.string.arabic)
+        )
     val selectedItem = remember { mutableStateOf("") }
-    Row() {
-        radioButtons.forEach() { item ->
+    if(selectedItem.value==languages[0])
+        selectedLan.value="en"
+    else if(selectedItem.value==languages[1])
+        selectedLan.value="ar"
+    Column() {
+        languages.forEach() { item ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(start = 10.dp)
+                modifier = Modifier.padding( 10.dp)
             ) {
                 RadioButton(
                     modifier = Modifier.size(15.dp),
@@ -334,7 +330,7 @@ fun radioButton() {
                         disabledColor = Color.DarkGray
                     )
                 )
-                Text(text = item, modifier = Modifier.padding(start = 5.dp), fontSize = 20.sp)
+                Text(text = item, modifier = Modifier.padding(start = 10.dp), fontSize = 20.sp)
             }
         }
     }
@@ -345,7 +341,7 @@ fun checkBox(item: String) {
     var myState = remember { mutableStateOf(false) }
     Row(verticalAlignment = Alignment.CenterVertically) {
         Checkbox(
-            modifier = Modifier,
+            modifier = Modifier.clip(CircleShape),
             checked = myState.value,
             onCheckedChange = { myState.value = it },
             colors = CheckboxDefaults.colors(
@@ -502,13 +498,14 @@ fun editText(content: MutableState<String>,hint:String,modifier:Modifier) {
     }
 }
 @Composable
-fun floatingActionButton(navController: NavHostController,images:MutableState<Boolean>,modifier: Modifier,
+fun floatingActionButton(context:Context,images:MutableState<Boolean>,modifier: Modifier,
 imagesId:MutableState<List<String>>){
 
     val selectedImage = remember{ mutableStateListOf<Uri?>() }
     var upload = remember{ mutableStateOf(false) }
     if(upload.value==true){
         uploadImage(selectedImage,imagesId)
+        Toast.makeText(context, stringResource(R.string.images_are_uploaded),Toast.LENGTH_LONG).show()
         upload.value=false
     }
 
@@ -551,12 +548,7 @@ imagesId:MutableState<List<String>>){
        if(selectedImage.isNotEmpty()){
 
            images.value=true
-           ClickableText(
-               text = AnnotatedString(stringResource(R.string.showImages)),
-               onClick ={navController.navigate(ScreensRoute.FoodContentImages.route+"/${imagesId.value.joinToString(",")}")} ,
-               modifier=Modifier.padding(start=20.dp,top=5.dp),
-               style = TextStyle(color= colorResource(id = R.color.green))
-           )
+
        }
    }
 }

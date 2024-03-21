@@ -90,4 +90,8 @@
     <string name="am">AM</string>
     <string name="pm">PM</string>
     <string name="history">History</string>
+    <string name="images_are_uploaded">images are uploaded successfully</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
+    <string name="language">Language</string>
 </resources>

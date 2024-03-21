@@ -27,9 +27,12 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.ourproject.BackEnd.Files.userType
 import com.example.ourproject.FrontEnd.BottomBarScreen
 import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.R
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
 
 @Composable
@@ -94,7 +97,7 @@ fun face(navController:NavHostController) {
 //                if(user==null)
 //                   navController.navigate(ScreensRoute.RegisterAs.route)
 //                else
-//                    orgORdo(navController)
+//                    userType(navController)
                 navController.navigate(ScreensRoute.SignIn.route)
             }
             Box(
@@ -111,7 +114,7 @@ fun face(navController:NavHostController) {
                 )
             }
             Box(
-                modifier = Modifier.weight(2f)
+                modifier = Modifier.weight(1.5f)
             ){
                 Image(
                     painterResource(R.drawable.logo),
@@ -120,7 +123,7 @@ fun face(navController:NavHostController) {
                 )
             }
            Box(
-               modifier = Modifier.weight(1f)
+               modifier = Modifier.weight(1f).fillMaxSize()
            ){
                Column(
                    modifier = Modifier.fillMaxSize(),
@@ -131,13 +134,12 @@ fun face(navController:NavHostController) {
                        color= colorResource(id = R.color.mainColor),
                        fontFamily = FontFamily(Font(R.font.font2)),
                        modifier = Modifier.scale(scale.value).align(CenterHorizontally),
-                       fontSize = 20.sp
+
                    )
                    Text(text= stringResource(R.string.intro2),
                        color= colorResource(id = R.color.mainColor),
                        fontFamily = FontFamily(Font(R.font.font2)),
                        modifier = Modifier.scale(scale.value).align(CenterHorizontally),
-                       fontSize = 20.sp
                    )
                }
            }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -111,6 +112,7 @@ fun RowScope.addItem(
             label = { Text(text = donation, color = Color.Black) },
             icon = {
                 Icon(
+                    modifier=Modifier.padding(top=20.dp),
                     painter = painterResource(id = R.drawable.donaton_icon),
                     contentDescription = "navigation icon"
                 )
