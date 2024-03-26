@@ -80,6 +80,7 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
         languageDialog(selectLanguage,language)
         if(language.value.isNotEmpty())
         sharedPreferences.edit().putString(SELECTED_LANGUAGE, language.value).apply()
+        //and look at main activity
     }
     // Load the saved language and apply it
 
@@ -162,7 +163,6 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
                         }
                         IconButton(onClick = {
 
-                            selectLanguage.value=true
                         }) {
                             Icon(
                                 imageVector = Icons.Default.Search,

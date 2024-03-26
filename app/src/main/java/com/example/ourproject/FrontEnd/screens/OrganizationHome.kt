@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import com.example.ourproject.BackEnd.DataClasses.RequestItems
 import com.example.ourproject.BackEnd.Files.getRequests
 import com.example.ourproject.FrontEnd.ScreensRoute
+import com.example.ourproject.MainActivity
 import com.example.ourproject.R
 
 
@@ -50,8 +51,26 @@ fun organizationHome(navController: NavHostController) {
 fun orHomeTopBar(requestNumber: MutableState<Int>, navController: NavHostController) {
 
     var showNotification = rememberSaveable { mutableStateOf(false) }
+    var language = rememberSaveable { mutableStateOf("") }
+    var selectLanguage = rememberSaveable { mutableStateOf(false) }
     var showMenu = rememberSaveable { mutableStateOf(false) }
-        menuItems1(navController,showMenu)
+
+    if(selectLanguage.value==true){
+
+        languageDialog(selectLanguage,language)
+        if(language.value.isNotEmpty())
+            MainActivity.sharedPreferences.edit().putString(MainActivity.SELECTED_LANGUAGE, language.value).apply()
+        //and look at main activity
+    }
+    // Load the saved language and apply it
+
+    if(language.value.isNotEmpty()){
+
+        setLocale1(lang = language.value)
+    }
+
+    menuItems1(navController,showMenu,selectLanguage)
+
     val requests=stringResource(id = R.string.requests)
 
     showNotification.value = (requestNumber.value > 0)
@@ -124,7 +143,7 @@ fun orHomeTopBar(requestNumber: MutableState<Int>, navController: NavHostControl
     }
 }
 @Composable
-fun menuItems1(navController:NavHostController, showMenu:MutableState<Boolean>){
+fun menuItems1(navController:NavHostController, showMenu:MutableState<Boolean>,selectLan:MutableState<Boolean>){
 
 
     val accepted_requests=stringResource(id = R.string.acceptedRequests)
@@ -173,6 +192,25 @@ fun menuItems1(navController:NavHostController, showMenu:MutableState<Boolean>){
                     )
                 }
             }
+            DropdownMenuItem(
+                onClick = {
+                    selectLan.value=true
+                    showMenu.value=false
+                }
+            ) {
+                Row() {
+                    Icon(
+                        imageVector = Icons.Default.Language,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
+                    Text(
+                        text = stringResource(R.string.language),
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+            }
+
         }
     }
 }
