@@ -37,8 +37,7 @@ import java.util.*
 @Composable
 fun donorHome(navController: NavHostController){
 
-    val accepted= stringResource(id = R.string.accepted)
-    val rejected= stringResource(id = R.string.rejected)
+
     val context=LocalContext.current
 
     Column {
@@ -46,8 +45,8 @@ fun donorHome(navController: NavHostController){
         val acceptedRequestedNumber= rememberSaveable{ mutableStateOf(0)}
         val rejectedRequestedNumber= rememberSaveable{ mutableStateOf(0)}
 
-        val accList= myRequests(type = accepted)
-        val rejList= myRequests(type = rejected)
+        val accList= myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
+        val rejList= myRequests(typeInArabic = "مرفوض", typeInEnglish = "Rejected")
 
         acceptedRequestedNumber.value=accList.size
         rejectedRequestedNumber.value=rejList.size

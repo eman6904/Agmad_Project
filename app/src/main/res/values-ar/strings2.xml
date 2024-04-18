@@ -80,4 +80,6 @@
     <string name="images_are_uploaded">تم رفع الصور بنجاح</string>
     <string name="english">إنجليزي</string>
     <string name="arabic">عربي</string>
+    <string name="language">اللغة</string>
+    <string name="waiting">أنتظر قليلا..</string>
 </resources>

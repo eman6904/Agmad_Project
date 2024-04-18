@@ -47,13 +47,12 @@ fun response(navController: NavHostController, responseType:String){
 
     val accepted_requests=stringResource(id = R.string.acceptedRequests)
     val rejected_requests=stringResource(id = R.string.rejectedRequests)
-    val accepted=stringResource(id = R.string.accepted)
-    val rejected=stringResource(id = R.string.rejected)
+
 
     when(responseType){
 
-        accepted_requests-> requestsList = myRequests(type =accepted)
-        rejected_requests-> requestsList = myRequests(type = rejected)
+        accepted_requests-> requestsList =myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
+        rejected_requests-> requestsList = myRequests(typeInArabic = "مرفوض", typeInEnglish = "Rejected")
     }
 
     Column(

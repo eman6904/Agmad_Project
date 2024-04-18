@@ -23,13 +23,12 @@ fun responseImages(navController: NavHostController,requestId:String,requestType
     var requestsList by remember { mutableStateOf(emptyList<RequestItems>()) }
     val accepted_requests= stringResource(id = R.string.acceptedRequests)
     val rejected_requests= stringResource(id = R.string.rejectedRequests)
-    val accept= stringResource(id = R.string.accepted)
-    val reject= stringResource(id = R.string.rejected)
+
 
     when(requestType){
 
-        accepted_requests-> requestsList= myRequests(type = accept)
-        rejected_requests->   requestsList= myRequests(type = reject)
+        accepted_requests-> requestsList= myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
+        rejected_requests->   requestsList= myRequests (typeInArabic = "مرفوض", typeInEnglish = "Rejected")
     }
 
     var imageUris by remember { mutableStateOf(emptyList<String>()) }
@@ -52,13 +51,12 @@ fun responseImages(navController: NavHostController,requestId:String,requestType
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ){
-                Text(text = "Waiting...",color= Color.Gray)
+                Text(text =  stringResource(R.string.waiting),color= Color.Gray)
             }
         }else{
 
             LazyColumn(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+
                 modifier = Modifier.fillMaxSize()
             ){
 

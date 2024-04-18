@@ -247,7 +247,7 @@ fun spinner(
         newLocation(shoutDown = shoutDown, newLocation = result)
     }else if(selectedItem=="My Location"||selectedItem=="المكان الأفتراضي"){
 
-        result.value= getMyLocation()
+        result.value= getDonorData().location
     }else{
         result.value=selectedItem
     }

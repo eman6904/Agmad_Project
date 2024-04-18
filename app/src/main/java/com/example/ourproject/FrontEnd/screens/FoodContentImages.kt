@@ -67,13 +67,11 @@ fun foodContent(navController: NavHostController,imagesIdList:List<String>) {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "Waiting...",color=Color.Gray)
+                Text(text = stringResource(R.string.waiting),color=Color.Gray)
             }
         }else{
 
             LazyColumn(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxSize()
             ){
 

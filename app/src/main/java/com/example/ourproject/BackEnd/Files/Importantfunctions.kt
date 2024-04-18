@@ -7,7 +7,9 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import com.example.ourproject.BackEnd.Classes.ListsGroup
 import com.example.ourproject.BackEnd.DataClasses.DonorItems
+import com.example.ourproject.BackEnd.DataClasses.LevelItems
 import com.example.ourproject.BackEnd.DataClasses.OrganizationItems
 import com.example.ourproject.BackEnd.DataClasses.RequestItems
 import com.example.ourproject.FrontEnd.BottomBarScreen
@@ -467,7 +469,7 @@ fun userType(navController:NavHostController){
         }
 }
 @Composable
-fun myRequests(type:String):List<RequestItems>{
+fun myRequests(typeInArabic:String,typeInEnglish:String):List<RequestItems>{
 
     var requestList1 by remember { mutableStateOf(emptyList<RequestItems>()) }
     var donorPhone= rememberSaveable() { mutableStateOf("")}
@@ -497,7 +499,8 @@ fun myRequests(type:String):List<RequestItems>{
             for(request in snapshot.children){
 
                 var requestData=request.getValue(RequestItems::class.java)
-                if(requestData?.donorPhone==donorPhone.value&&requestData?.status==type)
+                if(requestData?.donorPhone==donorPhone.value&&
+                    (requestData?.status==typeInArabic||requestData?.status==typeInEnglish))
                     requestList2.add(requestData!!)
             }
             requestList1=requestList2
@@ -511,9 +514,10 @@ fun myRequests(type:String):List<RequestItems>{
     return requestList1
 }
 @Composable
-fun getMyLocation():String{
+fun getDonorData():DonorItems{
 
-    var myLocation= rememberSaveable() { mutableStateOf("")}
+    var donor by remember{
+        mutableStateOf(DonorItems("","","","","",""))}
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
 
     var donorObj = FirebaseDatabase.getInstance().getReference("Donors")
@@ -522,7 +526,7 @@ fun getMyLocation():String{
 
             val donorData=snapshot.getValue(DonorItems::class.java)
             if(donorData!=null)
-                myLocation.value=donorData!!.location
+                donor=donorData
 
         }
 
@@ -532,7 +536,7 @@ fun getMyLocation():String{
 
     })
 
-    return myLocation.value
+    return donor
 }
 @Composable
 fun deleteImages(){
@@ -555,4 +559,17 @@ fun deleteImages(){
         }
     }
 
+}
+fun selectLevel(donationNumber:Int):LevelItems{
+
+    val listsGroup=ListsGroup()
+    listsGroup.setLevels()
+    when(donationNumber){
+       in 0..49->return listsGroup.levels[0]
+       in 50..199->return listsGroup.levels[1]
+       in 200..499->return listsGroup.levels[2]
+       in 500..999->return listsGroup.levels[3]
+       in 1000..1499->return listsGroup.levels[4]
+    }
+    return listsGroup.levels[5]
 }

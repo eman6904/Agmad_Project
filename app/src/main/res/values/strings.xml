@@ -94,4 +94,6 @@
     <string name="english">English</string>
     <string name="arabic">Arabic</string>
     <string name="language">Language</string>
+    <string name="waiting">Waiting...</string>
+    <string name="levels">Levels</string>
 </resources>

@@ -53,6 +53,7 @@ fun appNavGraph(navController: NavHostController) {
             val requestType=it.arguments?.getString("requestType")
             responseImages(navController,requestId.toString(),requestType.toString())
         }
+        composable(route = ScreensRoute.Levels.route) { levels(navController) }
 
     }
 }
