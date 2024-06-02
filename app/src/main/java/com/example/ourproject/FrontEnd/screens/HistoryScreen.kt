@@ -22,6 +22,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.modifier.modifierLocalConsumer
@@ -31,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -205,29 +207,51 @@ fun historyScreen(navController: NavHostController){
                     }
                 }
             }
-            Text(text="My Level:",fontStyle = FontStyle.Normal,
-                fontFamily = FontFamily(Font(R.font.bold)),
-                fontSize = 20.sp,
-                modifier=Modifier.padding(15.dp),
-            )
+
+            Spacer(modifier = Modifier.height(72.dp))
+
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.clickable { navController.navigate(ScreensRoute.Levels.route) }
-            ){
-
-                Icon(imageVector = Icons.Default.Circle, contentDescription = null,tint= colorResource(
-                    id = selectedLevel.color
-                ),
-                    modifier= Modifier
+            ) {
+                OutlinedButton(
+                    onClick = { navController.navigate(ScreensRoute.Levels.route) },
+                    modifier = Modifier
+                        .padding(5.dp)
                         .weight(1f)
-                        .padding(start = 15.dp))
-                Text(
-                    text=selectedLevel.name,
-                    modifier= Modifier
-                        .padding(start = 5.dp)
-                        .weight(10f)
-                )
+                        .fillMaxWidth()
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Circle,
+                        contentDescription = null,
+                        tint= colorResource(id = selectedLevel.color)
+                    )
+                    Text(
+                        text= "My Level",
+                        modifier= Modifier.padding(start = 12.dp),
+                        color = Color.Black
+                    )
+                }
+
+                OutlinedButton(
+                    onClick = { navController.navigate(ScreensRoute.Plant.route) },
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) {
+                    Icon(
+                        painterResource(id = R.drawable.plant),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp),
+                        tint = colorResource(id = R.color.mainColor)
+                    )
+                    Text(
+                        text="My Plant",
+                        modifier= Modifier.padding(start = 12.dp),
+                        color = Color.Black
+                    )
+                }
             }
         }
     }
