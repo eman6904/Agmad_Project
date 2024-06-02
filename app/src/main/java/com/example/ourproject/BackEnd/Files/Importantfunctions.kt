@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.tasks.await
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -572,4 +573,15 @@ fun selectLevel(donationNumber:Int):LevelItems{
        in 1000..1499->return listsGroup.levels[4]
     }
     return listsGroup.levels[5]
+}
+fun Context.createImageFile(): File {
+    // Create an image file name
+    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+    val imageFileName = "JPEG_" + timeStamp + "_"
+    val image = File.createTempFile(
+        imageFileName, /* prefix */
+        ".jpg", /* suffix */
+        externalCacheDir      /* directory */
+    )
+    return image
 }

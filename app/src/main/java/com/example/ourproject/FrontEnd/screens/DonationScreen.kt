@@ -1,7 +1,13 @@
 package com.example.ourproject.FrontEnd.screens
 
+import android.Manifest
+import android.Manifest.permission.CAMERA
+import android.Manifest.permission_group.CAMERA
 import android.content.Context
+import android.content.pm.PackageManager
+import android.media.MediaRecorder.VideoSource.CAMERA
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,9 +35,15 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import coil.compose.rememberImagePainter
 import com.example.ourproject.BackEnd.Files.*
+import com.example.ourproject.BuildConfig
 import com.example.ourproject.R
+import java.util.*
 
 @Composable
 fun donationScreen(navController:NavHostController) {
@@ -504,12 +516,13 @@ imagesId:MutableState<List<String>>){
     val selectedImage = remember{ mutableStateListOf<Uri?>() }
     var upload = remember{ mutableStateOf(false) }
     if(upload.value==true){
+
         uploadImage(selectedImage,imagesId)
         Toast.makeText(context, stringResource(R.string.images_are_uploaded),Toast.LENGTH_LONG).show()
         upload.value=false
     }
 
-
+   //to select  images from gallery
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) {
         selectedImage.apply {
             clear()
@@ -517,6 +530,41 @@ imagesId:MutableState<List<String>>){
             upload.value=true
         }
     }
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    //to capture image from camera
+    val context = LocalContext.current
+    val file = context.createImageFile()
+    val uri = FileProvider.getUriForFile(
+        Objects.requireNonNull(context),
+        BuildConfig.APPLICATION_ID + ".provider", file
+    )
+
+//    var capturedImageUri by remember {
+//        mutableStateOf<Uri>(Uri.EMPTY)
+//    }
+
+    val cameraLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
+
+            selectedImage.apply {
+                clear()
+                add(uri)
+                upload.value=true
+            }
+        }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        if (it) {
+            Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
+            cameraLauncher.launch(uri)
+        } else {
+            Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
 
 
    Column() {
@@ -537,19 +585,41 @@ imagesId:MutableState<List<String>>){
            ) {
                Icon(imageVector = Icons.Filled.Upload, contentDescription ="",tint=Color.White )
            }
+           //
            FloatingActionButton(
-               onClick = {},
+               onClick = {
+
+                   val permissionCheckResult =
+                       ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                   if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+
+                       cameraLauncher.launch(uri)
+
+                   } else {
+                       // Request a permission
+                       permissionLauncher.launch(Manifest.permission.CAMERA)
+                   }
+
+               },
                modifier=Modifier.padding(5.dp),
                backgroundColor = colorResource(id = R.color.mainColor)
            ) {
                Icon(imageVector = Icons.Filled.CameraAlt, contentDescription ="",tint=Color.White )
            }
+
        }
        if(selectedImage.isNotEmpty()){
 
            images.value=true
 
        }
+//       if (capturedImageUri.path?.isNotEmpty() == true) {
+//           AsyncImage(
+//               modifier = Modifier.size(size = 240.dp),
+//               model = capturedImageUri,
+//               contentDescription = null
+//           )
+//       }
    }
 }
 @Composable
