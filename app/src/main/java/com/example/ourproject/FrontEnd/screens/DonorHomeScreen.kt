@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +22,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -31,6 +33,7 @@ import com.example.ourproject.MainActivity
 import com.example.ourproject.MainActivity.Companion.SELECTED_LANGUAGE
 import com.example.ourproject.MainActivity.Companion.sharedPreferences
 import com.example.ourproject.R
+import java.time.format.TextStyle
 import java.util.*
 
 
@@ -74,7 +77,7 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
     var showMenu = rememberSaveable { mutableStateOf(false) }
     var selectLanguage = rememberSaveable { mutableStateOf(false) }
 
-    if(selectLanguage.value==true){
+    if(selectLanguage.value){
 
         languageDialog(selectLanguage,language)
         if(language.value.isNotEmpty())
@@ -121,7 +124,7 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
                             BadgedBox(badge = {
                                 if (showNotificationForRej.value) {
                                     Badge(
-                                        backgroundColor = Color.Red
+                                        backgroundColor = Color.Green
                                     ){
                                         Text(
                                             text = rejectedRequestedNumber.value.toString(),
@@ -133,7 +136,7 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
                                 Icon(
                                     imageVector = Icons.Default.Notifications,
                                     contentDescription = "notification icon",
-                                    tint = Color.White
+                                    tint = Color.Red
                                 )
                             }
                         }
@@ -156,29 +159,30 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
                                 Icon(
                                     imageVector = Icons.Default.Notifications,
                                     contentDescription = "notification icon",
-                                    tint = Color.White
+                                    tint = Color.Green
                                 )
                             }
                         }
-                        IconButton(onClick = {
 
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "search icon",
-                                tint = Color.White
-                            )
-                        }
                         IconButton(
                             onClick = {
-                               showMenu.value=!showMenu.value
+                               selectLanguage.value = true
                             }
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Menu,
-                                contentDescription = "menu icon",
-                                tint = Color.White
-                            )
+                            Row {
+                                Icon(
+                                    imageVector = Icons.Default.Language,
+                                    contentDescription = "menu icon",
+                                    tint = Color.White
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = stringResource(R.string.language),
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White,
+                                    modifier = Modifier.padding(end = 8.dp)
+                                )
+                            }
                         }
                     },
                     backgroundColor = colorResource(id = R.color.mainColor),
@@ -233,7 +237,8 @@ fun languageDialog(shoutDownDialog: MutableState<Boolean>,selectedLan:MutableSta
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(10.dp).fillMaxSize()
+                        .padding(10.dp)
+                        .fillMaxSize()
                 ) {
 
                    radioButton(selectedLan)
