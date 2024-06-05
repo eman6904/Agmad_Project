@@ -81,7 +81,7 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
 
         languageDialog(selectLanguage,language)
         if(language.value.isNotEmpty())
-        sharedPreferences.edit().putString(SELECTED_LANGUAGE, language.value).apply()
+            sharedPreferences.edit().putString(SELECTED_LANGUAGE, language.value).apply()
         //and look at main activity
     }
     // Load the saved language and apply it
