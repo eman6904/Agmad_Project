@@ -192,7 +192,18 @@ fun DonationTopBar(navController: NavHostController) {
                             )
                         }
                     },
-
+                    actions = {
+                        IconButton(
+                            onClick = {
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "menu icon",
+                                tint = Color.White
+                            )
+                        }
+                    },
                     backgroundColor = colorResource(id = R.color.mainColor),
                     modifier = Modifier
                         .fillMaxSize()
