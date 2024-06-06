@@ -62,7 +62,7 @@ fun historyScreen(navController: NavHostController){
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        HistoryTopBar()
+        HistoryTopBar(navController)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -112,7 +112,7 @@ fun historyScreen(navController: NavHostController){
                 }
             }
 
-            Text(text="My Impact:",fontStyle = FontStyle.Normal,
+            Text(text= stringResource(R.string.my_impact),fontStyle = FontStyle.Normal,
                 fontFamily = FontFamily(Font(R.font.bold)),
                 fontSize = 20.sp,
                 modifier=Modifier.padding(top=10.dp,start=10.dp),
@@ -129,7 +129,7 @@ fun historyScreen(navController: NavHostController){
                 ){
 
                     Text(
-                        text="Total donations:",
+                        text= stringResource(R.string.total_donations),
                         color = Color.Black,
                         modifier=Modifier.padding(10.dp),
                     )
@@ -185,7 +185,7 @@ fun historyScreen(navController: NavHostController){
                        Icon(imageVector = Icons.Default.Circle, contentDescription = null,tint=Color.Red,
                            modifier=Modifier.weight(1f))
                        Text(
-                           text="Rejected requests",
+                           text= stringResource(R.string.rejected_requests),
                            modifier= Modifier
                                .padding(start = 5.dp)
                                .weight(20f)
@@ -199,7 +199,7 @@ fun historyScreen(navController: NavHostController){
                         Icon(imageVector = Icons.Default.Circle, contentDescription = null,tint=Color.Green,
                             modifier=Modifier.weight(1f))
                         Text(
-                            text="Accepted requests",
+                            text= stringResource(R.string.accepted_requests),
                             modifier= Modifier
                                 .padding(start = 5.dp)
                                 .weight(20f)
@@ -227,7 +227,7 @@ fun historyScreen(navController: NavHostController){
                         tint= colorResource(id = selectedLevel.color)
                     )
                     Text(
-                        text= "My Level",
+                        text= stringResource(R.string.my_level),
                         modifier= Modifier.padding(start = 12.dp),
                         color = Color.Black
                     )
@@ -247,7 +247,7 @@ fun historyScreen(navController: NavHostController){
                         tint = colorResource(id = R.color.mainColor)
                     )
                     Text(
-                        text="My Plant",
+                        text=stringResource(R.string.my_plant),
                         modifier= Modifier.padding(start = 12.dp),
                         color = Color.Black
                     )
@@ -257,7 +257,7 @@ fun historyScreen(navController: NavHostController){
     }
 }
 @Composable
-fun HistoryTopBar() {
+fun HistoryTopBar(navController: NavHostController) {
 
     Card(
         modifier = Modifier
@@ -279,6 +279,17 @@ fun HistoryTopBar() {
                     title = { Text(text = stringResource(R.string.history),
                         color = Color.White,
                         modifier = Modifier.padding(start=10.dp))
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            navController.popBackStack()
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = stringResource(R.string.arrowbackicon),
+                                tint = Color.White
+                            )
+                        }
                     },
                     actions = {
                         IconButton(

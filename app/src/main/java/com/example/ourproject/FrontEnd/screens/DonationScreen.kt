@@ -86,7 +86,7 @@ fun donationScreen(navController:NavHostController) {
     val emptyFieldModifier= Modifier
         .fillMaxWidth()
         .padding(top = 20.dp, start = 20.dp, end = 20.dp)
-        .border(2.dp, Color.Red, RoundedCornerShape(20.dp, 0.dp, 20.dp, 0.dp))
+        .border(2.dp, Color.Red, RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp))
 
     val notEmptyFieldModifier= Modifier
         .fillMaxWidth()
@@ -94,7 +94,7 @@ fun donationScreen(navController:NavHostController) {
         .border(
             2.dp,
             colorResource(id = R.color.mainColor),
-            RoundedCornerShape(20.dp, 0.dp, 20.dp, 0.dp)
+            RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp)
         )
 
     val emptySpinnerModifier= Modifier
@@ -212,24 +212,13 @@ fun DonationTopBar(navController: NavHostController) {
                         }
                     },
                     actions = {
-                        IconButton(onClick = {}) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = stringResource(R.string.search_icon),
-                                tint = Color.White
-                            )
-                        }
-                        IconButton(onClick = {}) {
-                            Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = stringResource(R.string.locationIcon),
-                                tint = Color.White
-                            )
-                        }
-                        IconButton(onClick = {}) {
+                        IconButton(
+                            onClick = {
+                            }
+                        ) {
                             Icon(
                                 imageVector = Icons.Default.Menu,
-                                contentDescription = stringResource(R.string.menuIcon),
+                                contentDescription = "menu icon",
                                 tint = Color.White
                             )
                         }
@@ -288,8 +277,7 @@ fun spinner(
                     Text(
                         text = result.value,
                         modifier = Modifier
-                            .weight(8f)
-                            .height(35.dp),
+                            .weight(8f),
                         color = Color.Gray,
                         fontFamily = FontFamily.Default,
                         fontSize = 15.sp
@@ -425,33 +413,17 @@ fun requestButton(
         Button(
             onClick = {
 
-                if(organizationName==_organization)
-                    emptyOrganization.value=true
-                else
-                    emptyOrganization.value=false
+                emptyOrganization.value = organizationName==_organization
 
-                if(location==_location)
-                    emptyLocation.value=true
-                else
-                    emptyLocation.value=false
+                emptyLocation.value = location==_location
 
-                if(foodState==_foodState)
-                    emptyFoodState.value=true
-                else
-                    emptyFoodState.value=false
+                emptyFoodState.value = foodState==_foodState
 
-                if(mealsNumber.value.isEmpty())
-                    emptyMealsNumber.value=true
-                else
-                    emptyMealsNumber.value=false
+                emptyMealsNumber.value = mealsNumber.value.isEmpty()
 
-                if(images.value==false)
-                    emptyImagesList.value=true
-                else
-                    emptyImagesList.value=false
+                emptyImagesList.value = images.value==false
 
-                if(location!=_location&&organizationName!=_organization&&foodState!=_foodState&&mealsNumber.value.isNotEmpty()
-                    &&images.value==true){
+                if(location!=_location&&organizationName!=_organization&&foodState!=_foodState&&mealsNumber.value.isNotEmpty() && images.value){
                            Toast.makeText(appContext, R.string.requestSentSuccessfully,Toast.LENGTH_LONG).show()
                            sendRequest(
                                organizationName,
@@ -482,7 +454,7 @@ fun editText(content: MutableState<String>,hint:String,modifier:Modifier) {
     val focusManager = LocalFocusManager.current
     Card(
         modifier =modifier,
-        shape = RoundedCornerShape(20.dp, 0.dp, 20.dp, 0.dp),
+        shape = RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp),
         elevation = 5.dp,
     ) {
         TextField(

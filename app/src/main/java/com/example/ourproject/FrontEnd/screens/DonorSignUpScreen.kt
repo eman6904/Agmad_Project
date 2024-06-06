@@ -129,9 +129,9 @@ fun DonorSignUp(navController: NavHostController) {
                 textDecoration = TextDecoration.Underline
             )
             if(emptyName.value==false||name.value.isNotEmpty())
-            nameField(name,modifierForNotEmptyField)
+                nameField(name,modifierForNotEmptyField)
             else
-            nameField(name,modifierForEmptyField)
+                nameField(name,modifierForEmptyField)
 
             if(emptyEmail.value==false||email.value.isNotEmpty())
                emailField(email,modifierForNotEmptyField)

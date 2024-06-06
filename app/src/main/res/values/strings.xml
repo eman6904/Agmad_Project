@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OurProject</string>
+    <string name="app_name">Food Saver</string>
     <string name="food_size">Food Size:</string>
     <string name="food_content">Food Content:</string>
     <string name="meat">Meat</string>
@@ -92,11 +92,19 @@
     <string name="history">History</string>
     <string name="images_are_uploaded">images are uploaded successfully</string>
     <string name="english">English</string>
-    <string name="arabic">Arabic</string>
+    <string name="arabic">عربي</string>
     <string name="language">Language</string>
     <string name="waiting">Waiting...</string>
     <string name="levels">Levels</string>
     <string name="my_plant">My Plant</string>
+<<<<<<< HEAD
     <string name="show_images">Show Images</string>
     <string name="logout">Logout</string>
+=======
+    <string name="total_donations">Total donations:</string>
+    <string name="my_impact">My Impact:</string>
+    <string name="rejected_requests">Rejected requests</string>
+    <string name="accepted_requests">Accepted requests</string>
+    <string name="my_level">My Level</string>
+>>>>>>> origin/modifying_ui
 </resources>
