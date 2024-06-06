@@ -1,14 +1,7 @@
 package com.example.ourproject.FrontEnd.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Card
@@ -63,17 +56,21 @@ fun TreeAnimation() {
         }
     }
 
-    Spacer(modifier = Modifier.height(42.dp))
-    
+   // Spacer(modifier = Modifier.height(42.dp))
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         PlantTopBar()
-        LottieAnimation(
-            modifier = Modifier.size(400.dp),
-            composition = composition,
-            progress = treeProgress
-        )
+       Box(
+           contentAlignment = Alignment.BottomCenter
+       ){
+           LottieAnimation(
+               modifier = Modifier.size(400.dp).padding(bottom=50.dp),
+               composition = composition,
+               progress = treeProgress
+           )
+       }
     }
 }
 

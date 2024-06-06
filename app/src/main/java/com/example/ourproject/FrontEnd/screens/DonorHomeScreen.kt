@@ -8,7 +8,6 @@ import android.os.Build
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,7 +23,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -35,11 +33,7 @@ import com.example.ourproject.MainActivity
 import com.example.ourproject.MainActivity.Companion.SELECTED_LANGUAGE
 import com.example.ourproject.MainActivity.Companion.sharedPreferences
 import com.example.ourproject.R
-<<<<<<< HEAD
 import com.google.firebase.auth.FirebaseAuth
-=======
-import java.time.format.TextStyle
->>>>>>> origin/modifying_ui
 import java.util.*
 
 
@@ -66,7 +60,7 @@ fun donorHome(navController: NavHostController){
         }
     }
 
-     BackHandler() {
+    BackHandler() {
         // Exit the app when the back button is pressed
         (context as? Activity)?.finish()
     }
@@ -83,7 +77,7 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
     var showMenu = rememberSaveable { mutableStateOf(false) }
     var selectLanguage = rememberSaveable { mutableStateOf(false) }
 
-    if(selectLanguage.value){
+    if(selectLanguage.value==true){
 
         languageDialog(selectLanguage,language)
         if(language.value.isNotEmpty())
@@ -121,7 +115,7 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
                     title = { Text(text = stringResource(R.string.home),
                         color = Color.White,
                         modifier = Modifier.padding(start=10.dp))
-                            },
+                    },
                     actions = {
                         IconButton(onClick = {
                             rejectedRequestedNumber.value = 0
@@ -130,7 +124,7 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
                             BadgedBox(badge = {
                                 if (showNotificationForRej.value) {
                                     Badge(
-                                        backgroundColor = Color.Green
+                                        backgroundColor = Color.Red
                                     ){
                                         Text(
                                             text = rejectedRequestedNumber.value.toString(),
@@ -142,7 +136,7 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
                                 Icon(
                                     imageVector = Icons.Default.Notifications,
                                     contentDescription = "notification icon",
-                                    tint = Color.Red
+                                    tint = Color.White
                                 )
                             }
                         }
@@ -151,44 +145,43 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
                             navController.navigate(ScreensRoute.Response.route+"/$accepted_requests")
                         }) {
                             BadgedBox(badge = {
-                                    if(showNotificationForAcc.value){
-                                        Badge(
-                                            backgroundColor = Color.Green
-                                        ){
-                                            Text(
-                                                text = acceptedRequestedNumber.value.toString(),
-                                                color = Color.White
-                                            )
-                                        }
+                                if(showNotificationForAcc.value){
+                                    Badge(
+                                        backgroundColor = Color.Green
+                                    ){
+                                        Text(
+                                            text = acceptedRequestedNumber.value.toString(),
+                                            color = Color.White
+                                        )
                                     }
+                                }
                             }) {
                                 Icon(
                                     imageVector = Icons.Default.Notifications,
                                     contentDescription = "notification icon",
-                                    tint = Color.Green
+                                    tint = Color.White
                                 )
                             }
                         }
+                        IconButton(onClick = {
 
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "search icon",
+                                tint = Color.White
+                            )
+                        }
                         IconButton(
                             onClick = {
-                               selectLanguage.value = true
+                                showMenu.value=!showMenu.value
                             }
                         ) {
-                            Row {
-                                Icon(
-                                    imageVector = Icons.Default.Language,
-                                    contentDescription = "menu icon",
-                                    tint = Color.White
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = stringResource(R.string.language),
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    modifier = Modifier.padding(end = 8.dp, top = 3.dp)
-                                )
-                            }
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "menu icon",
+                                tint = Color.White
+                            )
                         }
                     },
                     backgroundColor = colorResource(id = R.color.mainColor),
@@ -207,7 +200,7 @@ fun setLocale1(lang: String?) {
     val systemLocale = configuration.locale
 
     // Create a Locale object based on the provided language code
-   // val newLocale = if (lang != null) Locale(lang) else systemLocale
+    // val newLocale = if (lang != null) Locale(lang) else systemLocale
     val locale = if (lang != null) Locale(lang) else systemLocale
     Locale.setDefault(locale)
     val config = Configuration(context.resources.configuration)
@@ -240,11 +233,10 @@ fun languageDialog(shoutDownDialog: MutableState<Boolean>,selectedLan:MutableSta
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxSize()
+                        .padding(10.dp).fillMaxSize()
                 ) {
 
-                   radioButton(selectedLan)
+                    radioButton(selectedLan)
                 }
             }
 
@@ -303,5 +295,3 @@ fun menuItems2(showMenu:MutableState<Boolean>,selectLan:MutableState<Boolean>,na
         }
     }
 }
-
-

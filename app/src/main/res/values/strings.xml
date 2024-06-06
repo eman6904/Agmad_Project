@@ -97,14 +97,13 @@
     <string name="waiting">Waiting...</string>
     <string name="levels">Levels</string>
     <string name="my_plant">My Plant</string>
-<<<<<<< HEAD
+
     <string name="show_images">Show Images</string>
     <string name="logout">Logout</string>
-=======
     <string name="total_donations">Total donations:</string>
     <string name="my_impact">My Impact:</string>
     <string name="rejected_requests">Rejected requests</string>
     <string name="accepted_requests">Accepted requests</string>
     <string name="my_level">My Level</string>
->>>>>>> origin/modifying_ui
+
 </resources>

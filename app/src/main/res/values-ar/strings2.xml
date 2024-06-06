@@ -2,11 +2,8 @@
 <resources>
     <string name="app_name">حافظ الطعام</string>
     <string name="food_size">حجم الطعام:</string>
-<<<<<<< HEAD
     <string name="food_content">محتوي الطعام:</string>
-    <string name="request">تبرع</string>
-=======
-    <string name="food_content">محتوى الطعام:</string>
+
     <string name="meat">لحمة</string>
     <string name="eggs">بيض</string>
     <string name="dairy">منتجات الألبان</string>
@@ -19,9 +16,7 @@
     <string name="large">L</string>
     <string name="x_large">XL</string>
     <string name="enter_weight">أدخل الوزن (اختياري)</string>
-
     <string name="request">طلب</string>
->>>>>>> origin/modifying_ui
     <string name="donation">تبرع</string>
     <string name="search_icon">محرك البحث</string>
     <string name="arrowbackicon">الرجوع</string>
@@ -59,7 +54,6 @@
     <string name="home">الصفحة الرئيسية</string>
     <string name="foodContent">محتوى الطعام</string>
     <string name="requests">الطلبات</string>
-
     <string name="food_stste">حالة الطعام</string>
     <string name="freshfood">طعام صالح للأكل</string>
     <string name="leftovers">طعام فاسد</string>
@@ -100,23 +94,15 @@
     <string name="english">English</string>
     <string name="arabic">عربي</string>
     <string name="language">اللغة</string>
-<<<<<<< HEAD
     <string name="waiting">أنتظر قليلا..</string>
     <string name="levels">مستويات</string>
     <string name="my_plant">زرعتي</string>
     <string name="show_images">عرض الصور</string>
     <string name="logout">تسجيل خروج</string>
-=======
-    <string name="waiting">انتظر قليلا...</string>
-    <string name="levels">المستويات</string>
-    <string name="my_plant">زرعتي</string>
-
     <string name="total_donations">:عدد التبرعات الكلي</string>
     <string name="my_impact">:تأثيري</string>
     <string name="rejected_requests">الطلبات المرفوضة</string>
     <string name="accepted_requests">الطلبات المقبولة</string>
     <string name="my_level">مستوايا</string>
 
-
->>>>>>> origin/modifying_ui
 </resources>
