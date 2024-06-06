@@ -2,6 +2,7 @@ package com.example.ourproject
 
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
 import androidx.activity.ComponentActivity
@@ -44,14 +45,14 @@ fun SetLocale2(lang: String?) {
     val systemLocale = configuration.locale
 
     // Create a Locale object based on the provided language code
-    val newLocale = if (lang != null) Locale(lang) else systemLocale
-
-    // Apply the new locale to the configuration
-    val newConfiguration = Configuration(configuration).apply {
-        locale = newLocale
+    // val newLocale = if (lang != null) Locale(lang) else systemLocale
+    val locale = if (lang != null) Locale(lang) else systemLocale
+    Locale.setDefault(locale)
+    val config = Configuration(context.resources.configuration)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        config.setLocale(locale)
+    } else {
+        config.locale = locale
     }
-
-    // Update the configuration
-    context.resources.updateConfiguration(newConfiguration, context.resources.displayMetrics)
-
+    context.resources.updateConfiguration(config, context.resources.displayMetrics)
 }

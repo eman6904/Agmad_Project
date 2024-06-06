@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.os.Build
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -31,6 +33,7 @@ import com.example.ourproject.MainActivity
 import com.example.ourproject.MainActivity.Companion.SELECTED_LANGUAGE
 import com.example.ourproject.MainActivity.Companion.sharedPreferences
 import com.example.ourproject.R
+import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 
 
@@ -88,7 +91,7 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
         setLocale1(lang = language.value)
     }
 
-    menuItems2(showMenu,selectLanguage)
+    menuItems2(showMenu,selectLanguage,navController)
 
     showNotificationForAcc.value = (acceptedRequestedNumber.value > 0)
     showNotificationForRej.value = (rejectedRequestedNumber.value > 0)
@@ -197,20 +200,17 @@ fun setLocale1(lang: String?) {
     val systemLocale = configuration.locale
 
     // Create a Locale object based on the provided language code
-    val newLocale = if (lang != null) Locale(lang) else systemLocale
-
-    // Apply the new locale to the configuration
-    val newConfiguration = Configuration(configuration).apply {
-        locale = newLocale
+   // val newLocale = if (lang != null) Locale(lang) else systemLocale
+    val locale = if (lang != null) Locale(lang) else systemLocale
+    Locale.setDefault(locale)
+    val config = Configuration(context.resources.configuration)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        config.setLocale(locale)
+    } else {
+        config.locale = locale
     }
+    context.resources.updateConfiguration(config, context.resources.displayMetrics)
 
-    // Update the configuration
-    context.resources.updateConfiguration(newConfiguration, context.resources.displayMetrics)
-
-    // Restart the activity to apply changes
-    // Note: You may need to adjust this part according to your specific app structure
-    // For instance, using a Composable function to launch an activity
-    // or navigate to a different screen instead of restarting the current activity.
     val refreshIntent = Intent(context,MainActivity::class.java)
     refreshIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
     context.startActivity(refreshIntent)
@@ -244,8 +244,9 @@ fun languageDialog(shoutDownDialog: MutableState<Boolean>,selectedLan:MutableSta
     }
 }
 @Composable
-fun menuItems2(showMenu:MutableState<Boolean>,selectLan:MutableState<Boolean>) {
+fun menuItems2(showMenu:MutableState<Boolean>,selectLan:MutableState<Boolean>,navController: NavHostController) {
 
+    val context = LocalContext.current
 
     if (showMenu.value) {
         DropdownMenu(
@@ -272,7 +273,25 @@ fun menuItems2(showMenu:MutableState<Boolean>,selectLan:MutableState<Boolean>) {
                     )
                 }
             }
-
+            DropdownMenuItem(
+                onClick = {
+                    FirebaseAuth.getInstance().signOut()
+                    (context as? Activity)?.finishAffinity()
+                    showMenu.value=false
+                }
+            ) {
+                Row() {
+                    Icon(
+                        imageVector = Icons.Default.Logout,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
+                    Text(
+                        text = stringResource(R.string.logout),
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+            }
         }
     }
 }

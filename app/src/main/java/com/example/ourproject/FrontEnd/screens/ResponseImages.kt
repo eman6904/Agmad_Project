@@ -1,6 +1,5 @@
 package com.example.ourproject.FrontEnd.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -43,7 +42,7 @@ fun responseImages(navController: NavHostController,requestId:String,requestType
         modifier = Modifier.fillMaxSize()
     ) {
 
-        foodCintentTopBar(navController)
+        foodContentTopBar(navController)
 
         if(imageUris.size==0){
 

@@ -2,7 +2,7 @@
 <resources>
     <string name="food_size">حجم الطعام:</string>
     <string name="food_content">محتوي الطعام:</string>
-    <string name="request">طلب</string>
+    <string name="request">تبرع</string>
     <string name="donation">تبرع</string>
     <string name="search_icon">search icon</string>
     <string name="arrowbackicon">arrow back</string>
@@ -82,4 +82,8 @@
     <string name="arabic">عربي</string>
     <string name="language">اللغة</string>
     <string name="waiting">أنتظر قليلا..</string>
+    <string name="levels">مستويات</string>
+    <string name="my_plant">زرعتي</string>
+    <string name="show_images">عرض الصور</string>
+    <string name="logout">تسجيل خروج</string>
 </resources>

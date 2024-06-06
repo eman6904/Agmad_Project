@@ -1,5 +1,7 @@
 package com.example.ourproject.FrontEnd.screens
 
+import android.content.res.Configuration
+import android.os.Build
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -18,6 +20,8 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,9 +38,11 @@ import com.example.ourproject.R
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
+import java.util.*
 
 @Composable
 fun face(navController:NavHostController) {
+
 
     Box(
         Modifier
@@ -102,19 +108,19 @@ fun face(navController:NavHostController) {
             }
             Box(
                 modifier = Modifier
-                    .weight(1f).fillMaxWidth(),
+                    .weight(1f).fillMaxSize(),
                 contentAlignment = Alignment.Center
             ){
                 Text(text= stringResource(R.string.food_ssver),
                     color= colorResource(id = R.color.mainColor),
                     fontFamily = FontFamily(Font(R.font.font4)),
                     fontSize = 45.sp,
-                    modifier = Modifier.scale(scale.value),
+                    modifier = Modifier.scale(scale.value).padding(top=20.dp),
                     textDecoration = TextDecoration.Underline,
                 )
             }
             Box(
-                modifier = Modifier.weight(1.5f)
+                modifier = Modifier.weight(1.5f).fillMaxSize()
             ){
                 Image(
                     painterResource(R.drawable.logo),
@@ -123,23 +129,23 @@ fun face(navController:NavHostController) {
                 )
             }
            Box(
-               modifier = Modifier.weight(1f).fillMaxSize()
+               modifier = Modifier.weight(1f).fillMaxSize(),
+               contentAlignment = Alignment.TopCenter
            ){
                Column(
-                   modifier = Modifier.fillMaxSize(),
+                   modifier = Modifier.fillMaxSize().padding(top=20.dp),
                    horizontalAlignment = Alignment.CenterHorizontally,
-                   verticalArrangement = Arrangement.Center
+
                ){
                    Text(text= stringResource(R.string.intro1),
                        color= colorResource(id = R.color.mainColor),
+                       fontSize = 15.sp,
                        fontFamily = FontFamily(Font(R.font.font2)),
-                       modifier = Modifier.scale(scale.value).align(CenterHorizontally),
-
                    )
                    Text(text= stringResource(R.string.intro2),
                        color= colorResource(id = R.color.mainColor),
+                       fontSize = 15.sp,
                        fontFamily = FontFamily(Font(R.font.font2)),
-                       modifier = Modifier.scale(scale.value).align(CenterHorizontally),
                    )
                }
            }

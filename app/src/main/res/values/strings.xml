@@ -11,7 +11,7 @@
     <string name="beverages">Beverages</string>
     <string name="backed_goods">Backed goods</string>
     <string name="non_perishable">Non-Perishable</string>
-    <string name="request">Request</string>
+    <string name="request">Donation</string>
     <string name="donation">Donation</string>
     <string name="search_icon">search icon</string>
     <string name="arrowbackicon">arrow back</string>
@@ -97,4 +97,6 @@
     <string name="waiting">Waiting...</string>
     <string name="levels">Levels</string>
     <string name="my_plant">My Plant</string>
+    <string name="show_images">Show Images</string>
+    <string name="logout">Logout</string>
 </resources>

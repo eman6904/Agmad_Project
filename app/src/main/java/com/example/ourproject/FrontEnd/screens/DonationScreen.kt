@@ -13,8 +13,11 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -29,8 +32,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,6 +49,7 @@ import coil.compose.rememberImagePainter
 import com.example.ourproject.BackEnd.Files.*
 import com.example.ourproject.BuildConfig
 import com.example.ourproject.R
+import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 
 @Composable
@@ -525,7 +532,7 @@ imagesId:MutableState<List<String>>){
    //to select  images from gallery
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) {
         selectedImage.apply {
-            clear()
+
             addAll(it)
             upload.value=true
         }
@@ -547,7 +554,7 @@ imagesId:MutableState<List<String>>){
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
 
             selectedImage.apply {
-                clear()
+
                 add(uri)
                 upload.value=true
             }
@@ -569,6 +576,15 @@ imagesId:MutableState<List<String>>){
 
    Column() {
 
+       val shoutDown= remember { mutableStateOf(false)}
+
+       if(shoutDown.value==true) {
+           showImages(
+               shoutDown = shoutDown,
+               imagesId = imagesId
+           )
+          // shoutDown.value=false
+       }
          Text(text= stringResource(R.string.uploadImage),modifier=Modifier.padding(start=20.dp,top=10.dp))
        Row(
            horizontalArrangement = Arrangement.Center,
@@ -607,6 +623,13 @@ imagesId:MutableState<List<String>>){
                Icon(imageVector = Icons.Filled.CameraAlt, contentDescription ="",tint=Color.White )
            }
 
+       }
+       if(images.value==true){
+           ClickableText(text = AnnotatedString(stringResource(R.string.show_images)) ,
+               onClick ={shoutDown.value=true },
+               modifier=Modifier.padding(start=20.dp,top=10.dp),
+               style= TextStyle(color= colorResource(id = R.color.mainColor), textDecoration = TextDecoration.Underline)
+           )
        }
        if(selectedImage.isNotEmpty()){
 
@@ -676,4 +699,54 @@ fun newLocation(shoutDown: MutableState<Boolean>,newLocation:MutableState<String
             }
         }
     }
+}
+@Composable
+fun showImages(shoutDown: MutableState<Boolean>,imagesId:MutableState<List<String>>){
+
+    var imageUris by remember { mutableStateOf(emptyList<String>()) }
+    var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
+
+    imageUris= getImages(imagesId = imagesId.value,currentUserId)
+   if(shoutDown.value) {
+       Dialog(
+           onDismissRequest = { shoutDown.value = false }
+       ) {
+           Card(
+               modifier = Modifier
+                   .fillMaxSize()
+           ) {
+               Column(
+                   modifier = Modifier.fillMaxSize()
+               ) {
+
+                   if (imageUris.size == 0) {
+
+                       Box(
+                           modifier = Modifier.fillMaxSize(),
+                           contentAlignment = Alignment.Center
+                       ) {
+                           Text(text = stringResource(R.string.waiting), color = Color.Gray)
+                       }
+                   } else {
+
+                       LazyColumn(
+
+                           modifier = Modifier.fillMaxSize()
+                       ) {
+
+                           items(items = imageUris, itemContent = { item ->
+                               AsyncImage(
+                                   modifier = Modifier.padding(20.dp),
+                                   model = item,
+                                   contentDescription = null
+                               )
+                               Spacer(modifier = Modifier.width(10.dp))
+                           })
+                       }
+                   }
+
+               }
+           }
+       }
+   }
 }
