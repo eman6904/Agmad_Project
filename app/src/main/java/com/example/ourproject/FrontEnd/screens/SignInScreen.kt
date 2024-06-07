@@ -9,8 +9,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -109,7 +107,7 @@ fun signIn(navController: NavHostController) {
                 passwordField(password,modifierForEmptyField)
 
             ErrorDialog(shoutDownDialog = shoutDownDialogE)
-            DataDialog(shoutDownDialog = shoutDownDialogD)
+            signInError(shoutDownDialog = shoutDownDialogD)
             DialogForResetPassword(shoutDownDialogR)
             VerificationDialog(shoutDownDialog = shoutDownDialogV)
             Column(

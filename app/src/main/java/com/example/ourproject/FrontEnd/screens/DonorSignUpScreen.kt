@@ -1,6 +1,5 @@
 package com.example.ourproject.FrontEnd.screens
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,7 +48,8 @@ fun DonorSignUp(navController: NavHostController) {
     val showProgress = rememberSaveable() { mutableStateOf(false) }
     val phone = rememberSaveable() { mutableStateOf("") }
     var selectedGender by rememberSaveable() { mutableStateOf(genderL) }
-    var shoutDownDialogD = rememberSaveable() { mutableStateOf(false) }
+    var shoutDownDialogD1 = rememberSaveable() { mutableStateOf(false) }
+    var shoutDownDialogD2 = rememberSaveable() { mutableStateOf(false) }
     var shoutDownDialogE = rememberSaveable() { mutableStateOf(false) }
     var shoutDownDialogV = rememberSaveable() { mutableStateOf(false) }
     var emptyPassword = rememberSaveable() { mutableStateOf(false)}
@@ -172,12 +172,13 @@ fun DonorSignUp(navController: NavHostController) {
 
             ButtonSignUpDo(
                 stringResource(R.string.sign_up), name, email, password,conPassword, phone, selectedGender,
-                showProgress, shoutDownDialogD, shoutDownDialogE, shoutDownDialogV,location,navController,emptyPassword,
+                showProgress, shoutDownDialogD1, shoutDownDialogE, shoutDownDialogV,location,navController,emptyPassword,
                 emptyConPassword,emptyName,emptyPhone,emptyEmail,emptyLocation,emptyGender
             )
             progressBar(showProgress)
             ErrorDialog(shoutDownDialog = shoutDownDialogE)
-            DataDialog(shoutDownDialog = shoutDownDialogD)
+            signUpError(shoutDownDialog = shoutDownDialogD1)
+            signInError(shoutDownDialog = shoutDownDialogD2)
             VerificationDialog(shoutDownDialog = shoutDownDialogV)
             Row(
 
@@ -587,7 +588,7 @@ fun SelectCountryWithCountryCode(phone: MutableState<String>,modifier:Modifier) 
 }
 
 @Composable
-fun DataDialog(shoutDownDialog: MutableState<Boolean>) {
+fun signInError(shoutDownDialog: MutableState<Boolean>) {
 
     val scrollState = rememberScrollState()
     if (shoutDownDialog.value) {
@@ -623,20 +624,12 @@ fun DataDialog(shoutDownDialog: MutableState<Boolean>) {
                             .wrapContentSize(Alignment.Center),
                         textAlign = TextAlign.Center,
                     )
-                    Text(
-                        text = stringResource(R.string.already_have_an_account),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(3.dp)
-                            .wrapContentSize(Alignment.Center),
-                        textAlign = TextAlign.Center,
-                    )
                     Box(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.BottomCenter
                     ) {
                         FloatingActionButton(
-                            onClick = {},
+                            onClick = {shoutDownDialog.value=false},
                             modifier = Modifier.padding(10.dp),
                             backgroundColor = Color.Red
                         ) {
@@ -653,7 +646,73 @@ fun DataDialog(shoutDownDialog: MutableState<Boolean>) {
         }
     }
 }
+@Composable
+fun signUpError(shoutDownDialog: MutableState<Boolean>) {
 
+    val scrollState = rememberScrollState()
+    if (shoutDownDialog.value) {
+
+        Dialog(
+            onDismissRequest = { shoutDownDialog.value = false }
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(30.dp)
+                    .verticalScroll(state = scrollState),
+                shape = RoundedCornerShape(16.dp),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(start=30.dp,end=30.dp,top=30.dp, bottom = 10.dp).fillMaxSize()
+                ) {
+
+                    Text(
+                        text = stringResource(R.string.validationdata),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(3.dp)
+                            .wrapContentSize(Alignment.Center),
+                        textAlign = TextAlign.Center,
+                    )
+                    Text(
+                        text = stringResource(R.string.internet_connection),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(3.dp)
+                            .wrapContentSize(Alignment.Center),
+                        textAlign = TextAlign.Center,
+                    )
+                    Text(
+                        text = stringResource(R.string.already_have_an_account),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(3.dp)
+                            .wrapContentSize(Alignment.Center),
+                        textAlign = TextAlign.Center,
+                    )
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
+                        FloatingActionButton(
+                            onClick = {shoutDownDialog.value=false},
+                            modifier = Modifier.padding(10.dp),
+                            backgroundColor = Color.Red
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Clear,
+                                contentDescription = "",
+                                tint = Color.White
+                            )
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+}
 @Composable
 fun ErrorDialog(shoutDownDialog: MutableState<Boolean>) {
 

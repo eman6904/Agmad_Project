@@ -1,15 +1,12 @@
 package com.example.ourproject.FrontEnd.screens
 
 import android.content.Context
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -156,7 +153,9 @@ fun responseItem(index:Int,requests:List<RequestItems>,navController: NavHostCon
                 painter = painterResource(id = R.drawable.or_icon),
                 contentDescription = "navigation icon",
                 tint= colorResource(id = R.color.mainColor),
-                modifier = Modifier.weight(1f).padding(10.dp)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(10.dp)
             )
             Column (
                 modifier = Modifier
@@ -187,6 +186,7 @@ fun responseDisplay(
 ) {
 
     var requestStatus= rememberSaveable{ mutableStateOf(request.value.status)}
+    val confirmDialog= remember { mutableStateOf(false)}
     var hint= rememberSaveable{ mutableStateOf("")}
     var showDialogForOrganizationResponse= rememberSaveable{ mutableStateOf(false)}
     if(showDialogForOrganizationResponse.value)
@@ -196,6 +196,11 @@ fun responseDisplay(
     val acceptResponse=stringResource(id = R.string.dateTimeForReceiveFood)
     val accepted=stringResource(id = R.string.accepted)
     val rejected=stringResource(id = R.string.rejected)
+    val warningsText= stringResource(R.string.warningText)
+    val btnName1= stringResource(R.string.cancel)
+    val btnName2= stringResource(R.string.deletRequest)
+    if(confirmDialog.value)
+        deleteConfirming(shoutDownDialog = shoutDownDialog,request,warningsText,btnName1,btnName2)
     Dialog(
         onDismissRequest = { shoutDownDialog.value = false }
     ) {
@@ -211,7 +216,7 @@ fun responseDisplay(
                     contentAlignment = Alignment.TopEnd
                 ){
                     IconButton(onClick = {
-                        FirebaseDatabase.getInstance().getReference("Requests").child(request.value.requestId).removeValue()
+                       confirmDialog.value=true
                     }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
@@ -297,7 +302,7 @@ fun responseDisplay(
                             fontFamily = FontFamily(Font(R.font.bold)),
                             modifier=Modifier.padding(end=5.dp)
                         )
-                        if(requestStatus.value==accepted)
+                        if(requestStatus.value=="Accepted"||requestStatus.value=="مقبول")
                             Text(requestStatus.value,color=Color.Green)
                         else
                             Text(requestStatus.value,color=Color.Red)
@@ -365,4 +370,79 @@ fun responseDisplay(
             }
         }
     }
+}
+@Composable
+fun deleteConfirming(shoutDownDialog: MutableState<Boolean>,
+                     request:MutableState<RequestItems>
+                     , warningText:String,
+                     btnName1:String,
+                     btnName2:String){
+
+    if(shoutDownDialog.value){
+        Dialog(
+            onDismissRequest = { shoutDownDialog.value = false }
+        ){
+            Card(
+                shape = RoundedCornerShape(20.dp,20.dp,20.dp,20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max)
+                ,
+                elevation = 10.dp
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(20.dp)
+                ){
+                    Image(
+                        painterResource(R.drawable.wareningicon),
+                        modifier = Modifier.size(90.dp),
+                        contentDescription = "",
+                    )
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp))
+                    Text(text= stringResource(R.string.are_you_sure), fontSize = 25.sp, fontFamily = FontFamily(Font(R.font.bold)))
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp))
+                    Text(text=warningText)
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp))
+                       Box(
+                           contentAlignment = Alignment.BottomCenter,
+                           modifier = Modifier.fillMaxSize()
+                       ){
+                           Row(
+                               modifier = Modifier.fillMaxWidth().padding(bottom = 15.dp),
+                               horizontalArrangement = Arrangement.Center
+                           ){
+                               Button(
+                                   onClick = {shoutDownDialog.value=false },
+                                   colors=ButtonDefaults.buttonColors(
+                                       backgroundColor = Color.Gray
+                                   ),
+                                   modifier = Modifier.width(IntrinsicSize.Min)
+                               ) {
+                                   Text(text=btnName1,color=Color.White)
+                               }
+                               Spacer(modifier = Modifier
+                                   .width(5.dp))
+                               Button(
+                                   onClick = {
+                                       FirebaseDatabase.getInstance().getReference("Requests").child(request.value.requestId).removeValue()
+                                       shoutDownDialog.value=false
+                                   },
+                                   colors=ButtonDefaults.buttonColors(
+                                       backgroundColor = Color.Red
+                                   ),
+                                   modifier = Modifier.width(IntrinsicSize.Max)
+                               ) {
+                                   Text(text=btnName2,color=Color.White)
+                               }
+                           }
+                       }
+       } } } }
 }

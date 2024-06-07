@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import com.example.ourproject.BackEnd.DataClasses.RequestItems
 import com.example.ourproject.BackEnd.Files.getAcceptedRequested
@@ -37,7 +38,6 @@ import com.example.ourproject.BackEnd.Files.getRequests
 import com.example.ourproject.BackEnd.Files.updateRequest
 import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.R
-import com.google.firebase.database.FirebaseDatabase
 
 @Composable
 fun requests(navController:NavHostController,type:String){
@@ -206,6 +206,12 @@ fun requestDisplay(
     val acceptResponse=stringResource(id = R.string.dateTimeForReceiveFood)
     val accepted=stringResource(id = R.string.accepted)
     val rejected=stringResource(id = R.string.rejected)
+    val confirmDialog= remember { mutableStateOf(false)}
+    val warningsText= stringResource(R.string.warningText)
+    val btnName1= stringResource(R.string.cancel)
+    val btnName2= stringResource(R.string.deletRequest)
+    if(confirmDialog.value)
+        deleteConfirming(shoutDownDialog = shoutDownDialog,request,warningsText,btnName1,btnName2)
     Dialog(
         onDismissRequest = { shoutDownDialog.value = false }
     ) {
@@ -221,7 +227,7 @@ fun requestDisplay(
                     contentAlignment = Alignment.TopEnd
                 ){
                     IconButton(onClick = {
-                        FirebaseDatabase.getInstance().getReference("Requests").child(request.value.requestId).removeValue()
+                       confirmDialog.value=true
                     }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
@@ -307,7 +313,7 @@ fun requestDisplay(
                            fontFamily = FontFamily(Font(R.font.bold)),
                            modifier=Modifier.padding(end=5.dp)
                        )
-                       if(requestStatus.value==accepted)
+                       if(requestStatus.value=="Accepted"||requestStatus.value=="مقبول")
                            Text(requestStatus.value,color=Color.Green)
                        else
                            Text(requestStatus.value,color=Color.Red)
@@ -386,13 +392,25 @@ fun organizationResponse(shoutDownDialog: MutableState<Boolean>,
     val response = rememberSaveable() { mutableStateOf("") }
     if(shoutDownDialog.value){
         Dialog(
-            onDismissRequest = {shoutDownDialog.value=false}
+            onDismissRequest = {shoutDownDialog.value=false},
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false // This allows the dialog to wrap content
+            )
         ) {
             Card(
-                modifier = Modifier.clip(shape= RoundedCornerShape(10.dp))
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max)
+                    .padding(20.dp)
+                    .clip(
+                        shape = RoundedCornerShape(10.dp)
+
+                    )
             ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ){
@@ -409,6 +427,7 @@ fun organizationResponse(shoutDownDialog: MutableState<Boolean>,
                             cursorColor = colorResource(id = R.color.mainColor)
                         )
                     )
+                    Spacer(modifier = Modifier.height(10.dp))
                     Button(
                         onClick = {
                             shoutDownDialog.value=false
@@ -420,7 +439,7 @@ fun organizationResponse(shoutDownDialog: MutableState<Boolean>,
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 10.dp, end = 10.dp)
+                            .padding(start = 40.dp, end = 40.dp)
                     ) {
                         Text(text= stringResource(id = R.string.done))
                     }

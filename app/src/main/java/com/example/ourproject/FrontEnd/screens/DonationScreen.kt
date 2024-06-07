@@ -1,13 +1,9 @@
 package com.example.ourproject.FrontEnd.screens
 
 import android.Manifest
-import android.Manifest.permission.CAMERA
-import android.Manifest.permission_group.CAMERA
 import android.content.Context
 import android.content.pm.PackageManager
-import android.media.MediaRecorder.VideoSource.CAMERA
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,9 +27,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
@@ -41,15 +39,19 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import coil.compose.rememberImagePainter
+import com.example.ourproject.BackEnd.DataClasses.RequestItems
 import com.example.ourproject.BackEnd.Files.*
 import com.example.ourproject.BuildConfig
+import com.example.ourproject.MainActivity
 import com.example.ourproject.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import okhttp3.internal.wait
 import java.util.*
 
 @Composable
@@ -116,15 +118,14 @@ fun donationScreen(navController:NavHostController) {
     val notEmptyImagesListModifier=Modifier.padding(5.dp)
 
    Column(
-       modifier=Modifier.fillMaxSize(),
+       modifier=Modifier.fillMaxSize().background(Color.White),
    ) {
        DonationTopBar(navController)
        Column(
            modifier = Modifier
                .padding(bottom = 45.dp)
                .fillMaxSize()
-               .verticalScroll(state = scrollState)
-               .background(color = Color.White),
+               .verticalScroll(state = scrollState),
            verticalArrangement = Arrangement.Center,
            horizontalAlignment = Alignment.CenterHorizontally
        ) {
@@ -156,7 +157,7 @@ fun donationScreen(navController:NavHostController) {
                editText(mealsNumber, stringResource(R.string.estimatedMealsNumber),emptyFieldModifier)
            editText(comment, stringResource(R.string.anyComment),notEmptyFieldModifier)
 
-           requestButton(
+           donationButton(
                stringResource(R.string.request),
                navController,
                organization.value,
@@ -182,9 +183,28 @@ fun donationScreen(navController:NavHostController) {
 
 @Composable
 fun DonationTopBar(navController: NavHostController) {
+
+    var showMenu = rememberSaveable { mutableStateOf(false) }
+    var selectLanguage = rememberSaveable { mutableStateOf(false) }
+    var language = rememberSaveable { mutableStateOf("") }
+
+    if(selectLanguage.value==true){
+
+        languageDialog(selectLanguage,language)
+        if(language.value.isNotEmpty())
+            MainActivity.sharedPreferences.edit().putString(MainActivity.SELECTED_LANGUAGE, language.value).apply()
+        //and look at main activity
+    }
+    // Load the saved language and apply it
+
+    if(language.value.isNotEmpty()){
+
+        setLocale1(lang = language.value)
+    }
+
+    menuItems2(showMenu,selectLanguage,navController)
     Card(
         modifier = Modifier
-            .background(color = Color.White)
             .height(102.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(
@@ -214,6 +234,7 @@ fun DonationTopBar(navController: NavHostController) {
                     actions = {
                         IconButton(
                             onClick = {
+                                showMenu.value=!showMenu.value
                             }
                         ) {
                             Icon(
@@ -260,23 +281,23 @@ fun spinner(
         result.value=selectedItem
     }
 
-    Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp),
-        elevation = 3.dp,
-    ) {
-        Column() {
+        Column(
+            modifier = modifier.
+            clip(RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp))
+            .fillMaxSize()
+        ){
             OutlinedButton(
                 onClick = { expanded = true },
-                //shape = RoundedCornerShape(30, 30, 30, 30),
+                modifier = Modifier.background(Color.White)
             ) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment =Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxSize()
                 ){
                     Text(
                         text = result.value,
-                        modifier = Modifier
+                        modifier = Modifier.fillMaxSize().padding(10.dp)
                             .weight(8f),
                         color = Color.Gray,
                         fontFamily = FontFamily.Default,
@@ -308,7 +329,7 @@ fun spinner(
                     }
                 }
             }
-        }
+
    }
 
 @Composable
@@ -316,7 +337,7 @@ fun radioButtonforSelectLanguage(selectedLan:MutableState<String>) {
     val languages = listOf<String>(stringResource(R.string.english),
             stringResource(R.string.arabic)
         )
-    val selectedItem = remember { mutableStateOf("") }
+    val selectedItem = remember { mutableStateOf(selectedLan.value) }
     if(selectedItem.value==languages[0])
         selectedLan.value="en"
     else if(selectedItem.value==languages[1])
@@ -382,7 +403,7 @@ fun textField() {
 }
 
 @Composable
-fun requestButton(
+fun donationButton(
     buttonName: String, navController: NavHostController,
     organizationName:String,
     foodState:String,
@@ -404,6 +425,27 @@ fun requestButton(
     val _organization= stringResource(id = R.string.organization)
     val _location= stringResource(id = R.string.location)
     val _foodState= stringResource(id = R.string.food_stste)
+    val confirmDialog= remember { mutableStateOf(false)}
+    val thankingDialog=remember{ mutableStateOf(false)}
+
+    if(thankingDialog.value)
+        thankingMessage(shoutDownDialog = thankingDialog)
+
+    if(confirmDialog.value){
+
+        donationConfirming(
+            shoutDownDialog = confirmDialog,
+            thankingDialog=thankingDialog,
+            organizationName = organizationName,
+            foodState =foodState ,
+            location =location,
+            foodContent = foodContent,
+            mealsNumber = mealsNumber,
+            comment =comment ,
+            imagesId = imagesId,
+            context =context
+        )
+    }
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -424,18 +466,9 @@ fun requestButton(
                 emptyImagesList.value = images.value==false
 
                 if(location!=_location&&organizationName!=_organization&&foodState!=_foodState&&mealsNumber.value.isNotEmpty() && images.value){
-                           Toast.makeText(appContext, R.string.requestSentSuccessfully,Toast.LENGTH_LONG).show()
-                           sendRequest(
-                               organizationName,
-                               foodState,
-                               location,
-                               foodContent,
-                               mealsNumber,
-                               comment,
-                               imagesId.value,
-                           context)
-                       }
-                      },
+
+                    confirmDialog.value=true
+                } },
             modifier = Modifier
                 .fillMaxWidth(),
             shape = RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp),
@@ -505,8 +538,10 @@ imagesId:MutableState<List<String>>){
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) {
         selectedImage.apply {
 
-            addAll(it)
-            upload.value=true
+            if(it.isNotEmpty()){
+                addAll(it)
+                upload.value=true
+            }
         }
     }
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -520,12 +555,12 @@ imagesId:MutableState<List<String>>){
 
     val cameraLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
-
+        if(it&&uri!=null) {
             selectedImage.apply {
-
                 add(uri)
-                upload.value=true
+                upload.value = true
             }
+        }
         }
 
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -553,7 +588,9 @@ imagesId:MutableState<List<String>>){
            )
           // shoutDown.value=false
        }
-         Text(text= stringResource(R.string.uploadImage),modifier=Modifier.padding(start=20.dp,top=10.dp).fillMaxWidth())
+         Text(text= stringResource(R.string.uploadImage),modifier= Modifier
+             .padding(start = 20.dp, top = 10.dp)
+             .fillMaxWidth())
        Row(
            horizontalArrangement = Arrangement.Center,
            modifier = Modifier
@@ -620,13 +657,16 @@ fun newLocation(shoutDown: MutableState<Boolean>,newLocation:MutableState<String
     newLocation.value=location.value
     if (shoutDown.value) {
         Dialog(
-            onDismissRequest = { shoutDown.value = false }
+            onDismissRequest = { shoutDown.value = false },
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false // This allows the dialog to wrap content
+            )
         ) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
-                    .padding(10.dp),
+                    .height(IntrinsicSize.Max)
+                    .padding(20.dp),
                 shape = RoundedCornerShape(16.dp),
             ) {
                 Column(
@@ -636,7 +676,7 @@ fun newLocation(shoutDown: MutableState<Boolean>,newLocation:MutableState<String
                     OutlinedTextField(
                         value = location.value,
                         onValueChange = { location.value = it },
-                        modifier = Modifier.padding(20.dp),
+                        modifier = Modifier.padding(15.dp),
                         label = { Text(text = stringResource(R.string.enterNewLocation)) },
                         colors = TextFieldDefaults.textFieldColors(
                             backgroundColor = Color.White,
@@ -661,7 +701,7 @@ fun newLocation(shoutDown: MutableState<Boolean>,newLocation:MutableState<String
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = colorResource(id = R.color.mainColor)
                         ),
-                        modifier = Modifier.padding(5.dp)
+                        modifier = Modifier.padding(bottom=10.dp,end=30.dp,start=30.dp).fillMaxWidth()
                     )
                 }
             }
@@ -717,4 +757,142 @@ fun showImages(shoutDown: MutableState<Boolean>,imagesId:MutableState<List<Strin
            }
        }
    }
+}
+@Composable
+fun donationConfirming(shoutDownDialog: MutableState<Boolean>,
+thankingDialog:MutableState<Boolean>,
+organizationName:String,
+foodState:String,
+location:String,
+foodContent:MutableState<String>,
+ mealsNumber:MutableState<String>,
+comment:MutableState<String>,
+ imagesId:MutableState<List<String>>,
+ context: Context){
+
+    if(shoutDownDialog.value){
+        Dialog(
+            onDismissRequest = { shoutDownDialog.value = false }
+        ){
+            Card(
+                shape = RoundedCornerShape(20.dp,20.dp,20.dp,20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max)
+                ,
+                elevation = 10.dp
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(20.dp)
+                ){
+                    Image(
+                        painterResource(R.drawable.donation_iicon),
+                        modifier = Modifier.size(90.dp),
+                        contentDescription = "",
+                    )
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp))
+                    Text(text= stringResource(R.string.are_you_sure), fontSize = 25.sp, fontFamily = FontFamily(
+                        Font(R.font.bold)
+                    ))
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp))
+                    Text(text= stringResource(R.string.donaton_confirm))
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp))
+                    Box(
+                        contentAlignment = Alignment.BottomCenter,
+                        modifier = Modifier.fillMaxSize()
+                    ){
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 15.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ){
+                            Button(
+                                onClick = { shoutDownDialog.value=false },
+                                colors=ButtonDefaults.buttonColors(
+                                    backgroundColor = Color.Gray
+                                ),
+                                modifier = Modifier.width(IntrinsicSize.Min)
+                            ) {
+                                Text(text= stringResource(id = R.string.cancel),color=Color.White)
+                            }
+                            Spacer(modifier = Modifier
+                                .width(5.dp))
+                            Button(
+                                onClick = {
+
+                                    sendRequest(
+                                        organizationName,
+                                        foodState,
+                                        location,
+                                        foodContent,
+                                        mealsNumber,
+                                        comment,
+                                        imagesId.value,
+                                        context)
+                                    shoutDownDialog.value=false
+                                    thankingDialog.value=true
+                                },
+                                colors=ButtonDefaults.buttonColors(
+                                    backgroundColor = colorResource(id = R.color.mainColor)
+                                ),
+                                modifier = Modifier.width(IntrinsicSize.Max)
+                            ) {
+                                Text(text= stringResource(R.string.sendDonation),color=Color.White)
+                            }
+                        }
+                    }
+                } } } }
+}
+@Composable
+fun thankingMessage(shoutDownDialog: MutableState<Boolean>) {
+
+    if (shoutDownDialog.value) {
+        Dialog(
+            onDismissRequest = { shoutDownDialog.value = false }
+        ) {
+            Card(
+                shape = RoundedCornerShape(20.dp, 20.dp, 20.dp, 20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max),
+                elevation = 10.dp
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Image(
+                        painterResource(R.drawable.thanking_icon),
+                        modifier = Modifier.size(100.dp),
+                        contentDescription = "",
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(20.dp)
+                    )
+
+                    Text(text = stringResource(R.string.sent_successfully),
+                        color= colorResource(id = R.color.lightOrange),
+                    fontFamily = FontFamily(Font(R.font.bold)))
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(10.dp)
+                    )
+
+                }
+            }
+        }
+    }
 }

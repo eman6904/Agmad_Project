@@ -75,11 +75,11 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
 
     val accepted_requests=stringResource(id = R.string.acceptedRequests)
     val rejected_requests=stringResource(id = R.string.rejectedRequests)
-    var language = rememberSaveable { mutableStateOf("") }
     var showNotificationForAcc = rememberSaveable { mutableStateOf(false) }
     var showNotificationForRej = rememberSaveable { mutableStateOf(false) }
     var showMenu = rememberSaveable { mutableStateOf(false) }
     var selectLanguage = rememberSaveable { mutableStateOf(false) }
+    var language = rememberSaveable { mutableStateOf("") }
 
     if(selectLanguage.value==true){
 

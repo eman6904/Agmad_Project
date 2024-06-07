@@ -14,6 +14,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -31,6 +32,7 @@ import com.example.ourproject.BackEnd.Classes.ListsGroup
 import com.example.ourproject.BackEnd.DataClasses.LevelItems
 import com.example.ourproject.BackEnd.Files.myRequests
 import com.example.ourproject.BackEnd.Files.selectLevel
+import com.example.ourproject.MainActivity
 import com.example.ourproject.R
 
 @Composable
@@ -120,6 +122,25 @@ fun levels(navController: NavHostController){
 @Composable
 fun LevelsTopBar(navController:NavHostController) {
 
+    var showMenu = rememberSaveable { mutableStateOf(false) }
+    var selectLanguage = rememberSaveable { mutableStateOf(false) }
+    var language = rememberSaveable { mutableStateOf("") }
+
+    if(selectLanguage.value==true){
+
+        languageDialog(selectLanguage,language)
+        if(language.value.isNotEmpty())
+            MainActivity.sharedPreferences.edit().putString(MainActivity.SELECTED_LANGUAGE, language.value).apply()
+        //and look at main activity
+    }
+    // Load the saved language and apply it
+
+    if(language.value.isNotEmpty()){
+
+        setLocale1(lang = language.value)
+    }
+
+    menuItems2(showMenu,selectLanguage,navController)
     Card(
         modifier = Modifier
             .background(color = Color.White)
@@ -137,20 +158,29 @@ fun LevelsTopBar(navController:NavHostController) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(end = 65.dp)
-                        ){Text(text = stringResource(R.string.levels),color = Color.White)}
-                    },
+                    title ={ Text(text = stringResource(R.string.levels),
+                        color = Color.White,
+                        modifier = Modifier.padding(start=10.dp))
+                            },
                     navigationIcon = {
                         IconButton(
                             onClick = { navController.popBackStack() }) {
                             Icon(
                                 imageVector = Icons.Default.ArrowBack,
                                 contentDescription = stringResource(R.string.arrowbackicon),
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = {
+                                showMenu.value=!showMenu.value
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "menu icon",
                                 tint = Color.White
                             )
                         }

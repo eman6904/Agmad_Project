@@ -29,10 +29,11 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.ourproject.BackEnd.Files.myRequests
+import com.example.ourproject.MainActivity
 import com.example.ourproject.R
 
 @Composable
-fun TreeAnimation() {
+fun TreeAnimation(navController: NavHostController) {
     val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.tree_with_flowers))
     val acceptedRequestedNumber= rememberSaveable{ mutableStateOf(0) }
     val accList= myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
@@ -61,7 +62,7 @@ fun TreeAnimation() {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        PlantTopBar()
+        PlantTopBar(navController)
        Box(
            contentAlignment = Alignment.BottomCenter,
            modifier = Modifier.fillMaxSize()
@@ -76,7 +77,27 @@ fun TreeAnimation() {
 }
 
 @Composable
-fun PlantTopBar() {
+fun PlantTopBar(navController:NavHostController) {
+
+    var showMenu = rememberSaveable { mutableStateOf(false) }
+    var selectLanguage = rememberSaveable { mutableStateOf(false) }
+    var language = rememberSaveable { mutableStateOf("") }
+
+    if(selectLanguage.value==true){
+
+        languageDialog(selectLanguage,language)
+        if(language.value.isNotEmpty())
+            MainActivity.sharedPreferences.edit().putString(MainActivity.SELECTED_LANGUAGE, language.value).apply()
+        //and look at main activity
+    }
+    // Load the saved language and apply it
+
+    if(language.value.isNotEmpty()){
+
+        setLocale1(lang = language.value)
+    }
+
+    menuItems2(showMenu,selectLanguage,navController)
     Card(
         modifier = Modifier
             .background(color = Color.White)
@@ -101,6 +122,7 @@ fun PlantTopBar() {
                     actions = {
                         IconButton(
                             onClick = {
+                                showMenu.value=!showMenu.value
                             }
                         ) {
                             Icon(
@@ -120,8 +142,8 @@ fun PlantTopBar() {
     }
 }
 
-@Preview
-@Composable
-fun TreeAnimationPreview() {
-    TreeAnimation()
-}
+//@Preview
+//@Composable
+//fun TreeAnimationPreview(navController: NavHostController) {
+//    TreeAnimation(navController)
+//}

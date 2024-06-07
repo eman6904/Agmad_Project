@@ -106,5 +106,13 @@
     <string name="accepted_requests">Accepted requests</string>
     <string name="my_level">My Level</string>
     <string name="no_items">No Items</string>
+    <string name="warningText">You will not be able to recover this request again</string>
+    <string name="cancel">Cancel</string>
+    <string name="deletRequest">Yes, delete it</string>
+    <string name="are_you_sure">Are You Sure?</string>
+    <string name="donaton_confirm">You want to send this donation?</string>
+    <string name="sendDonation">Yes ,send it</string>
+    <string name="sent_successfully">Your donation was sent successfully</string>
+    <string name="validationdata">Make sure your data is valid</string>
 
 </resources>

@@ -1,10 +1,8 @@
 package com.example.ourproject.FrontEnd.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,12 +13,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -145,7 +139,7 @@ fun organizationSignUp(navController:NavHostController){
             )
             progressBar(showProgress)
             ErrorDialog(shoutDownDialog = shoutDownDialogE)
-            DataDialog(shoutDownDialog = shoutDownDialogD)
+            signUpError(shoutDownDialog = shoutDownDialogD)
             VerificationDialog(shoutDownDialog = shoutDownDialogV)
             Row(
 
@@ -228,7 +222,7 @@ fun buttonSignUpOr(
                     emptyName.value=false
                 }
                 if(name.value.isNotEmpty()&&email.value.isNotEmpty()&&password.value.isNotEmpty()
-                    &&conPassword.value.isNotEmpty()&&taxNumber.value.isNotEmpty()&&location.value.isNotEmpty()){
+                    &&conPassword.value.isNotEmpty()&&taxNumber.value.isNotEmpty()&&location.value.isNotEmpty()&&conPassword.value==password.value){
                     shoutDownProgress.value = true
                     organization_signUp(name,email,password,taxNumber,location,
                         shoutDownProgress,showMsgD,showError,showMsgV,navController)

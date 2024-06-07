@@ -54,7 +54,7 @@ fun appNavGraph(navController: NavHostController) {
             responseImages(navController,requestId.toString(),requestType.toString())
         }
         composable(route = ScreensRoute.Levels.route) { levels(navController) }
-        composable(route = ScreensRoute.Plant.route) { TreeAnimation() }
+        composable(route = ScreensRoute.Plant.route) { TreeAnimation(navController) }
 
     }
 }

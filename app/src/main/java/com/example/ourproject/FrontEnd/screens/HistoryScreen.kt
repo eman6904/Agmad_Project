@@ -259,6 +259,25 @@ fun historyScreen(navController: NavHostController){
 @Composable
 fun HistoryTopBar(navController: NavHostController) {
 
+    var showMenu = rememberSaveable { mutableStateOf(false) }
+    var selectLanguage = rememberSaveable { mutableStateOf(false) }
+    var language = rememberSaveable { mutableStateOf("") }
+
+    if(selectLanguage.value==true){
+
+        languageDialog(selectLanguage,language)
+        if(language.value.isNotEmpty())
+            MainActivity.sharedPreferences.edit().putString(MainActivity.SELECTED_LANGUAGE, language.value).apply()
+        //and look at main activity
+    }
+    // Load the saved language and apply it
+
+    if(language.value.isNotEmpty()){
+
+        setLocale1(lang = language.value)
+    }
+
+    menuItems2(showMenu,selectLanguage,navController)
     Card(
         modifier = Modifier
             .background(color = Color.White)
@@ -294,6 +313,7 @@ fun HistoryTopBar(navController: NavHostController) {
                     actions = {
                         IconButton(
                             onClick = {
+                                showMenu.value=!showMenu.value
                             }
                         ) {
                             Icon(
