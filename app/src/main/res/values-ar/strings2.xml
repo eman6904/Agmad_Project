@@ -104,5 +104,6 @@
     <string name="rejected_requests">الطلبات المرفوضة</string>
     <string name="accepted_requests">الطلبات المقبولة</string>
     <string name="my_level">مستوايا</string>
+    <string name="no_items">لايوجد عناصر</string>
 
 </resources>

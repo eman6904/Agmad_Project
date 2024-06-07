@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
@@ -29,6 +30,7 @@ class MainActivity : ComponentActivity() {
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             val savedLanguage =sharedPreferences.getString(SELECTED_LANGUAGE, null)
             if (savedLanguage != null) {
+
                 SetLocale2(savedLanguage)
             }
             val navController= rememberNavController()

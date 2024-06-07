@@ -63,10 +63,11 @@ fun TreeAnimation() {
     ) {
         PlantTopBar()
        Box(
-           contentAlignment = Alignment.BottomCenter
+           contentAlignment = Alignment.BottomCenter,
+           modifier = Modifier.fillMaxSize()
        ){
            LottieAnimation(
-               modifier = Modifier.size(400.dp).padding(bottom=50.dp),
+               modifier = Modifier.size(400.dp).padding(bottom=70.dp),
                composition = composition,
                progress = treeProgress
            )

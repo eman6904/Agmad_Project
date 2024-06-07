@@ -69,7 +69,7 @@ fun requests(navController:NavHostController,type:String){
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ){
-                Text(text = "No Items",color=Color.Gray, fontSize = 15.sp)
+                Text(text = stringResource(R.string.no_items),color=Color.Gray, fontSize = 15.sp)
             }
         }else{
             LazyColumn(

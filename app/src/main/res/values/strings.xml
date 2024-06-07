@@ -105,5 +105,6 @@
     <string name="rejected_requests">Rejected requests</string>
     <string name="accepted_requests">Accepted requests</string>
     <string name="my_level">My Level</string>
+    <string name="no_items">No Items</string>
 
 </resources>

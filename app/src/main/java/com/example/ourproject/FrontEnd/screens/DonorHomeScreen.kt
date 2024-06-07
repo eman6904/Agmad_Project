@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -57,6 +58,9 @@ fun donorHome(navController: NavHostController){
         doHomeTopBar(acceptedRequestedNumber,rejectedRequestedNumber,navController,context)
         Column() {
 
+            DonorHomeContent(R.drawable.imm1)
+            Spacer(modifier = Modifier.width(10.dp))
+            DonorHomeContent(R.drawable.imm2)
         }
     }
 
@@ -163,15 +167,7 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
                                 )
                             }
                         }
-                        IconButton(onClick = {
 
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "search icon",
-                                tint = Color.White
-                            )
-                        }
                         IconButton(
                             onClick = {
                                 showMenu.value=!showMenu.value
@@ -233,10 +229,11 @@ fun languageDialog(shoutDownDialog: MutableState<Boolean>,selectedLan:MutableSta
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(10.dp).fillMaxSize()
+                        .padding(10.dp)
+                        .fillMaxSize()
                 ) {
 
-                    radioButton(selectedLan)
+                    radioButtonforSelectLanguage(selectedLan)
                 }
             }
 
@@ -293,5 +290,20 @@ fun menuItems2(showMenu:MutableState<Boolean>,selectLan:MutableState<Boolean>,na
                 }
             }
         }
+    }
+}
+@Composable
+fun DonorHomeContent(image:Int){
+
+    Card(
+        shape=RoundedCornerShape(20.dp,20.dp,20.dp,20.dp),
+        modifier = Modifier.fillMaxWidth().height(250.dp).padding(20.dp),
+        elevation = 10.dp
+    ){
+        Image(
+            painterResource(image),
+            modifier = Modifier.fillMaxSize().padding(10.dp),
+            contentDescription = "",
+        )
     }
 }

@@ -331,7 +331,7 @@ fun getRequests():List<RequestItems>{
 @Composable
 fun getRejectedRequested():List<RequestItems>{
 
-    val rejected= stringResource(id = R.string.rejected)
+
 
     var requestList1 by remember { mutableStateOf(emptyList<RequestItems>()) }
     var orName= rememberSaveable() { mutableStateOf("")}
@@ -361,7 +361,7 @@ fun getRejectedRequested():List<RequestItems>{
             for(request in snapshot.children){
 
                 var requestData=request.getValue(RequestItems::class.java)
-                if(requestData?.organizationName==orName.value&&requestData?.status==rejected)
+                if(requestData?.organizationName==orName.value&&(requestData?.status=="Rejected"||requestData?.status=="مرفوض"))
                     requestList2.add(requestData!!)
             }
             requestList1=requestList2
@@ -407,7 +407,7 @@ fun getAcceptedRequested():List<RequestItems>{
             for(request in snapshot.children){
 
                 var requestData=request.getValue(RequestItems::class.java)
-                if(requestData?.organizationName==orName.value&&requestData?.status==accepted)
+                if(requestData?.organizationName==orName.value&&(requestData?.status=="Accepted"||requestData?.status=="مقبول"))
                     requestList2.add(requestData!!)
             }
             requestList1=requestList2

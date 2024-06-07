@@ -67,7 +67,7 @@ fun registerAs(navController:NavHostController){
         ) {
             Text(text= stringResource(R.string.registeras),color= colorResource(id = R.color.mainColor),
                 fontFamily = FontFamily(Font(R.font.bold)),
-                fontSize = 25.sp,
+                fontSize = 20.sp,
                 textDecoration = TextDecoration.Underline
             )
             Image(

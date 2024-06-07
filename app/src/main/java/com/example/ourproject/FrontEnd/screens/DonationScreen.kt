@@ -253,7 +253,7 @@ fun spinner(
          shoutDown.value=true
 
         newLocation(shoutDown = shoutDown, newLocation = result)
-    }else if(selectedItem=="My Location"||selectedItem=="المكان الأفتراضي"){
+    }else if(selectedItem=="My Location"||selectedItem=="المكان الإفتراضي"){
 
         result.value= getDonorData().location
     }else{
@@ -312,7 +312,7 @@ fun spinner(
    }
 
 @Composable
-fun radioButton(selectedLan:MutableState<String>) {
+fun radioButtonforSelectLanguage(selectedLan:MutableState<String>) {
     val languages = listOf<String>(stringResource(R.string.english),
             stringResource(R.string.arabic)
         )
@@ -518,10 +518,6 @@ imagesId:MutableState<List<String>>){
         BuildConfig.APPLICATION_ID + ".provider", file
     )
 
-//    var capturedImageUri by remember {
-//        mutableStateOf<Uri>(Uri.EMPTY)
-//    }
-
     val cameraLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
 
@@ -557,7 +553,7 @@ imagesId:MutableState<List<String>>){
            )
           // shoutDown.value=false
        }
-         Text(text= stringResource(R.string.uploadImage),modifier=Modifier.padding(start=20.dp,top=10.dp))
+         Text(text= stringResource(R.string.uploadImage),modifier=Modifier.padding(start=20.dp,top=10.dp).fillMaxWidth())
        Row(
            horizontalArrangement = Arrangement.Center,
            modifier = Modifier
