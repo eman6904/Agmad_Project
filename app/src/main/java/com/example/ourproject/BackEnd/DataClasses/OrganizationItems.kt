@@ -5,5 +5,6 @@ data class OrganizationItems(
     var email:String="",
     var password:String="",
     var taxNumber:String="",
-    var location:String=""
+    var location:String="",
+    var profileImage:String=""
 )

@@ -29,7 +29,7 @@ fun appNavGraph(navController: NavHostController) {
         composable(route = ScreensRoute.OrganizationSignUp.route) { organizationSignUp(navController) }
         composable(route = BottomBarScreen.OrganizationHome.route) { organizationHome(navController) }
         composable(route = BottomBarScreen.Donation.route) { donationScreen(navController) }
-        composable(route = BottomBarScreen.History.route) { historyScreen(navController) }
+        composable(route = BottomBarScreen.DonorHistory.route) { donorHistory(navController) }
         composable(route = ScreensRoute.DonorHome.route) { donorHome(navController) }
         composable(route = ScreensRoute.RequestsScreen.route+"/{type}") {
 
@@ -55,6 +55,7 @@ fun appNavGraph(navController: NavHostController) {
         }
         composable(route = ScreensRoute.Levels.route) { levels(navController) }
         composable(route = ScreensRoute.Plant.route) { TreeAnimation(navController) }
+        composable(route = ScreensRoute.OrganizationHistory.route) { organizationHistory(navController) }
 
     }
 }

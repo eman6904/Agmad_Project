@@ -1,52 +1,55 @@
 package com.example.ourproject.FrontEnd.screens
 
-import android.content.Context
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarHalf
 import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
-import com.example.ourproject.BackEnd.DataClasses.LevelItems
-import com.example.ourproject.BackEnd.Files.getDonorData
-import com.example.ourproject.BackEnd.Files.myRequests
-import com.example.ourproject.BackEnd.Files.selectLevel
+import coil.compose.AsyncImage
+import com.example.ourproject.BackEnd.Files.*
 import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.MainActivity
 import com.example.ourproject.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 
 @Composable
-fun historyScreen(navController: NavHostController){
+fun donorHistory(navController: NavHostController){
 
 
     val acceptedRequestedNumber= rememberSaveable{ mutableStateOf(0)}
@@ -62,17 +65,12 @@ fun historyScreen(navController: NavHostController){
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        HistoryTopBar(navController)
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(10.dp)
-        ){
+        HistoryTopBar(navController,"Donors")
 
-            Row(
-                horizontalArrangement = Arrangement.Center
-            ){
-
+        Row(
+            horizontalArrangement = Arrangement.Center
+        ) {
+            if (getDonorData().profileImage == "") {
                 Image(
                     painterResource(R.drawable.user_icon),
                     modifier = Modifier
@@ -82,6 +80,17 @@ fun historyScreen(navController: NavHostController){
                     contentDescription = "",
                     colorFilter = ColorFilter.tint(colorResource(id = R.color.mainColor))
                 )
+            } else {
+                AsyncImage(
+                    model = getDonorData().profileImage,
+                    modifier = Modifier
+                        .clip(shape = CircleShape)
+                        .weight(1f)
+                        .padding(10.dp),
+                    contentDescription = "",
+                   // colorFilter = ColorFilter.tint(colorResource(id = R.color.mainColor))
+                )
+            }
                 Column(
                     modifier= Modifier
                         .weight(3f)
@@ -254,15 +263,21 @@ fun historyScreen(navController: NavHostController){
                 }
             }
         }
-    }
 }
 @Composable
-fun HistoryTopBar(navController: NavHostController) {
+fun HistoryTopBar(navController: NavHostController,selectedUser:String) {
 
     var showMenu = rememberSaveable { mutableStateOf(false) }
     var selectLanguage = rememberSaveable { mutableStateOf(false) }
     var language = rememberSaveable { mutableStateOf("") }
+    val profileImageDialog=remember{ mutableStateOf(false)}
 
+    //for profile image
+    if(profileImageDialog.value)
+        changeProfileImage(shutdown = profileImageDialog, selectedUser = selectedUser)
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+   // for language
     if(selectLanguage.value==true){
 
         languageDialog(selectLanguage,language)
@@ -276,8 +291,8 @@ fun HistoryTopBar(navController: NavHostController) {
 
         setLocale1(lang = language.value)
     }
-
     menuItems2(showMenu,selectLanguage,navController)
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     Card(
         modifier = Modifier
             .background(color = Color.White)
@@ -311,6 +326,17 @@ fun HistoryTopBar(navController: NavHostController) {
                         }
                     },
                     actions = {
+                        IconButton(
+                            onClick = {
+                                profileImageDialog.value=!profileImageDialog.value
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.CameraAlt,
+                                contentDescription = "menu icon",
+                                tint = Color.White
+                            )
+                        }
                         IconButton(
                             onClick = {
                                 showMenu.value=!showMenu.value
@@ -356,6 +382,86 @@ fun ratingBar(rating:Double=0.0, ){
                     }
                 }
             )
+        }
+    }
+}
+@Composable
+fun changeProfileImage(shutdown:MutableState<Boolean>,selectedUser:String){
+
+    val selectedImage = remember{ mutableStateOf<Uri?>(null) }
+    var upload = remember{ mutableStateOf(false) }
+    val context = LocalContext.current
+    if(upload.value==true){
+
+        updateProfileImage(selectedImage,selectedUser)
+        Toast.makeText(context, stringResource(R.string.images_are_uploaded), Toast.LENGTH_LONG).show()
+        upload.value=false
+    }
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
+        selectedImage.apply {
+
+            if(it!=null){
+                selectedImage.value=it
+                upload.value=true
+            }
+        }
+    }
+    if(shutdown.value){
+
+        Dialog(
+            onDismissRequest = {shutdown.value=false}
+        ){
+            Card(
+                shape= RoundedCornerShape(20.dp,20.dp,20.dp,20.dp),
+                elevation = 10.dp,
+                modifier = Modifier
+                    .width(IntrinsicSize.Max)
+                    .height(IntrinsicSize.Max)
+            ){
+                Column(
+                    modifier = Modifier.padding(20.dp),
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.TopStart
+                    ) {
+                        ClickableText(
+                            AnnotatedString(stringResource(R.string.set_new_image)),
+                            onClick = {
+                                launcher.launch("image/*")
+                                shutdown.value = false
+                            })
+                    }
+
+                    Spacer(
+                        modifier = Modifier
+                            .height(10.dp)
+                            .fillMaxWidth()
+                    )
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.TopStart
+                    ) {
+                        ClickableText(
+                            AnnotatedString(stringResource(R.string.unsetImage)),
+                            onClick = {
+
+                                var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
+                                var obj = FirebaseDatabase.getInstance().getReference(selectedUser)
+                                    .child(currentUserId)
+                                val hashMap: HashMap<String, Any> = HashMap()
+                                hashMap.put("profileImage", "")
+                                obj?.updateChildren(hashMap as Map<String, Any>)
+                                    ?.addOnSuccessListener {
+
+                                    }?.addOnFailureListener {
+
+                                }
+                            })
+                    }
+                }
+            }
         }
     }
 }

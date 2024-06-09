@@ -14,4 +14,5 @@ sealed class ScreensRoute (val route:String){
     object ResponseImages: ScreensRoute(route="responseImages")
     object Levels: ScreensRoute(route="Levels")
     object Plant: ScreensRoute(route="plant")
+    object OrganizationHistory: ScreensRoute(route="organizationHistory")
 }

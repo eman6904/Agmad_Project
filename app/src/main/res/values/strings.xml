@@ -11,7 +11,7 @@
     <string name="beverages">Beverages</string>
     <string name="backed_goods">Backed goods</string>
     <string name="non_perishable">Non-Perishable</string>
-    <string name="request">Donation</string>
+    <string name="request">Donate</string>
     <string name="donation">Donation</string>
     <string name="search_icon">search icon</string>
     <string name="arrowbackicon">arrow back</string>
@@ -106,13 +106,17 @@
     <string name="accepted_requests">Accepted requests</string>
     <string name="my_level">My Level</string>
     <string name="no_items">No Items</string>
-    <string name="warningText">You will not be able to recover this request again</string>
+    <string name="warningText">You will not be able to recover this item again</string>
     <string name="cancel">Cancel</string>
     <string name="deletRequest">Yes, delete it</string>
     <string name="are_you_sure">Are You Sure?</string>
-    <string name="donaton_confirm">You want to send this donation?</string>
+    <string name="donaton_confirm">You want to send this donation</string>
     <string name="sendDonation">Yes ,send it</string>
     <string name="sent_successfully">Your donation was sent successfully</string>
     <string name="validationdata">Make sure your data is valid</string>
+    <string name="ratingbreakdown">Rating Breakdown:</string>
+    <string name="set_new_image">Set New Image</string>
+    <string name="unsetImage">Unset Image</string>
+    <string name="imageDeleted">Image was deleted successfully</string>
 
 </resources>

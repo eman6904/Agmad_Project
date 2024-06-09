@@ -11,6 +11,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -51,7 +52,7 @@ import com.example.ourproject.MainActivity
 import com.example.ourproject.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import okhttp3.internal.wait
+import com.google.firebase.storage.FirebaseStorage
 import java.util.*
 
 @Composable
@@ -118,7 +119,9 @@ fun donationScreen(navController:NavHostController) {
     val notEmptyImagesListModifier=Modifier.padding(5.dp)
 
    Column(
-       modifier=Modifier.fillMaxSize().background(Color.White),
+       modifier= Modifier
+           .fillMaxSize()
+           .background(Color.White),
    ) {
        DonationTopBar(navController)
        Column(
@@ -282,9 +285,9 @@ fun spinner(
     }
 
         Column(
-            modifier = modifier.
-            clip(RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp))
-            .fillMaxSize()
+            modifier = modifier
+                .clip(RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp))
+                .fillMaxSize()
         ){
             OutlinedButton(
                 onClick = { expanded = true },
@@ -297,7 +300,9 @@ fun spinner(
                 ){
                     Text(
                         text = result.value,
-                        modifier = Modifier.fillMaxSize().padding(10.dp)
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(10.dp)
                             .weight(8f),
                         color = Color.Gray,
                         fontFamily = FontFamily.Default,
@@ -640,6 +645,8 @@ imagesId:MutableState<List<String>>){
 
            images.value=true
 
+       }else{
+           images.value=false
        }
 //       if (capturedImageUri.path?.isNotEmpty() == true) {
 //           AsyncImage(
@@ -701,7 +708,9 @@ fun newLocation(shoutDown: MutableState<Boolean>,newLocation:MutableState<String
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = colorResource(id = R.color.mainColor)
                         ),
-                        modifier = Modifier.padding(bottom=10.dp,end=30.dp,start=30.dp).fillMaxWidth()
+                        modifier = Modifier
+                            .padding(bottom = 10.dp, end = 30.dp, start = 30.dp)
+                            .fillMaxWidth()
                     )
                 }
             }
@@ -741,15 +750,9 @@ fun showImages(shoutDown: MutableState<Boolean>,imagesId:MutableState<List<Strin
 
                            modifier = Modifier.fillMaxSize()
                        ) {
-
-                           items(items = imageUris, itemContent = { item ->
-                               AsyncImage(
-                                   modifier = Modifier.padding(20.dp),
-                                   model = item,
-                                   contentDescription = null
-                               )
-                               Spacer(modifier = Modifier.width(10.dp))
-                           })
+                           itemsIndexed(items = imageUris){ index,image->
+                               imageItem(image,shoutDown)
+                           }
                        }
                    }
 
@@ -757,6 +760,64 @@ fun showImages(shoutDown: MutableState<Boolean>,imagesId:MutableState<List<Strin
            }
        }
    }
+}
+@Composable
+fun imageItem(imageUri:String,shutdown:MutableState<Boolean>){
+
+
+    val confirmDialog=remember{ mutableStateOf(false)}
+    if(confirmDialog.value){
+
+        deleteConfirming(
+            shoutDownDialog = confirmDialog,
+            imageUri =imageUri ,
+            shutdown=shutdown,
+            warningText = stringResource(id = R.string.warningText) ,
+            btnName1 = stringResource(id = R.string.cancel) ,
+            btnName2 = stringResource(id = R.string.deletRequest)
+        )
+    }
+    Card(
+        shape= RoundedCornerShape(20.dp,20.dp,20.dp,20.dp),
+        elevation = 10.dp,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(15.dp)
+    ){
+       Column(
+           modifier = Modifier.fillMaxSize()
+       ){
+           Box(
+               modifier = Modifier
+                   .fillMaxWidth()
+                   .padding(top = 5.dp),
+               contentAlignment = Alignment.TopEnd
+           ){
+               IconButton(onClick = {
+
+                   confirmDialog.value=true
+               }) {
+                   Icon(
+                       imageVector = Icons.Default.Delete,
+                       contentDescription = null,
+                   )
+               }
+           }
+
+           Box(
+               modifier = Modifier.fillMaxWidth(),
+               contentAlignment = Alignment.Center
+           ){
+
+               AsyncImage(
+                   modifier = Modifier,
+                   model = imageUri,
+                   contentDescription = null
+               )
+               Spacer(modifier = Modifier.width(10.dp))
+           }
+       }
+    }
 }
 @Composable
 fun donationConfirming(shoutDownDialog: MutableState<Boolean>,
@@ -891,6 +952,110 @@ fun thankingMessage(shoutDownDialog: MutableState<Boolean>) {
                             .height(10.dp)
                     )
 
+                }
+            }
+        }
+    }
+}
+@Composable
+fun deleteConfirming(shoutDownDialog: MutableState<Boolean>,
+imageUri:String,
+ shutdown: MutableState<Boolean>,
+warningText:String,
+ btnName1:String,
+ btnName2:String) {
+
+    val context= LocalContext.current
+    val msg=stringResource(R.string.imageDeleted)
+    if (shoutDownDialog.value) {
+        Dialog(
+            onDismissRequest = { shoutDownDialog.value = false }
+        ) {
+            Card(
+                shape = RoundedCornerShape(20.dp, 20.dp, 20.dp, 20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max),
+                elevation = 10.dp
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Image(
+                        painterResource(R.drawable.wareningicon),
+                        modifier = Modifier.size(90.dp),
+                        contentDescription = "",
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(20.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.are_you_sure),
+                        fontSize = 25.sp,
+                        fontFamily = FontFamily(Font(R.font.bold))
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(20.dp)
+                    )
+                    Text(text = warningText)
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(20.dp)
+                    )
+                    Box(
+                        contentAlignment = Alignment.BottomCenter,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 15.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Button(
+                                onClick = { shoutDownDialog.value = false },
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Color.Gray
+                                ),
+                                modifier = Modifier.width(IntrinsicSize.Min)
+                            ) {
+                                Text(text = btnName1, color = Color.White)
+                            }
+                            Spacer(
+                                modifier = Modifier
+                                    .width(5.dp)
+                            )
+                            Button(
+                                onClick = {
+
+                                    val storage = FirebaseStorage.getInstance()
+                                    val storageRef = storage.getReferenceFromUrl(imageUri)
+
+                                    storageRef.delete().addOnSuccessListener {
+                                        println("File deleted successfully")
+                                    }.addOnFailureListener { exception ->
+                                        println("Error deleting file: ${exception.message}")
+                                    }
+                                    shoutDownDialog.value = false
+                                    shutdown.value=false
+                                    Toast.makeText(context, msg,Toast.LENGTH_LONG).show()
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Color.Red
+                                ),
+                                modifier = Modifier.width(IntrinsicSize.Max)
+                            ) {
+                                Text(text = btnName2, color = Color.White)
+                            }
+                        }
+                    }
                 }
             }
         }

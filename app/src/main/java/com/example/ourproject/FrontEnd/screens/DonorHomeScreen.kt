@@ -6,21 +6,22 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
+import com.example.ourproject.BackEnd.Classes.ListsGroup
 import com.example.ourproject.BackEnd.Files.myRequests
 import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.MainActivity
@@ -36,6 +38,7 @@ import com.example.ourproject.MainActivity.Companion.sharedPreferences
 import com.example.ourproject.R
 import com.google.firebase.auth.FirebaseAuth
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 @Composable
@@ -56,11 +59,23 @@ fun donorHome(navController: NavHostController){
         rejectedRequestedNumber.value=rejList.size
 
         doHomeTopBar(acceptedRequestedNumber,rejectedRequestedNumber,navController,context)
-        Column() {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(bottom=40.dp)
+        ) {
 
-            DonorHomeContent(R.drawable.imm1)
-            Spacer(modifier = Modifier.width(10.dp))
-            DonorHomeContent(R.drawable.imm2)
+           val listGroup=ListsGroup()
+            listGroup.setChannels()
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+
+            ) {
+                itemsIndexed(items = listGroup.channels){ index,channel->
+                    donorHomeContent(channel,listGroup.channels,index)
+                    Spacer(modifier = Modifier.width(10.dp))
+                }
+            }
+
         }
     }
 
@@ -293,17 +308,36 @@ fun menuItems2(showMenu:MutableState<Boolean>,selectLan:MutableState<Boolean>,na
     }
 }
 @Composable
-fun DonorHomeContent(image:Int){
+fun donorHomeContent(pair:Pair<String,Int>,list:ArrayList<Pair<String,Int>>,index:Int){
 
+    val localUriHandler = LocalUriHandler.current
     Card(
         shape=RoundedCornerShape(20.dp,20.dp,20.dp,20.dp),
-        modifier = Modifier.fillMaxWidth().height(250.dp).padding(20.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(250.dp)
+            .padding(20.dp)
+            .clickable {
+                localUriHandler.openUri(pair.first)
+            },
         elevation = 10.dp
     ){
-        Image(
-            painterResource(image),
-            modifier = Modifier.fillMaxSize().padding(10.dp),
-            contentDescription = "",
-        )
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ){
+            Image(
+                painterResource(pair.second),
+                modifier = Modifier.fillMaxSize(),
+                contentDescription = "",
+            )
+            if(index!=list.size-1) {
+                Image(
+                    painterResource(R.drawable.play),
+                    modifier = Modifier.size(40.dp),
+                    contentDescription = "",
+                )
+            }
+        }
     }
 }

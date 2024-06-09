@@ -5,7 +5,6 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.example.ourproject.BackEnd.Classes.ListsGroup
 import com.example.ourproject.BackEnd.DataClasses.DonorItems
@@ -162,7 +161,7 @@ private fun verifyEmailAddress(
     if (Auth?.currentUser!!.isEmailVerified) {
 
         shoutDownProgress.value = false
-        userType(navController)
+        selectHome(navController)
     } else {
         shoutDownProgress.value = false
         showMsgV.value = true
@@ -377,7 +376,7 @@ fun getRejectedRequested():List<RequestItems>{
 @Composable
 fun getAcceptedRequested():List<RequestItems>{
 
-    val accepted= stringResource(id = R.string.accepted)
+
 
     var requestList1 by remember { mutableStateOf(emptyList<RequestItems>()) }
     var orName= rememberSaveable() { mutableStateOf("")}
@@ -443,11 +442,12 @@ fun updateRequest(status:String, requestId:String, organizationResponse:String,c
     }
 }
 
-fun userType(navController:NavHostController){
+fun selectHome(navController:NavHostController){
 
         var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
         var organizationObj = FirebaseDatabase.getInstance().getReference("Organizations")
         var Auth = FirebaseAuth.getInstance()
+
         if (Auth?.currentUser!!.isEmailVerified) {
             organizationObj.child(currentUserId).addValueEventListener(object :
                 ValueEventListener {
@@ -468,6 +468,33 @@ fun userType(navController:NavHostController){
 
             })
         }
+}
+fun selectHistory(navController:NavHostController){
+
+    var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
+    var organizationObj = FirebaseDatabase.getInstance().getReference("Organizations")
+    var Auth = FirebaseAuth.getInstance()
+
+    if (Auth?.currentUser!!.isEmailVerified) {
+        organizationObj.child(currentUserId).addValueEventListener(object :
+            ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                val organizationData=snapshot.getValue(OrganizationItems::class.java)
+
+                if(organizationData!=null)
+                    navController.navigate(ScreensRoute.OrganizationHistory.route)
+                else
+                    navController.navigate(BottomBarScreen.DonorHistory.route)
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+    }
 }
 @Composable
 fun myRequests(typeInArabic:String,typeInEnglish:String):List<RequestItems>{
@@ -540,6 +567,31 @@ fun getDonorData():DonorItems{
     return donor
 }
 @Composable
+fun getOrganizationData():OrganizationItems{
+
+    var organization by remember{
+        mutableStateOf(OrganizationItems("","","","",""))}
+    var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
+
+    var organizationObj = FirebaseDatabase.getInstance().getReference("Organizations")
+    organizationObj.child(currentUserId).addValueEventListener(object :ValueEventListener{
+        override fun onDataChange(snapshot: DataSnapshot) {
+
+            val organizationData=snapshot.getValue(OrganizationItems::class.java)
+            if(organizationData!=null)
+                organization=organizationData
+
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            TODO("Not yet implemented")
+        }
+
+    })
+
+    return organization
+}
+@Composable
 fun deleteImages(){
 
 
@@ -584,4 +636,37 @@ fun Context.createImageFile(): File {
         externalCacheDir      /* directory */
     )
     return image
+}
+@Composable
+fun updateProfileImage(imageLocalUri: MutableState<Uri?>,selectedUser:String) {
+
+    var storage: StorageReference? = null
+    storage = FirebaseStorage.getInstance().reference
+    var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
+    val profileImageUri = remember { mutableStateOf("") }
+
+    if (imageLocalUri != null) {
+
+        var imagePath = UUID.randomUUID().toString()
+
+        storage?.child(currentUserId + "/" + imagePath)?.putFile(imageLocalUri.value!!)
+            ?.addOnSuccessListener { taskSnapshot ->
+                taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri ->
+                    profileImageUri.value = uri.toString()
+                    var obj = FirebaseDatabase.getInstance().getReference(selectedUser).child(currentUserId)
+                    val hashMap: HashMap<String, Any> = HashMap()
+                    hashMap.put("profileImage",profileImageUri.value)
+                    obj?.updateChildren(hashMap as Map<String, Any>)?.addOnSuccessListener {
+
+                    }?.addOnFailureListener {
+
+                    }
+
+                }?.addOnFailureListener() {
+                    Log.d("message", it.message.toString())
+                }
+
+            }
+
+    }
 }

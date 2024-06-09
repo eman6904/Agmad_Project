@@ -20,7 +20,7 @@ sealed class BottomBarScreen(
         title="Donation",
         icon= Icons.Default.Home
     )
-    object History: BottomBarScreen(
+    object DonorHistory: BottomBarScreen(
         route="history",
         title="History",
         icon= Icons.Default.ShoppingCart

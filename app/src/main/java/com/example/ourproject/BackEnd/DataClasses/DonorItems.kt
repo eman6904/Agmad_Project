@@ -6,5 +6,6 @@ data class DonorItems(
     var password:String="",
     var phone:String="",
     var location:String="",
-    var gender:String=""
+    var gender:String="",
+    var profileImage:String=""
 )

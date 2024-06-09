@@ -24,7 +24,8 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.ourproject.BackEnd.Files.userType
+import com.example.ourproject.BackEnd.Files.selectHistory
+import com.example.ourproject.BackEnd.Files.selectHome
 import com.example.ourproject.FrontEnd.BottomBarScreen
 import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.R
@@ -38,7 +39,7 @@ fun mainScreen(navController: NavHostController) {
     var showBottomBar by rememberSaveable { mutableStateOf(false) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     showBottomBar = when (navBackStackEntry?.destination?.route) {
-        BottomBarScreen.History.route->true
+        BottomBarScreen.DonorHistory.route->true
         BottomBarScreen.OrganizationHome.route->true
         BottomBarScreen.Donation.route->true
         ScreensRoute.DonorHome.route->true
@@ -50,7 +51,7 @@ fun mainScreen(navController: NavHostController) {
                 val screens = listOf(
                     BottomBarScreen.OrganizationHome,
                     BottomBarScreen.Donation,
-                    BottomBarScreen.History,
+                    BottomBarScreen.DonorHistory,
                 )
                 val currentDestination = navBackStackEntry?.destination
                 Card(
@@ -92,7 +93,7 @@ fun RowScope.addItem(
     val home= stringResource(id = R.string.home)
     val donation= stringResource(id = R.string.donation)
     val history= stringResource(R.string.history)
-    if(screen== BottomBarScreen.History) {
+    if(screen== BottomBarScreen.DonorHistory) {
         BottomNavigationItem(
             modifier = Modifier.background(Color.White),
             label = { Text(text = history, color = Color.Black) },
@@ -103,7 +104,7 @@ fun RowScope.addItem(
                 )
             },
             selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-            onClick = { navController.navigate(screen.route) }
+            onClick = { selectHistory(navController) }
         )
     }
     else if(screen== BottomBarScreen.Donation){
@@ -129,7 +130,7 @@ fun RowScope.addItem(
             },
             selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
             onClick = {
-             userType(navController)
+             selectHome(navController)
             }
         )
     }
