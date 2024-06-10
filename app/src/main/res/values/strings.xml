@@ -42,8 +42,8 @@
     <string name="error_occurred">Error Occurred</string>
     <string name="verify_email">Please verify your email</string>
     <string name="food_ssver">Food Saver</string>
-    <string name="intro1">If You Can\'t Feed A Hundred People,</string>
-    <string name="intro2">Then You Can Feed One.</string>
+    <string name="intro1">If You Can\'t Feed A Hundred People</string>
+    <string name="intro2">Then Feed Just One</string>
     <string name="tax_number">Tax Number</string>
     <string name="location">Location</string>
     <string name="or_sign_up">Organization Sign Up</string>

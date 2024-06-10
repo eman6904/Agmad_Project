@@ -1,6 +1,7 @@
 package com.example.ourproject.FrontEnd.screens
 
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -400,7 +401,7 @@ fun changeProfileImage(shutdown:MutableState<Boolean>,selectedUser:String){
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
         selectedImage.apply {
-
+            Log.d("uriiiiiiiiiiiiiiii",it.toString())
             if(it!=null){
                 selectedImage.value=it
                 upload.value=true
@@ -430,7 +431,7 @@ fun changeProfileImage(shutdown:MutableState<Boolean>,selectedUser:String){
                             AnnotatedString(stringResource(R.string.set_new_image)),
                             onClick = {
                                 launcher.launch("image/*")
-                                shutdown.value = false
+                              //  shutdown.value = false
                             })
                     }
 

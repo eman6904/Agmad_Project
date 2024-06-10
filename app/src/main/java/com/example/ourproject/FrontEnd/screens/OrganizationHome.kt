@@ -4,12 +4,15 @@ import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -17,12 +20,14 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.ourproject.BackEnd.DataClasses.RequestItems
 import com.example.ourproject.BackEnd.Files.getRequests
 import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.MainActivity
 import com.example.ourproject.R
+import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
@@ -32,12 +37,42 @@ fun organizationHome(navController: NavHostController) {
     var requestsNumber = rememberSaveable { mutableStateOf(0) }
     requestsList = getRequests()
 
-    Column() {
+    Column(
+        modifier=Modifier.fillMaxSize()
+    ) {
 
         requestsNumber.value=requestsList.size
         orHomeTopBar(requestsNumber,navController)
         Column() {
+            val context= LocalContext.current
+            val requests=stringResource(id = R.string.requests)
+            var requestsList by remember { mutableStateOf(emptyList<RequestItems>()) }
+            requestsList = getRequests()
+            if(requestsList.isEmpty()){
 
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ){
+                    Text(text = stringResource(R.string.no_items),color=Color.Gray, fontSize = 15.sp)
+                }
+            }else{
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ) {
+                    itemsIndexed(items = requestsList){ index,request->
+                        requestItem(
+                            index,
+                            requestsList,
+                            navController,
+                            requests,
+                            context
+                        )
+                    }
+                }
+            }
         }
     }
     val context= LocalContext.current
@@ -94,34 +129,28 @@ fun orHomeTopBar(requestNumber: MutableState<Int>, navController: NavHostControl
                     title = { Text(text = stringResource(R.string.home), color = Color.White,
                         modifier = Modifier.padding(start=10.dp)) },
                     actions = {
-                        IconButton(onClick = {
-                            requestNumber.value = 0
-                            navController.navigate(ScreensRoute.RequestsScreen.route+"/${requests}")
-                        }) {
-                            BadgedBox(badge = {
-                                if (showNotification.value) {
-                                    Badge {
-                                        Text(
-                                            text = requestNumber.value.toString(),
-                                            color = Color.White
-                                        )
-                                    }
-                                }
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.Notifications,
-                                    contentDescription = "notification icon",
-                                    tint = Color.White
-                                )
-                            }
-                        }
-                        IconButton(onClick = {}) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "search icon",
-                                tint = Color.White
-                            )
-                        }
+                        //لوحبينا نرجع الاشعارات هنشيل الكومنت دا بس
+//                        IconButton(onClick = {
+//                            requestNumber.value = 0
+//                            navController.navigate(ScreensRoute.RequestsScreen.route+"/${requests}")
+//                        }) {
+//                            BadgedBox(badge = {
+//                                if (showNotification.value) {
+//                                    Badge {
+//                                        Text(
+//                                            text = requestNumber.value.toString(),
+//                                            color = Color.White
+//                                        )
+//                                    }
+//                                }
+//                            }) {
+//                                Icon(
+//                                    imageVector = Icons.Default.Notifications,
+//                                    contentDescription = "notification icon",
+//                                    tint = Color.White
+//                                )
+//                            }
+//                        }
                         IconButton(
                             onClick = {
                                 showMenu.value=!showMenu.value
@@ -148,69 +177,91 @@ fun menuItems1(navController:NavHostController, showMenu:MutableState<Boolean>,s
 
     val accepted_requests=stringResource(id = R.string.acceptedRequests)
     val rejected_requests=stringResource(id = R.string.rejectedRequests)
+    val context = LocalContext.current
 
     if(showMenu.value){
-        DropdownMenu(
-            expanded = showMenu.value,
-            onDismissRequest = { showMenu.value=false },
-            offset = DpOffset(x = (160).dp, y = (5).dp)
-        )
-        {
-           DropdownMenuItem(
-               onClick = {
-                   navController.navigate(ScreensRoute.RequestsScreen.route+"/${accepted_requests}")
-                   showMenu.value=false
-               }
-           ) {
-               Row(){
-                   Icon(
-                       imageVector = Icons.Default.Done,
-                       contentDescription = null,
-                       tint = Color.Green
-                   )
-                   Text(
-                       text = stringResource(R.string.acceptedRequests),
-                       modifier = Modifier.padding(start=4.dp)
-                   )
-               }
-           }
-            DropdownMenuItem(
-                onClick = {
-                    navController.navigate(ScreensRoute.RequestsScreen.route+"/${rejected_requests}")
-                    showMenu.value=false
+        Box(){
+            DropdownMenu(
+                expanded = showMenu.value,
+                onDismissRequest = { showMenu.value=false },
+                offset = DpOffset(x = (160).dp, y = (5).dp)
+            )
+            {
+                DropdownMenuItem(
+                    onClick = {
+                        navController.navigate(ScreensRoute.RequestsScreen.route+"/${accepted_requests}")
+                        showMenu.value=false
+                    }
+                ) {
+                    Row(){
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = null,
+                            tint = Color.Green
+                        )
+                        Text(
+                            text = stringResource(R.string.acceptedRequests),
+                            modifier = Modifier.padding(start=4.dp)
+                        )
+                    }
                 }
-            ) {
-                Row(){
-                    Icon(
-                        imageVector = Icons.Default.Clear,
-                        contentDescription = null,
-                        tint = Color.Red
-                    )
-                    Text(
-                        text = stringResource(R.string.rejectedRequests),
-                        modifier = Modifier.padding(start=4.dp)
-                    )
+                DropdownMenuItem(
+                    onClick = {
+                        navController.navigate(ScreensRoute.RequestsScreen.route+"/${rejected_requests}")
+                        showMenu.value=false
+                    }
+                ) {
+                    Row(){
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = null,
+                            tint = Color.Red
+                        )
+                        Text(
+                            text = stringResource(R.string.rejectedRequests),
+                            modifier = Modifier.padding(start=4.dp)
+                        )
+                    }
                 }
-            }
-            DropdownMenuItem(
-                onClick = {
-                    selectLan.value=true
-                    showMenu.value=false
+                DropdownMenuItem(
+                    onClick = {
+                        selectLan.value=true
+                        showMenu.value=false
+                    }
+                ) {
+                    Row() {
+                        Icon(
+                            imageVector = Icons.Default.Language,
+                            contentDescription = null,
+                            tint = Color.Gray
+                        )
+                        Text(
+                            text = stringResource(R.string.language),
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }
                 }
-            ) {
-                Row() {
-                    Icon(
-                        imageVector = Icons.Default.Language,
-                        contentDescription = null,
-                        tint = Color.Gray
-                    )
-                    Text(
-                        text = stringResource(R.string.language),
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
+                DropdownMenuItem(
+                    onClick = {
+                        FirebaseAuth.getInstance().signOut()
+                        (context as? Activity)?.finishAffinity()
+                        showMenu.value=false
+                    }
+                ) {
+                    Row() {
+                        Icon(
+                            imageVector = Icons.Default.Logout,
+                            contentDescription = null,
+                            tint = Color.Gray
+                        )
+                        Text(
+                            text = stringResource(R.string.logout),
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }
                 }
-            }
 
+            }
         }
     }
 }

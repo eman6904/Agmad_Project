@@ -1,6 +1,8 @@
 package com.example.ourproject.FrontEnd.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -12,10 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,9 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.*
 import com.example.ourproject.BackEnd.Files.myRequests
 import com.example.ourproject.MainActivity
 import com.example.ourproject.R
@@ -38,7 +35,8 @@ fun TreeAnimation(navController: NavHostController) {
     val acceptedRequestedNumber= rememberSaveable{ mutableStateOf(0) }
     val accList= myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
     acceptedRequestedNumber.value=accList.size
-    val treeProgress = rememberSaveable(acceptedRequestedNumber.value) {
+    var treeProgress = remember(acceptedRequestedNumber.value) {
+
         when(acceptedRequestedNumber.value) {
             0 -> 0f
             in 1 .. 2 -> 0.05f
@@ -58,7 +56,23 @@ fun TreeAnimation(navController: NavHostController) {
     }
 
    // Spacer(modifier = Modifier.height(42.dp))
-
+    var points by remember { mutableStateOf(0) }
+    var isPlaying by remember { mutableStateOf(false) }
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        isPlaying = isPlaying,
+        restartOnPlay = false,
+        iterations = 1,
+        speed = 1.0f,
+        clipSpec = LottieClipSpec.Progress(0f, points / 100f)
+    )
+    while(points!=acceptedRequestedNumber.value*5){
+        points += 5
+        if (points > 100) points = 100
+        isPlaying = false // Stop the animation if it's playing
+        isPlaying = true
+        Log.d("nnnnn",points.toString())
+    }
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -68,9 +82,9 @@ fun TreeAnimation(navController: NavHostController) {
            modifier = Modifier.fillMaxSize()
        ){
            LottieAnimation(
-               modifier = Modifier.size(400.dp).padding(bottom=70.dp),
+               modifier = Modifier.size(400.dp).padding(bottom=100.dp),
                composition = composition,
-               progress = treeProgress
+               progress = progress
            )
        }
     }

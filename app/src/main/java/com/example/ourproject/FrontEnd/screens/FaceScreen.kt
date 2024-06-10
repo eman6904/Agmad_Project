@@ -92,7 +92,7 @@ fun face(navController:NavHostController) {
 //                   navController.navigate(ScreensRoute.RegisterAs.route)
 //                else
 //                    userType(navController)
-                navController.navigate(ScreensRoute.SignIn.route)
+                navController.navigate(ScreensRoute.RegisterAs.route)
             }
             Box(
                 modifier = Modifier

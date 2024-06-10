@@ -261,50 +261,52 @@ fun menuItems2(showMenu:MutableState<Boolean>,selectLan:MutableState<Boolean>,na
     val context = LocalContext.current
 
     if (showMenu.value) {
-        DropdownMenu(
-            expanded = showMenu.value,
-            onDismissRequest = { showMenu.value = false },
-            offset = DpOffset(x = (160).dp, y = (5).dp)
-        )
-        {
-            DropdownMenuItem(
-                onClick = {
-                    selectLan.value=true
-                    showMenu.value=false
-                }
-            ) {
-                Row() {
-                    Icon(
-                        imageVector = Icons.Default.Language,
-                        contentDescription = null,
-                        tint = Color.Gray
-                    )
-                    Text(
-                        text = stringResource(R.string.language),
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
-                }
-            }
-            DropdownMenuItem(
-                onClick = {
-                    FirebaseAuth.getInstance().signOut()
-                    (context as? Activity)?.finishAffinity()
-                    showMenu.value=false
-                }
-            ) {
-                Row() {
-                    Icon(
-                        imageVector = Icons.Default.Logout,
-                        contentDescription = null,
-                        tint = Color.Gray
-                    )
-                    Text(
-                        text = stringResource(R.string.logout),
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
-                }
-            }
-        }
+       Box(){
+           DropdownMenu(
+               expanded = showMenu.value,
+               onDismissRequest = { showMenu.value = false },
+               offset = DpOffset(x = (160).dp, y = (5).dp)
+           )
+           {
+               DropdownMenuItem(
+                   onClick = {
+                       selectLan.value=true
+                       showMenu.value=false
+                   }
+               ) {
+                   Row() {
+                       Icon(
+                           imageVector = Icons.Default.Language,
+                           contentDescription = null,
+                           tint = Color.Gray
+                       )
+                       Text(
+                           text = stringResource(R.string.language),
+                           modifier = Modifier.padding(start = 4.dp)
+                       )
+                   }
+               }
+               DropdownMenuItem(
+                   onClick = {
+                       FirebaseAuth.getInstance().signOut()
+                       (context as? Activity)?.finishAffinity()
+                       showMenu.value=false
+                   }
+               ) {
+                   Row() {
+                       Icon(
+                           imageVector = Icons.Default.Logout,
+                           contentDescription = null,
+                           tint = Color.Gray
+                       )
+                       Text(
+                           text = stringResource(R.string.logout),
+                           modifier = Modifier.padding(start = 4.dp)
+                       )
+                   }
+               }
+           }
+       }
     }
 }
 @Composable

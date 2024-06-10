@@ -198,7 +198,7 @@ fun LevelsTopBar(navController:NavHostController) {
 fun customProgressBar(selectedLevel:LevelItems,donationsNumber:Double){
 
     var currentLevel=selectedLevel.endPoint
-    var average: Double =donationsNumber/currentLevel
+    var average: Double =(donationsNumber/currentLevel)+0.1
     var progress by remember { mutableStateOf(average.toFloat())}
     val size by animateFloatAsState(
         targetValue = progress,
