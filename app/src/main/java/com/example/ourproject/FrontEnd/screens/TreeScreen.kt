@@ -13,6 +13,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -35,25 +36,25 @@ fun TreeAnimation(navController: NavHostController) {
     val acceptedRequestedNumber= rememberSaveable{ mutableStateOf(0) }
     val accList= myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
     acceptedRequestedNumber.value=accList.size
-    var treeProgress = remember(acceptedRequestedNumber.value) {
-
-        when(acceptedRequestedNumber.value) {
-            0 -> 0f
-            in 1 .. 2 -> 0.05f
-            in 3 .. 4 -> 0.1f
-            in 5 .. 6 -> 0.15f
-            in 7 .. 8 -> 0.2f
-            in 9 .. 10 -> 0.25f
-            in 11 .. 12 -> 0.3f
-            in 13 .. 15 -> 0.35f
-            in 16 .. 18 -> 0.45f
-            in 19 .. 20 -> 0.55f
-            in 21 .. 23 -> 0.6f
-            in 24 .. 26 -> 0.65f
-            in 27 .. 29 -> 0.7f
-            else -> 1f
-        }
-    }
+//    var treeProgress = remember(acceptedRequestedNumber.value) {
+//
+//        when(acceptedRequestedNumber.value) {
+//            0 -> 0f
+//            in 1 .. 2 -> 0.05f
+//            in 3 .. 4 -> 0.1f
+//            in 5 .. 6 -> 0.15f
+//            in 7 .. 8 -> 0.2f
+//            in 9 .. 10 -> 0.25f
+//            in 11 .. 12 -> 0.3f
+//            in 13 .. 15 -> 0.35f
+//            in 16 .. 18 -> 0.45f
+//            in 19 .. 20 -> 0.55f
+//            in 21 .. 23 -> 0.6f
+//            in 24 .. 26 -> 0.65f
+//            in 27 .. 29 -> 0.7f
+//            else -> 1f
+//        }
+//    }
 
    // Spacer(modifier = Modifier.height(42.dp))
     var points by remember { mutableStateOf(0) }
@@ -132,6 +133,16 @@ fun PlantTopBar(navController:NavHostController) {
                     title = { Text(text = stringResource(R.string.my_plant),
                         color = Color.White,
                         modifier = Modifier.padding(start=10.dp))
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { navController.popBackStack() }) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = stringResource(R.string.arrowbackicon),
+                                tint = Color.White
+                            )
+                        }
                     },
                     actions = {
                         IconButton(

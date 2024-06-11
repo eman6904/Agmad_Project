@@ -3,7 +3,6 @@
     <string name="app_name">حافظ الطعام</string>
     <string name="food_size">حجم الطعام:</string>
     <string name="food_content">محتوي الطعام:</string>
-
     <string name="meat">لحمة</string>
     <string name="eggs">بيض</string>
     <string name="dairy">منتجات الألبان</string>
@@ -48,7 +47,7 @@
     <string name="location">الموقع</string>
     <string name="or_sign_up">إنشاء حساب كمنظمة</string>
     <string name="donor_sign_up">إنشاء حساب كمتبرع</string>
-    <string name="registeras">ما الحساب الذي تريد إنشاؤه </string>
+    <string name="registeras">نوع الحساب</string>
     <string name="donor">متبرع</string>
     <string name="organization">منظمة</string>
     <string name="home">الصفحة الرئيسية</string>
@@ -105,5 +104,17 @@
     <string name="accepted_requests">الطلبات المقبولة</string>
     <string name="my_level">مستوايا</string>
     <string name="no_items">لايوجد عناصر</string>
+    <string name="warningText">لا يمكنك استرجاع هذا العنصر مرة ثانيه</string>
+    <string name="cancel">إغلاق</string>
+    <string name="deletRequest">نعم, إمسح</string>
+    <string name="are_you_sure">هل أنت متاكد</string>
+    <string name="donaton_confirm">هذا التبرع سوف يتم إرساله الي المنظمة</string>
+    <string name="sendDonation">نعم ,ارسل</string>
+    <string name="sent_successfully">تم إرسال تبرعك بنجاح</string>
+    <string name="validationdata">تأكد ان بياناتك صالحة لتسجيل</string>
+    <string name="ratingbreakdown">Rating Breakdown:</string>
+    <string name="set_new_image">تغيير صورة الملف الشخصي</string>
+    <string name="unsetImage">حذف صورة الملف الشخصي</string>
+    <string name="imageDeleted">تم حذف الصورة بنجاح</string>
 
 </resources>
