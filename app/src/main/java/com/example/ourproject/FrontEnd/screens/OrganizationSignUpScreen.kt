@@ -28,8 +28,9 @@ import androidx.navigation.NavHostController
 import com.example.ourproject.BackEnd.Files.organization_signUp
 import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.R
+
 @Composable
-fun organizationSignUp(navController:NavHostController){
+fun organizationSignUp(navController: NavHostController) {
 
     val name = rememberSaveable() { mutableStateOf("") }
     val email = rememberSaveable() { mutableStateOf("") }
@@ -41,12 +42,12 @@ fun organizationSignUp(navController:NavHostController){
     var shoutDownDialogD = rememberSaveable() { mutableStateOf(false) }
     var shoutDownDialogE = rememberSaveable() { mutableStateOf(false) }
     var shoutDownDialogV = rememberSaveable() { mutableStateOf(false) }
-    var emptyPassword = rememberSaveable() { mutableStateOf(false)}
-    var emptyEmail = rememberSaveable() { mutableStateOf(false)}
-    var emptyConPassword = rememberSaveable() { mutableStateOf(false)}
-    var emptyName = rememberSaveable() { mutableStateOf(false)}
-    var emptyLocation = rememberSaveable() { mutableStateOf(false)}
-    var emptyTaxNumber = rememberSaveable() { mutableStateOf(false)}
+    var emptyPassword = rememberSaveable() { mutableStateOf(false) }
+    var emptyEmail = rememberSaveable() { mutableStateOf(false) }
+    var emptyConPassword = rememberSaveable() { mutableStateOf(false) }
+    var emptyName = rememberSaveable() { mutableStateOf(false) }
+    var emptyLocation = rememberSaveable() { mutableStateOf(false) }
+    var emptyTaxNumber = rememberSaveable() { mutableStateOf(false) }
     val modifierForEmptyField = Modifier
         .fillMaxWidth()
         .padding(start = 20.dp, end = 20.dp)
@@ -91,67 +92,85 @@ fun organizationSignUp(navController:NavHostController){
             )
         }
     }
-        Column(
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .padding(top = 40.dp)
-                .fillMaxSize()
+    Column(
+        verticalArrangement = Arrangement.SpaceEvenly,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .padding(top = 40.dp)
+            .fillMaxSize()
+    ) {
+        Text(
+            text = stringResource(R.string.or_sign_up),
+            color = colorResource(id = R.color.mainColor),
+            fontFamily = FontFamily(Font(R.font.bold)),
+            fontSize = 25.sp,
+            textDecoration = TextDecoration.Underline
+        )
+        if (emptyName.value == false || name.value.isNotEmpty())
+            nameField(name, modifierForNotEmptyField)
+        else
+            nameField(name, modifierForEmptyField)
+
+        if (emptyEmail.value == false || email.value.isNotEmpty())
+            emailField(email, modifierForNotEmptyField)
+        else
+            emailField(email, modifierForEmptyField)
+
+        if (emptyPassword.value == false || password.value.isNotEmpty())
+            passwordField(password, modifierForNotEmptyField)
+        else
+            passwordField(password, modifierForEmptyField)
+
+        if (emptyConPassword.value == false)
+            confirmPasswordField(conPassword, modifierForNotEmptyField)
+        else
+            confirmPasswordField(conPassword, modifierForEmptyField)
+
+        if (emptyTaxNumber.value == false || taxNumber.value.isNotEmpty())
+            taxNumber(taxNumber, modifierForNotEmptyField)
+        else
+            taxNumber(taxNumber, modifierForEmptyField)
+
+        if (emptyLocation.value == false || location.value.isNotEmpty())
+            location(location, modifierForNotEmptyField)
+        else
+            location(location, modifierForEmptyField)
+        buttonSignUpOr(
+            stringResource(R.string.sign_up),
+            name,
+            email,
+            password,
+            conPassword,
+            taxNumber,
+            location,
+            showProgress,
+            shoutDownDialogD,
+            shoutDownDialogE,
+            shoutDownDialogV,
+            navController,
+            emptyPassword,
+            emptyConPassword,
+            emptyName,
+            emptyTaxNumber,
+            emptyEmail,
+            emptyLocation
+        )
+        progressBar(showProgress)
+        ErrorDialog(shoutDownDialog = shoutDownDialogE)
+        signUpError(shoutDownDialog = shoutDownDialogD)
+        VerificationDialog(shoutDownDialog = shoutDownDialogV)
+        Row(
+
         ) {
-            Text(text= stringResource(R.string.or_sign_up),color= colorResource(id = R.color.mainColor),
-                fontFamily = FontFamily(Font(R.font.bold)),
-                fontSize = 25.sp,
-                textDecoration = TextDecoration.Underline
-            )
-            if(emptyName.value==false||name.value.isNotEmpty())
-                nameField(name,modifierForNotEmptyField)
-            else
-                nameField(name,modifierForEmptyField)
-
-            if(emptyEmail.value==false||email.value.isNotEmpty())
-                emailField(email,modifierForNotEmptyField)
-            else
-                emailField(email,modifierForEmptyField)
-
-            if(emptyPassword.value==false||password.value.isNotEmpty())
-                passwordField(password,modifierForNotEmptyField)
-            else
-                passwordField(password,modifierForEmptyField)
-
-            if(emptyConPassword.value==false)
-                confirmPasswordField(conPassword,modifierForNotEmptyField)
-            else
-                confirmPasswordField(conPassword,modifierForEmptyField)
-
-            if(emptyTaxNumber.value==false||taxNumber.value.isNotEmpty())
-             taxNumber(taxNumber,modifierForNotEmptyField)
-            else
-             taxNumber(taxNumber,modifierForEmptyField)
-
-            if(emptyLocation.value==false||location.value.isNotEmpty())
-                location(location,modifierForNotEmptyField)
-            else
-                location(location,modifierForEmptyField)
-            buttonSignUpOr(
-                stringResource(R.string.sign_up), name, email, password,conPassword,taxNumber,location,
-                showProgress, shoutDownDialogD, shoutDownDialogE, shoutDownDialogV, navController,emptyPassword,
-                emptyConPassword,emptyName,emptyTaxNumber,emptyEmail,emptyLocation
-            )
-            progressBar(showProgress)
-            ErrorDialog(shoutDownDialog = shoutDownDialogE)
-            signUpError(shoutDownDialog = shoutDownDialogD)
-            VerificationDialog(shoutDownDialog = shoutDownDialogV)
-            Row(
-
-            ) {
-                Text(text = stringResource(R.string.have_account))
-                ClickableText(text = AnnotatedString(stringResource(R.string.signin)),
-                    style = TextStyle(
-                        color = colorResource(id = R.color.mainColor),
-                    ), onClick = { navController.navigate(ScreensRoute.SignIn.route) })
-            }
+            Text(text = stringResource(R.string.have_account))
+            ClickableText(text = AnnotatedString(stringResource(R.string.signin)),
+                style = TextStyle(
+                    color = colorResource(id = R.color.mainColor),
+                ), onClick = { navController.navigate(ScreensRoute.SignIn.route) })
         }
+    }
 }
+
 @Composable
 fun buttonSignUpOr(
     buttonName: String,
@@ -166,12 +185,12 @@ fun buttonSignUpOr(
     showError: MutableState<Boolean>,
     showMsgV: MutableState<Boolean>,
     navController: NavHostController,
-    emptyPassword:MutableState<Boolean>,
-    emptyConPassword:MutableState<Boolean>,
-    emptyName:MutableState<Boolean>,
-    emptyTaxNumber:MutableState<Boolean>,
-    emptyEmail:MutableState<Boolean>,
-    emptyLocation:MutableState<Boolean>,
+    emptyPassword: MutableState<Boolean>,
+    emptyConPassword: MutableState<Boolean>,
+    emptyName: MutableState<Boolean>,
+    emptyTaxNumber: MutableState<Boolean>,
+    emptyEmail: MutableState<Boolean>,
+    emptyLocation: MutableState<Boolean>,
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -180,52 +199,54 @@ fun buttonSignUpOr(
 
         Button(
             onClick = {
-                if(password.value.isEmpty()){
-                    emptyPassword.value=true
+                if (password.value.isEmpty()) {
+                    emptyPassword.value = true
 
-                }
-                else
-                    emptyPassword.value=false
+                } else
+                    emptyPassword.value = false
 
-                if(conPassword.value.isEmpty()||conPassword.value!=password.value){
-                    emptyConPassword.value=true;
+                if (conPassword.value.isEmpty() || conPassword.value != password.value) {
+                    emptyConPassword.value = true;
 
-                }else{
-                    emptyConPassword.value=false
-                }
-
-                if(taxNumber.value.isEmpty()){
-                    emptyTaxNumber.value=true;
-
-                }else{
-                    emptyTaxNumber.value=false
+                } else {
+                    emptyConPassword.value = false
                 }
 
-                if(email.value.isEmpty()){
-                    emptyEmail.value=true;
+                if (taxNumber.value.isEmpty()) {
+                    emptyTaxNumber.value = true;
 
-                }else{
-                    emptyEmail.value=false
+                } else {
+                    emptyTaxNumber.value = false
                 }
 
-                if(location.value.isEmpty()){
-                    emptyLocation.value=true;
+                if (email.value.isEmpty()) {
+                    emptyEmail.value = true;
 
-                }else{
-                    emptyLocation.value=false
+                } else {
+                    emptyEmail.value = false
                 }
 
-                if(name.value.isEmpty()){
-                    emptyName.value=true;
+                if (location.value.isEmpty()) {
+                    emptyLocation.value = true;
 
-                }else{
-                    emptyName.value=false
+                } else {
+                    emptyLocation.value = false
                 }
-                if(name.value.isNotEmpty()&&email.value.isNotEmpty()&&password.value.isNotEmpty()
-                    &&conPassword.value.isNotEmpty()&&taxNumber.value.isNotEmpty()&&location.value.isNotEmpty()&&conPassword.value==password.value){
+
+                if (name.value.isEmpty()) {
+                    emptyName.value = true;
+
+                } else {
+                    emptyName.value = false
+                }
+                if (name.value.isNotEmpty() && email.value.isNotEmpty() && password.value.isNotEmpty()
+                    && conPassword.value.isNotEmpty() && taxNumber.value.isNotEmpty() && location.value.isNotEmpty() && conPassword.value == password.value
+                ) {
                     shoutDownProgress.value = true
-                    organization_signUp(name,email,password,taxNumber,location,
-                        shoutDownProgress,showMsgD,showError,showMsgV,navController)
+                    organization_signUp(
+                        name, email, password, taxNumber, location,
+                        shoutDownProgress, showMsgD, showError, showMsgV, navController
+                    )
                 }
             },
             modifier = Modifier
@@ -241,8 +262,9 @@ fun buttonSignUpOr(
         }
     }
 }
+
 @Composable
-fun taxNumber(name: MutableState<String>,modifier: Modifier) {
+fun taxNumber(name: MutableState<String>, modifier: Modifier) {
 
     Card(
         modifier = modifier,
@@ -266,8 +288,9 @@ fun taxNumber(name: MutableState<String>,modifier: Modifier) {
         )
     }
 }
+
 @Composable
-fun location(location: MutableState<String>,modifier: Modifier) {
+fun location(location: MutableState<String>, modifier: Modifier) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp),

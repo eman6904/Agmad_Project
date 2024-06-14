@@ -167,8 +167,9 @@ private fun verifyEmailAddress(
         showMsgV.value = true
     }
 }
+
 @Composable
-fun uploadImage(imagesLocalUri: MutableList<Uri?>,imagesId:MutableState<List<String>>) {
+fun uploadImage(imagesLocalUri: MutableList<Uri?>, imagesId: MutableState<List<String>>) {
 
     var storage: StorageReference? = null
     storage = FirebaseStorage.getInstance().reference
@@ -180,75 +181,92 @@ fun uploadImage(imagesLocalUri: MutableList<Uri?>,imagesId:MutableState<List<Str
         val imagesIdList = mutableListOf<String>()
         for (image in imagesLocalUri) {
 
-            var imagePath=UUID.randomUUID().toString()
+            var imagePath = UUID.randomUUID().toString()
             imagesIdList.add(imagePath)
 
-            storage?.child(currentUserId+"/"+imagePath)?.putFile(image!!)
+            storage?.child(currentUserId + "/" + imagePath)?.putFile(image!!)
                 ?.addOnSuccessListener {
                     //  Toast.makeText(requireContext(),"Uploaded",Toast.LENGTH_LONG).show()
 
                 }?.addOnFailureListener() {
-                    Log.d("message",it.message.toString())
-            }
+                    Log.d("message", it.message.toString())
+                }
 
         }
-        imagesId.value=imagesIdList
+        imagesId.value = imagesIdList
 
     }
 }
 
 fun sendRequest(
-     organizationName:String,
-     foodState:String ,
-     location:String,
-     foodContent:MutableState<String>,
-     mealNumber:MutableState<String>,
-     comment:MutableState<String>,
-     imagesList:List<String>,
-     context: Context
-){
+    organizationName: String,
+    foodState: String,
+    location: String,
+    foodContent: MutableState<String>,
+    mealNumber: MutableState<String>,
+    comment: MutableState<String>,
+    imagesList: List<String>,
+    context: Context
+) {
 
     val sdf = SimpleDateFormat("dd-MM-yyyy'   'HH:mm")
-    var calendar=Calendar.getInstance()
-    var currentTime= if(calendar.get(Calendar.AM_PM) == Calendar.AM)
+    var calendar = Calendar.getInstance()
+    var currentTime = if (calendar.get(Calendar.AM_PM) == Calendar.AM)
         context.getString(R.string.am)
     else
         context.getString(R.string.pm)
-    var date_time=sdf.format(Date())+" $currentTime"
+    var date_time = sdf.format(Date()) + " $currentTime"
     var donorObj = FirebaseDatabase.getInstance().getReference("Donors")
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
 
-    donorObj?.child(currentUserId)?.addValueEventListener(object:ValueEventListener{
+    donorObj?.child(currentUserId)?.addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
 
-            val donor=snapshot.getValue(DonorItems::class.java)
-            if(donor!=null){
+            val donor = snapshot.getValue(DonorItems::class.java)
+            if (donor != null) {
                 var requestObj = FirebaseDatabase.getInstance().getReference("Requests")
 
-                var id=requestObj.push().key
-                var request=RequestItems(currentUserId,id.toString(),donor!!.name,donor.phone,organizationName,foodState,
-                    location,foodContent.value,mealNumber.value,comment.value,"",date_time,"","",imagesList)
+                var id = requestObj.push().key
+                var request = RequestItems(
+                    currentUserId,
+                    id.toString(),
+                    donor!!.name,
+                    donor.phone,
+                    organizationName,
+                    foodState,
+                    location,
+                    foodContent.value,
+                    mealNumber.value,
+                    comment.value,
+                    "",
+                    date_time,
+                    "",
+                    "",
+                    imagesList
+                )
                 requestObj.child(id.toString()).setValue(request)
             }
         }
+
         override fun onCancelled(error: DatabaseError) {
 
         }
 
     })
 }
+
 @Composable
-fun getImages(imagesId:List<String>,DonorId:String):List<String>{
+fun getImages(imagesId: List<String>, DonorId: String): List<String> {
 
     var imageUris by remember { mutableStateOf(emptyList<String>()) }
 
     LaunchedEffect(true) {
-        val storageRef = FirebaseStorage.getInstance().reference.child(DonorId+"/")
+        val storageRef = FirebaseStorage.getInstance().reference.child(DonorId + "/")
         val images = mutableListOf<String>()
         storageRef.listAll().await().items.forEach { imageRef ->
 
 
-            if(imagesId.contains(imageRef.name)) {
+            if (imagesId.contains(imageRef.name)) {
                 val uri = imageRef.downloadUrl.await().toString()
                 images.add(uri)
             }
@@ -258,8 +276,9 @@ fun getImages(imagesId:List<String>,DonorId:String):List<String>{
 
     return imageUris
 }
+
 @Composable
-fun getOrganizations():List<String> {
+fun getOrganizations(): List<String> {
 
     var imageUris by remember { mutableStateOf(emptyList<String>()) }
 
@@ -280,23 +299,25 @@ fun getOrganizations():List<String> {
 
         override fun onCancelled(error: DatabaseError) {
             TODO("Not yet implemented")
-        } })
+        }
+    })
     return imageUris
 }
+
 @Composable
-fun getRequests():List<RequestItems>{
+fun getRequests(): List<RequestItems> {
 
     var requestList1 by remember { mutableStateOf(emptyList<RequestItems>()) }
-    var orName= rememberSaveable() { mutableStateOf("")}
+    var orName = rememberSaveable() { mutableStateOf("") }
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
 
     var organizationObj = FirebaseDatabase.getInstance().getReference("Organizations")
-    organizationObj.child(currentUserId).addValueEventListener(object :ValueEventListener{
+    organizationObj.child(currentUserId).addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
 
-               val organizationData=snapshot.getValue(OrganizationItems::class.java)
-               if(organizationData!=null)
-                   orName.value=organizationData!!.name
+            val organizationData = snapshot.getValue(OrganizationItems::class.java)
+            if (organizationData != null)
+                orName.value = organizationData!!.name
 
         }
 
@@ -306,64 +327,18 @@ fun getRequests():List<RequestItems>{
 
     })
 
-    var requestObj=FirebaseDatabase.getInstance().getReference("Requests")
-    requestObj.addValueEventListener(object :ValueEventListener{
+    var requestObj = FirebaseDatabase.getInstance().getReference("Requests")
+    requestObj.addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
 
             val requestList2 = mutableListOf<RequestItems>()
-            for(request in snapshot.children){
+            for (request in snapshot.children) {
 
-                var requestData=request.getValue(RequestItems::class.java)
-                if(requestData?.organizationName==orName.value&&requestData?.status=="")
-                 requestList2.add(requestData!!)
-            }
-            requestList1=requestList2
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-            TODO("Not yet implemented")
-        }
-
-    })
-    return requestList1
-}
-@Composable
-fun getRejectedRequested():List<RequestItems>{
-
-
-
-    var requestList1 by remember { mutableStateOf(emptyList<RequestItems>()) }
-    var orName= rememberSaveable() { mutableStateOf("")}
-    var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
-
-    var organizationObj = FirebaseDatabase.getInstance().getReference("Organizations")
-    organizationObj.child(currentUserId).addValueEventListener(object :ValueEventListener{
-        override fun onDataChange(snapshot: DataSnapshot) {
-
-            val organizationData=snapshot.getValue(OrganizationItems::class.java)
-            if(organizationData!=null)
-                orName.value=organizationData!!.name
-
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-            TODO("Not yet implemented")
-        }
-
-    })
-
-    var requestObj=FirebaseDatabase.getInstance().getReference("Requests")
-    requestObj.addValueEventListener(object :ValueEventListener{
-        override fun onDataChange(snapshot: DataSnapshot) {
-
-            val requestList2 = mutableListOf<RequestItems>()
-            for(request in snapshot.children){
-
-                var requestData=request.getValue(RequestItems::class.java)
-                if(requestData?.organizationName==orName.value&&(requestData?.status=="Rejected"||requestData?.status=="مرفوض"))
+                var requestData = request.getValue(RequestItems::class.java)
+                if (requestData?.organizationName == orName.value && requestData?.status == "")
                     requestList2.add(requestData!!)
             }
-            requestList1=requestList2
+            requestList1 = requestList2
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -373,22 +348,22 @@ fun getRejectedRequested():List<RequestItems>{
     })
     return requestList1
 }
-@Composable
-fun getAcceptedRequested():List<RequestItems>{
 
+@Composable
+fun getRejectedRequested(): List<RequestItems> {
 
 
     var requestList1 by remember { mutableStateOf(emptyList<RequestItems>()) }
-    var orName= rememberSaveable() { mutableStateOf("")}
+    var orName = rememberSaveable() { mutableStateOf("") }
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
 
     var organizationObj = FirebaseDatabase.getInstance().getReference("Organizations")
-    organizationObj.child(currentUserId).addValueEventListener(object :ValueEventListener{
+    organizationObj.child(currentUserId).addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
 
-            val organizationData=snapshot.getValue(OrganizationItems::class.java)
-            if(organizationData!=null)
-                orName.value=organizationData!!.name
+            val organizationData = snapshot.getValue(OrganizationItems::class.java)
+            if (organizationData != null)
+                orName.value = organizationData!!.name
 
         }
 
@@ -398,18 +373,18 @@ fun getAcceptedRequested():List<RequestItems>{
 
     })
 
-    var requestObj=FirebaseDatabase.getInstance().getReference("Requests")
-    requestObj.addValueEventListener(object :ValueEventListener{
+    var requestObj = FirebaseDatabase.getInstance().getReference("Requests")
+    requestObj.addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
 
             val requestList2 = mutableListOf<RequestItems>()
-            for(request in snapshot.children){
+            for (request in snapshot.children) {
 
-                var requestData=request.getValue(RequestItems::class.java)
-                if(requestData?.organizationName==orName.value&&(requestData?.status=="Accepted"||requestData?.status=="مقبول"))
+                var requestData = request.getValue(RequestItems::class.java)
+                if (requestData?.organizationName == orName.value && (requestData?.status == "Rejected" || requestData?.status == "مرفوض"))
                     requestList2.add(requestData!!)
             }
-            requestList1=requestList2
+            requestList1 = requestList2
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -419,22 +394,74 @@ fun getAcceptedRequested():List<RequestItems>{
     })
     return requestList1
 }
-fun updateRequest(status:String, requestId:String, organizationResponse:String,context:Context){
+
+@Composable
+fun getAcceptedRequested(): List<RequestItems> {
+
+
+    var requestList1 by remember { mutableStateOf(emptyList<RequestItems>()) }
+    var orName = rememberSaveable() { mutableStateOf("") }
+    var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
+
+    var organizationObj = FirebaseDatabase.getInstance().getReference("Organizations")
+    organizationObj.child(currentUserId).addValueEventListener(object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+
+            val organizationData = snapshot.getValue(OrganizationItems::class.java)
+            if (organizationData != null)
+                orName.value = organizationData!!.name
+
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            TODO("Not yet implemented")
+        }
+
+    })
+
+    var requestObj = FirebaseDatabase.getInstance().getReference("Requests")
+    requestObj.addValueEventListener(object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+
+            val requestList2 = mutableListOf<RequestItems>()
+            for (request in snapshot.children) {
+
+                var requestData = request.getValue(RequestItems::class.java)
+                if (requestData?.organizationName == orName.value && (requestData?.status == "Accepted" || requestData?.status == "مقبول"))
+                    requestList2.add(requestData!!)
+            }
+            requestList1 = requestList2
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            TODO("Not yet implemented")
+        }
+
+    })
+    return requestList1
+}
+
+fun updateRequest(
+    status: String,
+    requestId: String,
+    organizationResponse: String,
+    context: Context
+) {
 
     val sdf = SimpleDateFormat("dd-MM-yyyy'    'HH:mm")
-    var calendar=Calendar.getInstance()
+    var calendar = Calendar.getInstance()
 
-    var currentTime= if(calendar.get(Calendar.AM_PM) == Calendar.AM)
+    var currentTime = if (calendar.get(Calendar.AM_PM) == Calendar.AM)
         context.getString(R.string.am)
     else
         context.getString(R.string.pm)
-    var date_time=sdf.format(Date())+" $currentTime"
+    var date_time = sdf.format(Date()) + " $currentTime"
 
     var requestObj = FirebaseDatabase.getInstance().getReference("Requests").child(requestId)
     val hashMap: HashMap<String, Any> = HashMap()
-    hashMap.put("status",status)
-    hashMap.put("date_timeOfResponse",date_time)
-    hashMap.put("organizationResponse",organizationResponse)
+    hashMap.put("status", status)
+    hashMap.put("date_timeOfResponse", date_time)
+    hashMap.put("organizationResponse", organizationResponse)
     requestObj?.updateChildren(hashMap as Map<String, Any>)?.addOnSuccessListener {
 
     }?.addOnFailureListener {
@@ -442,34 +469,7 @@ fun updateRequest(status:String, requestId:String, organizationResponse:String,c
     }
 }
 
-fun selectHome(navController:NavHostController){
-
-        var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
-        var organizationObj = FirebaseDatabase.getInstance().getReference("Organizations")
-        var Auth = FirebaseAuth.getInstance()
-
-        if (Auth?.currentUser!!.isEmailVerified) {
-            organizationObj.child(currentUserId).addValueEventListener(object :
-                ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-
-                    val organizationData=snapshot.getValue(OrganizationItems::class.java)
-
-                    if(organizationData!=null)
-                        navController.navigate(BottomBarScreen.OrganizationHome.route)
-                    else
-                        navController.navigate(ScreensRoute.DonorHome.route)
-
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
-                }
-
-            })
-        }
-}
-fun selectHistory(navController:NavHostController){
+fun selectHome(navController: NavHostController) {
 
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
     var organizationObj = FirebaseDatabase.getInstance().getReference("Organizations")
@@ -480,9 +480,37 @@ fun selectHistory(navController:NavHostController){
             ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
-                val organizationData=snapshot.getValue(OrganizationItems::class.java)
+                val organizationData = snapshot.getValue(OrganizationItems::class.java)
 
-                if(organizationData!=null)
+                if (organizationData != null)
+                    navController.navigate(BottomBarScreen.OrganizationHome.route)
+                else
+                    navController.navigate(ScreensRoute.DonorHome.route)
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+    }
+}
+
+fun selectHistory(navController: NavHostController) {
+
+    var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
+    var organizationObj = FirebaseDatabase.getInstance().getReference("Organizations")
+    var Auth = FirebaseAuth.getInstance()
+
+    if (Auth?.currentUser!!.isEmailVerified) {
+        organizationObj.child(currentUserId).addValueEventListener(object :
+            ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                val organizationData = snapshot.getValue(OrganizationItems::class.java)
+
+                if (organizationData != null)
                     navController.navigate(ScreensRoute.OrganizationHistory.route)
                 else
                     navController.navigate(BottomBarScreen.DonorHistory.route)
@@ -496,20 +524,21 @@ fun selectHistory(navController:NavHostController){
         })
     }
 }
+
 @Composable
-fun myRequests(typeInArabic:String,typeInEnglish:String):List<RequestItems>{
+fun myRequests(typeInArabic: String, typeInEnglish: String): List<RequestItems> {
 
     var requestList1 by remember { mutableStateOf(emptyList<RequestItems>()) }
-    var donorPhone= rememberSaveable() { mutableStateOf("")}
+    var donorPhone = rememberSaveable() { mutableStateOf("") }
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
 
     var donorObj = FirebaseDatabase.getInstance().getReference("Donors")
-    donorObj.child(currentUserId).addValueEventListener(object :ValueEventListener{
+    donorObj.child(currentUserId).addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
 
-            val donorData=snapshot.getValue(DonorItems::class.java)
-            if(donorData!=null)
-                donorPhone.value=donorData!!.phone
+            val donorData = snapshot.getValue(DonorItems::class.java)
+            if (donorData != null)
+                donorPhone.value = donorData!!.phone
 
         }
 
@@ -519,19 +548,20 @@ fun myRequests(typeInArabic:String,typeInEnglish:String):List<RequestItems>{
 
     })
 
-    var requestObj=FirebaseDatabase.getInstance().getReference("Requests")
-    requestObj.addValueEventListener(object :ValueEventListener{
+    var requestObj = FirebaseDatabase.getInstance().getReference("Requests")
+    requestObj.addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
 
             val requestList2 = mutableListOf<RequestItems>()
-            for(request in snapshot.children){
+            for (request in snapshot.children) {
 
-                var requestData=request.getValue(RequestItems::class.java)
-                if(requestData?.donorPhone==donorPhone.value&&
-                    (requestData?.status==typeInArabic||requestData?.status==typeInEnglish))
+                var requestData = request.getValue(RequestItems::class.java)
+                if (requestData?.donorPhone == donorPhone.value &&
+                    (requestData?.status == typeInArabic || requestData?.status == typeInEnglish)
+                )
                     requestList2.add(requestData!!)
             }
-            requestList1=requestList2
+            requestList1 = requestList2
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -541,20 +571,22 @@ fun myRequests(typeInArabic:String,typeInEnglish:String):List<RequestItems>{
     })
     return requestList1
 }
-@Composable
-fun getDonorData():DonorItems{
 
-    var donor by remember{
-        mutableStateOf(DonorItems("","","","","",""))}
+@Composable
+fun getDonorData(): DonorItems {
+
+    var donor by remember {
+        mutableStateOf(DonorItems("", "", "", "", "", ""))
+    }
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
 
     var donorObj = FirebaseDatabase.getInstance().getReference("Donors")
-    donorObj.child(currentUserId).addValueEventListener(object :ValueEventListener{
+    donorObj.child(currentUserId).addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
 
-            val donorData=snapshot.getValue(DonorItems::class.java)
-            if(donorData!=null)
-                donor=donorData
+            val donorData = snapshot.getValue(DonorItems::class.java)
+            if (donorData != null)
+                donor = donorData
 
         }
 
@@ -566,20 +598,22 @@ fun getDonorData():DonorItems{
 
     return donor
 }
-@Composable
-fun getOrganizationData():OrganizationItems{
 
-    var organization by remember{
-        mutableStateOf(OrganizationItems("","","","",""))}
+@Composable
+fun getOrganizationData(): OrganizationItems {
+
+    var organization by remember {
+        mutableStateOf(OrganizationItems("", "", "", "", ""))
+    }
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
 
     var organizationObj = FirebaseDatabase.getInstance().getReference("Organizations")
-    organizationObj.child(currentUserId).addValueEventListener(object :ValueEventListener{
+    organizationObj.child(currentUserId).addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
 
-            val organizationData=snapshot.getValue(OrganizationItems::class.java)
-            if(organizationData!=null)
-                organization=organizationData
+            val organizationData = snapshot.getValue(OrganizationItems::class.java)
+            if (organizationData != null)
+                organization = organizationData
 
         }
 
@@ -591,15 +625,16 @@ fun getOrganizationData():OrganizationItems{
 
     return organization
 }
+
 @Composable
-fun deleteImages(){
+fun deleteImages() {
 
 
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
 
 
     LaunchedEffect(true) {
-        val storageRef = FirebaseStorage.getInstance().reference.child(currentUserId+"/")
+        val storageRef = FirebaseStorage.getInstance().reference.child(currentUserId + "/")
         storageRef.listAll().await().items.forEach { imageRef ->
             val uri = imageRef.downloadUrl.await().toString()
             val photoRef: StorageReference = FirebaseStorage.getInstance().getReferenceFromUrl(uri)
@@ -613,19 +648,21 @@ fun deleteImages(){
     }
 
 }
-fun selectLevel(donationNumber:Int):LevelItems{
 
-    val listsGroup=ListsGroup()
+fun selectLevel(donationNumber: Int): LevelItems {
+
+    val listsGroup = ListsGroup()
     listsGroup.setLevels()
-    when(donationNumber){
-       in 0..49->return listsGroup.levels[0]
-       in 50..199->return listsGroup.levels[1]
-       in 200..499->return listsGroup.levels[2]
-       in 500..999->return listsGroup.levels[3]
-       in 1000..1499->return listsGroup.levels[4]
+    when (donationNumber) {
+        in 0..49 -> return listsGroup.levels[0]
+        in 50..199 -> return listsGroup.levels[1]
+        in 200..499 -> return listsGroup.levels[2]
+        in 500..999 -> return listsGroup.levels[3]
+        in 1000..1499 -> return listsGroup.levels[4]
     }
     return listsGroup.levels[5]
 }
+
 fun Context.createImageFile(): File {
     // Create an image file name
     val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
@@ -637,8 +674,9 @@ fun Context.createImageFile(): File {
     )
     return image
 }
+
 @Composable
-fun updateProfileImage(imageLocalUri: MutableState<Uri?>,selectedUser:String) {
+fun updateProfileImage(imageLocalUri: MutableState<Uri?>, selectedUser: String) {
 
     var storage: StorageReference? = null
     storage = FirebaseStorage.getInstance().reference
@@ -653,9 +691,10 @@ fun updateProfileImage(imageLocalUri: MutableState<Uri?>,selectedUser:String) {
             ?.addOnSuccessListener { taskSnapshot ->
                 taskSnapshot.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri ->
                     profileImageUri.value = uri.toString()
-                    var obj = FirebaseDatabase.getInstance().getReference(selectedUser).child(currentUserId)
+                    var obj = FirebaseDatabase.getInstance().getReference(selectedUser)
+                        .child(currentUserId)
                     val hashMap: HashMap<String, Any> = HashMap()
-                    hashMap.put("profileImage",profileImageUri.value)
+                    hashMap.put("profileImage", profileImageUri.value)
                     obj?.updateChildren(hashMap as Map<String, Any>)?.addOnSuccessListener {
 
                     }?.addOnFailureListener {

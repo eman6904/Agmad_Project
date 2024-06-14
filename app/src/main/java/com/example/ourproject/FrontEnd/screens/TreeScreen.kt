@@ -33,9 +33,9 @@ import com.example.ourproject.R
 @Composable
 fun TreeAnimation(navController: NavHostController) {
     val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.tree_with_flowers))
-    val acceptedRequestedNumber= rememberSaveable{ mutableStateOf(0) }
-    val accList= myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
-    acceptedRequestedNumber.value=accList.size
+    val acceptedRequestedNumber = rememberSaveable { mutableStateOf(0) }
+    val accList = myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
+    acceptedRequestedNumber.value = accList.size
 //    var treeProgress = remember(acceptedRequestedNumber.value) {
 //
 //        when(acceptedRequestedNumber.value) {
@@ -56,7 +56,7 @@ fun TreeAnimation(navController: NavHostController) {
 //        }
 //    }
 
-   // Spacer(modifier = Modifier.height(42.dp))
+    // Spacer(modifier = Modifier.height(42.dp))
     var points by remember { mutableStateOf(0) }
     var isPlaying by remember { mutableStateOf(false) }
     val progress by animateLottieCompositionAsState(
@@ -67,52 +67,55 @@ fun TreeAnimation(navController: NavHostController) {
         speed = 1.0f,
         clipSpec = LottieClipSpec.Progress(0f, points / 100f)
     )
-    while(points!=acceptedRequestedNumber.value*5){
+    while (points != acceptedRequestedNumber.value) {
         points += 5
         if (points > 100) points = 100
         isPlaying = false // Stop the animation if it's playing
         isPlaying = true
-        Log.d("nnnnn",points.toString())
+        // Log.d("points",points.toString())
     }
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         PlantTopBar(navController)
-       Box(
-           contentAlignment = Alignment.BottomCenter,
-           modifier = Modifier.fillMaxSize()
-       ){
-           LottieAnimation(
-               modifier = Modifier.size(400.dp).padding(bottom=100.dp),
-               composition = composition,
-               progress = progress
-           )
-       }
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            LottieAnimation(
+                modifier = Modifier
+                    .size(500.dp)
+                    .padding(bottom = 190.dp),
+                composition = composition,
+                progress = progress
+            )
+        }
     }
 }
 
 @Composable
-fun PlantTopBar(navController:NavHostController) {
+fun PlantTopBar(navController: NavHostController) {
 
     var showMenu = rememberSaveable { mutableStateOf(false) }
     var selectLanguage = rememberSaveable { mutableStateOf(false) }
     var language = rememberSaveable { mutableStateOf("") }
 
-    if(selectLanguage.value==true){
+    if (selectLanguage.value == true) {
 
-        languageDialog(selectLanguage,language)
-        if(language.value.isNotEmpty())
-            MainActivity.sharedPreferences.edit().putString(MainActivity.SELECTED_LANGUAGE, language.value).apply()
+        languageDialog(selectLanguage, language)
+        if (language.value.isNotEmpty())
+            MainActivity.sharedPreferences.edit()
+                .putString(MainActivity.SELECTED_LANGUAGE, language.value).apply()
         //and look at main activity
     }
     // Load the saved language and apply it
 
-    if(language.value.isNotEmpty()){
+    if (language.value.isNotEmpty()) {
 
         setLocale1(lang = language.value)
     }
 
-    menuItems2(showMenu,selectLanguage,navController)
+    menuItems2(showMenu, selectLanguage, navController)
     Card(
         modifier = Modifier
             .background(color = Color.White)
@@ -130,9 +133,12 @@ fun PlantTopBar(navController:NavHostController) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = stringResource(R.string.my_plant),
-                        color = Color.White,
-                        modifier = Modifier.padding(start=10.dp))
+                    title = {
+                        Text(
+                            text = stringResource(R.string.my_plant),
+                            color = Color.White,
+                            modifier = Modifier.padding(start = 10.dp)
+                        )
                     },
                     navigationIcon = {
                         IconButton(
@@ -147,7 +153,7 @@ fun PlantTopBar(navController:NavHostController) {
                     actions = {
                         IconButton(
                             onClick = {
-                                showMenu.value=!showMenu.value
+                                showMenu.value = !showMenu.value
                             }
                         ) {
                             Icon(

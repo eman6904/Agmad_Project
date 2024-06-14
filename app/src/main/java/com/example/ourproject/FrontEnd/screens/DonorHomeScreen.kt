@@ -42,36 +42,38 @@ import kotlin.collections.ArrayList
 
 
 @Composable
-fun donorHome(navController: NavHostController){
+fun donorHome(navController: NavHostController) {
 
 
-    val context=LocalContext.current
+    val context = LocalContext.current
 
     Column {
 
-        val acceptedRequestedNumber= rememberSaveable{ mutableStateOf(0)}
-        val rejectedRequestedNumber= rememberSaveable{ mutableStateOf(0)}
+        val acceptedRequestedNumber = rememberSaveable { mutableStateOf(0) }
+        val rejectedRequestedNumber = rememberSaveable { mutableStateOf(0) }
 
-        val accList= myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
-        val rejList= myRequests(typeInArabic = "مرفوض", typeInEnglish = "Rejected")
+        val accList = myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
+        val rejList = myRequests(typeInArabic = "مرفوض", typeInEnglish = "Rejected")
 
-        acceptedRequestedNumber.value=accList.size
-        rejectedRequestedNumber.value=rejList.size
+        acceptedRequestedNumber.value = accList.size
+        rejectedRequestedNumber.value = rejList.size
 
-        doHomeTopBar(acceptedRequestedNumber,rejectedRequestedNumber,navController,context)
+        doHomeTopBar(acceptedRequestedNumber, rejectedRequestedNumber, navController, context)
         Column(
-            modifier = Modifier.fillMaxSize().padding(bottom=40.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 40.dp)
         ) {
 
-           val listGroup=ListsGroup()
+            val listGroup = ListsGroup()
             listGroup.setChannels()
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
 
             ) {
-                itemsIndexed(items = listGroup.channels){ index,channel->
-                    donorHomeContent(channel,listGroup.channels,index)
+                itemsIndexed(items = listGroup.channels) { index, channel ->
+                    donorHomeContent(channel, listGroup.channels, index)
                     Spacer(modifier = Modifier.width(10.dp))
                 }
             }
@@ -84,33 +86,36 @@ fun donorHome(navController: NavHostController){
         (context as? Activity)?.finish()
     }
 }
-@Composable
-fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNumber: MutableState<Int>,
-                 navController: NavHostController,_context: Context) {
 
-    val accepted_requests=stringResource(id = R.string.acceptedRequests)
-    val rejected_requests=stringResource(id = R.string.rejectedRequests)
+@Composable
+fun doHomeTopBar(
+    acceptedRequestedNumber: MutableState<Int>, rejectedRequestedNumber: MutableState<Int>,
+    navController: NavHostController, _context: Context
+) {
+
+    val accepted_requests = stringResource(id = R.string.acceptedRequests)
+    val rejected_requests = stringResource(id = R.string.rejectedRequests)
     var showNotificationForAcc = rememberSaveable { mutableStateOf(false) }
     var showNotificationForRej = rememberSaveable { mutableStateOf(false) }
     var showMenu = rememberSaveable { mutableStateOf(false) }
     var selectLanguage = rememberSaveable { mutableStateOf(false) }
     var language = rememberSaveable { mutableStateOf("") }
 
-    if(selectLanguage.value==true){
+    if (selectLanguage.value == true) {
 
-        languageDialog(selectLanguage,language)
-        if(language.value.isNotEmpty())
+        languageDialog(selectLanguage, language)
+        if (language.value.isNotEmpty())
             sharedPreferences.edit().putString(SELECTED_LANGUAGE, language.value).apply()
         //and look at main activity
     }
     // Load the saved language and apply it
 
-    if(language.value.isNotEmpty()){
+    if (language.value.isNotEmpty()) {
 
         setLocale1(lang = language.value)
     }
 
-    menuItems2(showMenu,selectLanguage,navController)
+    menuItems2(showMenu, selectLanguage, navController)
 
     showNotificationForAcc.value = (acceptedRequestedNumber.value > 0)
     showNotificationForRej.value = (rejectedRequestedNumber.value > 0)
@@ -131,26 +136,30 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = stringResource(R.string.home),
-                        color = Color.White,
-                        modifier = Modifier.padding(start=10.dp))
+                    title = {
+                        Text(
+                            text = stringResource(R.string.home),
+                            color = Color.White,
+                            modifier = Modifier.padding(start = 10.dp)
+                        )
                     },
                     actions = {
                         IconButton(onClick = {
                             rejectedRequestedNumber.value = 0
-                            navController.navigate(ScreensRoute.Response.route+"/$rejected_requests")
+                            navController.navigate(ScreensRoute.Response.route + "/$rejected_requests")
                         }) {
                             BadgedBox(badge = {
                                 if (showNotificationForRej.value) {
                                     Badge(
                                         backgroundColor = Color.Red
-                                    ){
+                                    ) {
                                         Text(
                                             text = rejectedRequestedNumber.value.toString(),
                                             color = Color.White
                                         )
                                     }
-                                }}
+                                }
+                            }
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Notifications,
@@ -161,13 +170,13 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
                         }
                         IconButton(onClick = {
                             acceptedRequestedNumber.value = 0
-                            navController.navigate(ScreensRoute.Response.route+"/$accepted_requests")
+                            navController.navigate(ScreensRoute.Response.route + "/$accepted_requests")
                         }) {
                             BadgedBox(badge = {
-                                if(showNotificationForAcc.value){
+                                if (showNotificationForAcc.value) {
                                     Badge(
                                         backgroundColor = Color.Green
-                                    ){
+                                    ) {
                                         Text(
                                             text = acceptedRequestedNumber.value.toString(),
                                             color = Color.White
@@ -185,7 +194,7 @@ fun doHomeTopBar(acceptedRequestedNumber: MutableState<Int>,rejectedRequestedNum
 
                         IconButton(
                             onClick = {
-                                showMenu.value=!showMenu.value
+                                showMenu.value = !showMenu.value
                             }
                         ) {
                             Icon(
@@ -222,12 +231,13 @@ fun setLocale1(lang: String?) {
     }
     context.resources.updateConfiguration(config, context.resources.displayMetrics)
 
-    val refreshIntent = Intent(context,MainActivity::class.java)
+    val refreshIntent = Intent(context, MainActivity::class.java)
     refreshIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
     context.startActivity(refreshIntent)
 }
+
 @Composable
-fun languageDialog(shoutDownDialog: MutableState<Boolean>,selectedLan:MutableState<String>) {
+fun languageDialog(shoutDownDialog: MutableState<Boolean>, selectedLan: MutableState<String>) {
 
     val scrollState = rememberScrollState()
     if (shoutDownDialog.value) {
@@ -255,66 +265,72 @@ fun languageDialog(shoutDownDialog: MutableState<Boolean>,selectedLan:MutableSta
         }
     }
 }
+
 @Composable
-fun menuItems2(showMenu:MutableState<Boolean>,selectLan:MutableState<Boolean>,navController: NavHostController) {
+fun menuItems2(
+    showMenu: MutableState<Boolean>,
+    selectLan: MutableState<Boolean>,
+    navController: NavHostController
+) {
 
     val context = LocalContext.current
 
     if (showMenu.value) {
-       Box(){
-           DropdownMenu(
-               expanded = showMenu.value,
-               onDismissRequest = { showMenu.value = false },
-               offset = DpOffset(x = (160).dp, y = (5).dp)
-           )
-           {
-               DropdownMenuItem(
-                   onClick = {
-                       selectLan.value=true
-                       showMenu.value=false
-                   }
-               ) {
-                   Row() {
-                       Icon(
-                           imageVector = Icons.Default.Language,
-                           contentDescription = null,
-                           tint = Color.Gray
-                       )
-                       Text(
-                           text = stringResource(R.string.language),
-                           modifier = Modifier.padding(start = 4.dp)
-                       )
-                   }
-               }
-               DropdownMenuItem(
-                   onClick = {
-                       FirebaseAuth.getInstance().signOut()
-                       (context as? Activity)?.finishAffinity()
-                       showMenu.value=false
-                   }
-               ) {
-                   Row() {
-                       Icon(
-                           imageVector = Icons.Default.Logout,
-                           contentDescription = null,
-                           tint = Color.Gray
-                       )
-                       Text(
-                           text = stringResource(R.string.logout),
-                           modifier = Modifier.padding(start = 4.dp)
-                       )
-                   }
-               }
-           }
-       }
+        Box() {
+            DropdownMenu(
+                expanded = showMenu.value,
+                onDismissRequest = { showMenu.value = false },
+                offset = DpOffset(x = (160).dp, y = (5).dp)
+            )
+            {
+                DropdownMenuItem(
+                    onClick = {
+                        selectLan.value = true
+                        showMenu.value = false
+                    }
+                ) {
+                    Row() {
+                        Icon(
+                            imageVector = Icons.Default.Language,
+                            contentDescription = null,
+                            tint = Color.Gray
+                        )
+                        Text(
+                            text = stringResource(R.string.language),
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }
+                }
+                DropdownMenuItem(
+                    onClick = {
+                        FirebaseAuth.getInstance().signOut()
+                        (context as? Activity)?.finishAffinity()
+                        showMenu.value = false
+                    }
+                ) {
+                    Row() {
+                        Icon(
+                            imageVector = Icons.Default.Logout,
+                            contentDescription = null,
+                            tint = Color.Gray
+                        )
+                        Text(
+                            text = stringResource(R.string.logout),
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }
+                }
+            }
+        }
     }
 }
+
 @Composable
-fun donorHomeContent(pair:Pair<String,Int>,list:ArrayList<Pair<String,Int>>,index:Int){
+fun donorHomeContent(pair: Pair<String, Int>, list: ArrayList<Pair<String, Int>>, index: Int) {
 
     val localUriHandler = LocalUriHandler.current
     Card(
-        shape=RoundedCornerShape(20.dp,20.dp,20.dp,20.dp),
+        shape = RoundedCornerShape(20.dp, 20.dp, 20.dp, 20.dp),
         modifier = Modifier
             .fillMaxWidth()
             .height(250.dp)
@@ -323,17 +339,17 @@ fun donorHomeContent(pair:Pair<String,Int>,list:ArrayList<Pair<String,Int>>,inde
                 localUriHandler.openUri(pair.first)
             },
         elevation = 10.dp
-    ){
+    ) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
-        ){
+        ) {
             Image(
                 painterResource(pair.second),
                 modifier = Modifier.fillMaxSize(),
                 contentDescription = "",
             )
-            if(index!=list.size-1) {
+            if (index != list.size - 1) {
                 Image(
                     painterResource(R.drawable.play),
                     modifier = Modifier.size(40.dp),

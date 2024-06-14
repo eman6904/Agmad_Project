@@ -36,41 +36,43 @@ import com.example.ourproject.R
 import com.google.firebase.database.FirebaseDatabase
 
 @Composable
-fun response(navController: NavHostController, responseType:String){
+fun response(navController: NavHostController, responseType: String) {
 
-    val context= LocalContext.current
+    val context = LocalContext.current
 
     var requestsList by remember { mutableStateOf(emptyList<RequestItems>()) }
 
-    val accepted_requests=stringResource(id = R.string.acceptedRequests)
-    val rejected_requests=stringResource(id = R.string.rejectedRequests)
+    val accepted_requests = stringResource(id = R.string.acceptedRequests)
+    val rejected_requests = stringResource(id = R.string.rejectedRequests)
 
 
-    when(responseType){
+    when (responseType) {
 
-        accepted_requests-> requestsList =myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
-        rejected_requests-> requestsList = myRequests(typeInArabic = "مرفوض", typeInEnglish = "Rejected")
+        accepted_requests -> requestsList =
+            myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
+        rejected_requests -> requestsList =
+            myRequests(typeInArabic = "مرفوض", typeInEnglish = "Rejected")
     }
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        responseTopBar(navController,responseType)
+        responseTopBar(navController, responseType)
 
-        if(requestsList.isEmpty()){
+        if (requestsList.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
-            ){
-                Text(text = "No Items",color=Color.Gray, fontSize = 15.sp)
+            ) {
+                Text(text = "No Items", color = Color.Gray, fontSize = 15.sp)
             }
-        }else{
+        } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
 
             ) {
-                itemsIndexed(items = requestsList){ index,request->
+                itemsIndexed(items = requestsList) { index, request ->
                     responseItem(
                         index,
                         requestsList,
@@ -83,8 +85,9 @@ fun response(navController: NavHostController, responseType:String){
         }
     }
 }
+
 @Composable
-fun responseTopBar(navController: NavHostController,title:String) {
+fun responseTopBar(navController: NavHostController, title: String) {
     Card(
         modifier = Modifier
             .background(color = Color.White)
@@ -126,13 +129,26 @@ fun responseTopBar(navController: NavHostController,title:String) {
         ) {}
     }
 }
-@Composable
-fun responseItem(index:Int,requests:List<RequestItems>,navController: NavHostController,requestType:String,context:Context){
 
-    var currRequest = remember { mutableStateOf(RequestItems())}
-    val shoutDownDialog= remember { mutableStateOf(false)}
-    if(shoutDownDialog.value)
-        responseDisplay(shoutDownDialog = shoutDownDialog, request = currRequest, navController, requestType,context)
+@Composable
+fun responseItem(
+    index: Int,
+    requests: List<RequestItems>,
+    navController: NavHostController,
+    requestType: String,
+    context: Context
+) {
+
+    var currRequest = remember { mutableStateOf(RequestItems()) }
+    val shoutDownDialog = remember { mutableStateOf(false) }
+    if (shoutDownDialog.value)
+        responseDisplay(
+            shoutDownDialog = shoutDownDialog,
+            request = currRequest,
+            navController,
+            requestType,
+            context
+        )
     Card(
         modifier = Modifier
             .padding(10.dp)
@@ -143,64 +159,77 @@ fun responseItem(index:Int,requests:List<RequestItems>,navController: NavHostCon
             },
         shape = RoundedCornerShape(10.dp),
         elevation = 10.dp
-    ){
+    ) {
         Row(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-        ){
+        ) {
             Icon(
                 painter = painterResource(id = R.drawable.or_icon),
                 contentDescription = "navigation icon",
-                tint= colorResource(id = R.color.mainColor),
+                tint = colorResource(id = R.color.mainColor),
                 modifier = Modifier
                     .weight(1f)
                     .padding(10.dp)
             )
-            Column (
+            Column(
                 modifier = Modifier
                     .weight(5f)
                     .padding(5.dp),
                 verticalArrangement = Arrangement.Center
-            ){
+            ) {
                 Text(
-                    text=requests[index].organizationName,
+                    text = requests[index].organizationName,
                     modifier = Modifier.padding(2.dp)
                 )
                 Text(
-                    text=requests[index].date_timeOfResponse,
+                    text = requests[index].date_timeOfResponse,
                     modifier = Modifier.padding(4.dp),
-                    color=Color.Gray
+                    color = Color.Gray
                 )
             }
         }
     }
 }
+
 @Composable
 fun responseDisplay(
-    shoutDownDialog:MutableState<Boolean>,
-    request:MutableState<RequestItems>,
+    shoutDownDialog: MutableState<Boolean>,
+    request: MutableState<RequestItems>,
     navController: NavHostController,
-    requestsType:String,
-    context:Context
+    requestsType: String,
+    context: Context
 ) {
 
-    var requestStatus= rememberSaveable{ mutableStateOf(request.value.status)}
-    val confirmDialog= remember { mutableStateOf(false)}
-    var hint= rememberSaveable{ mutableStateOf("")}
-    var showDialogForOrganizationResponse= rememberSaveable{ mutableStateOf(false)}
-    if(showDialogForOrganizationResponse.value)
-        organizationResponse(showDialogForOrganizationResponse,hint,requestStatus,request.value.requestId,context)
+    var requestStatus = rememberSaveable { mutableStateOf(request.value.status) }
+    val confirmDialog = remember { mutableStateOf(false) }
+    var hint = rememberSaveable { mutableStateOf("") }
+    var showDialogForOrganizationResponse = rememberSaveable { mutableStateOf(false) }
+    if (showDialogForOrganizationResponse.value)
+        organizationResponse(
+            showDialogForOrganizationResponse,
+            hint,
+            requestStatus,
+            request.value.requestId,
+            context
+        )
     val scrollState = rememberScrollState()
-    val rejectedReason=stringResource(id = R.string.ReasonForRejectedRequest)
-    val acceptResponse=stringResource(id = R.string.dateTimeForReceiveFood)
-    val accepted=stringResource(id = R.string.accepted)
-    val rejected=stringResource(id = R.string.rejected)
-    val warningsText= stringResource(R.string.warningText)
-    val btnName1= stringResource(R.string.cancel)
-    val btnName2= stringResource(R.string.deletRequest)
-    if(confirmDialog.value)
-        deleteConfirming(shoutDownDialog = shoutDownDialog,request,warningsText,btnName1,btnName2)
+    val rejectedReason = stringResource(id = R.string.ReasonForRejectedRequest)
+    val acceptResponse = stringResource(id = R.string.dateTimeForReceiveFood)
+    val accepted = stringResource(id = R.string.accepted)
+    val rejected = stringResource(id = R.string.rejected)
+    val warningsText = stringResource(R.string.warningText)
+    val btnName1 = stringResource(R.string.cancel)
+    val btnName2 = stringResource(R.string.deletRequest)
+    if (confirmDialog.value)
+        deleteConfirming(
+            shoutDownDialog = shoutDownDialog,
+            request,
+            warningsText,
+            btnName1,
+            btnName2
+        )
     Dialog(
         onDismissRequest = { shoutDownDialog.value = false }
     ) {
@@ -214,9 +243,9 @@ fun responseDisplay(
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.TopEnd
-                ){
+                ) {
                     IconButton(onClick = {
-                       confirmDialog.value=true
+                        confirmDialog.value = true
                     }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
@@ -230,7 +259,7 @@ fun responseDisplay(
                     Text(
                         text = stringResource(R.string.namee),
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier=Modifier.padding(end=5.dp)
+                        modifier = Modifier.padding(end = 5.dp)
                     )
                     Text(request.value.donorName)
                 }
@@ -240,7 +269,7 @@ fun responseDisplay(
                     Text(
                         text = stringResource(R.string.phone),
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier=Modifier.padding(end=5.dp)
+                        modifier = Modifier.padding(end = 5.dp)
                     )
                     Text(request.value.donorPhone)
                 }
@@ -250,7 +279,7 @@ fun responseDisplay(
                     Text(
                         text = stringResource(R.string.locationn),
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier=Modifier.padding(end=5.dp)
+                        modifier = Modifier.padding(end = 5.dp)
                     )
                     Text(request.value.location)
                 }
@@ -260,7 +289,7 @@ fun responseDisplay(
                     Text(
                         text = stringResource(R.string.mealsNumber),
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier=Modifier.padding(end=5.dp)
+                        modifier = Modifier.padding(end = 5.dp)
                     )
                     Text(request.value.mealNumber)
                 }
@@ -270,7 +299,7 @@ fun responseDisplay(
                     Text(
                         text = stringResource(R.string.foodContentt),
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier=Modifier.padding(end=5.dp)
+                        modifier = Modifier.padding(end = 5.dp)
                     )
                     Text(request.value.foodContent)
                 }
@@ -280,42 +309,42 @@ fun responseDisplay(
                     Text(
                         text = stringResource(R.string.imageListt),
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier=Modifier.padding(end=5.dp)
+                        modifier = Modifier.padding(end = 5.dp)
                     )
                     ClickableText(
                         AnnotatedString(stringResource(id = R.string.foodContent)),
                         onClick = {
-                            navController.navigate(ScreensRoute.ResponseImages.route+"/"+request.value.requestId+"/"+requestsType)
+                            navController.navigate(ScreensRoute.ResponseImages.route + "/" + request.value.requestId + "/" + requestsType)
                         },
                         style = TextStyle(
-                            color=Color.Blue,
+                            color = Color.Blue,
                             textDecoration = TextDecoration.Underline
                         )
                     )
                 }
-                if(request.value.status!=""){
+                if (request.value.status != "") {
                     Row(
                         modifier = Modifier.padding(15.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.statuss),
                             fontFamily = FontFamily(Font(R.font.bold)),
-                            modifier=Modifier.padding(end=5.dp)
+                            modifier = Modifier.padding(end = 5.dp)
                         )
-                        if(requestStatus.value=="Accepted"||requestStatus.value=="مقبول")
-                            Text(requestStatus.value,color=Color.Green)
+                        if (requestStatus.value == "Accepted" || requestStatus.value == "مقبول")
+                            Text(requestStatus.value, color = Color.Green)
                         else
-                            Text(requestStatus.value,color=Color.Red)
+                            Text(requestStatus.value, color = Color.Red)
                     }
                 }
-                if(request.value.organizationResponse.isNotEmpty()){
+                if (request.value.organizationResponse.isNotEmpty()) {
                     Row(
                         modifier = Modifier.padding(15.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.organizationResponse),
                             fontFamily = FontFamily(Font(R.font.bold)),
-                            modifier=Modifier.padding(end=5.dp)
+                            modifier = Modifier.padding(end = 5.dp)
                         )
                         Text(request.value.organizationResponse)
                     }
@@ -326,43 +355,45 @@ fun responseDisplay(
                     Text(
                         text = stringResource(R.string.comment),
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier=Modifier.padding(end=5.dp)
+                        modifier = Modifier.padding(end = 5.dp)
                     )
                     Text(request.value.comment)
                 }
-                if(request.value.status==""){
+                if (request.value.status == "") {
                     Row(
                         modifier = Modifier
                             .padding(10.dp)
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
-                    ){
+                    ) {
                         Button(
                             onClick = {
-                                requestStatus.value=rejected
-                                hint.value= rejectedReason
-                                showDialogForOrganizationResponse.value=true
+                                requestStatus.value = rejected
+                                hint.value = rejectedReason
+                                showDialogForOrganizationResponse.value = true
                             },
                             colors = ButtonDefaults.buttonColors(
                                 contentColor = Color.White,
-                                backgroundColor =Color.Red),
+                                backgroundColor = Color.Red
+                            ),
                             modifier = Modifier.padding(5.dp)
                         ) {
-                            Text(text= stringResource(R.string.reject))
+                            Text(text = stringResource(R.string.reject))
                         }
                         Button(
                             onClick = {
-                                requestStatus.value=accepted
-                                hint.value= acceptResponse
-                                showDialogForOrganizationResponse.value=true
+                                requestStatus.value = accepted
+                                hint.value = acceptResponse
+                                showDialogForOrganizationResponse.value = true
                             },
                             colors = ButtonDefaults.buttonColors(
                                 contentColor = Color.White,
-                                backgroundColor = colorResource(id = R.color.green)),
+                                backgroundColor = colorResource(id = R.color.green)
+                            ),
                             modifier = Modifier.padding(5.dp)
                         ) {
-                            Text(text= stringResource(R.string.accept))
+                            Text(text = stringResource(R.string.accept))
                         }
                     }
 
@@ -371,78 +402,97 @@ fun responseDisplay(
         }
     }
 }
-@Composable
-fun deleteConfirming(shoutDownDialog: MutableState<Boolean>,
-                     request:MutableState<RequestItems>
-                     , warningText:String,
-                     btnName1:String,
-                     btnName2:String){
 
-    if(shoutDownDialog.value){
+@Composable
+fun deleteConfirming(
+    shoutDownDialog: MutableState<Boolean>,
+    request: MutableState<RequestItems>, warningText: String,
+    btnName1: String,
+    btnName2: String
+) {
+
+    if (shoutDownDialog.value) {
         Dialog(
             onDismissRequest = { shoutDownDialog.value = false }
-        ){
+        ) {
             Card(
-                shape = RoundedCornerShape(20.dp,20.dp,20.dp,20.dp),
+                shape = RoundedCornerShape(20.dp, 20.dp, 20.dp, 20.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(IntrinsicSize.Max)
-                ,
+                    .height(IntrinsicSize.Max),
                 elevation = 10.dp
             ) {
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(20.dp)
-                ){
+                ) {
                     Image(
                         painterResource(R.drawable.wareningicon),
                         modifier = Modifier.size(90.dp),
                         contentDescription = "",
                     )
-                    Spacer(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(20.dp))
-                    Text(text= stringResource(R.string.are_you_sure), fontSize = 25.sp, fontFamily = FontFamily(Font(R.font.bold)))
-                    Spacer(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(20.dp))
-                    Text(text=warningText)
-                    Spacer(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(20.dp))
-                       Box(
-                           contentAlignment = Alignment.BottomCenter,
-                           modifier = Modifier.fillMaxSize()
-                       ){
-                           Row(
-                               modifier = Modifier.fillMaxWidth().padding(bottom = 15.dp),
-                               horizontalArrangement = Arrangement.Center
-                           ){
-                               Button(
-                                   onClick = {shoutDownDialog.value=false },
-                                   colors=ButtonDefaults.buttonColors(
-                                       backgroundColor = Color.Gray
-                                   ),
-                                   modifier = Modifier.width(IntrinsicSize.Min)
-                               ) {
-                                   Text(text=btnName1,color=Color.White)
-                               }
-                               Spacer(modifier = Modifier
-                                   .width(5.dp))
-                               Button(
-                                   onClick = {
-                                       FirebaseDatabase.getInstance().getReference("Requests").child(request.value.requestId).removeValue()
-                                       shoutDownDialog.value=false
-                                   },
-                                   colors=ButtonDefaults.buttonColors(
-                                       backgroundColor = Color.Red
-                                   ),
-                                   modifier = Modifier.width(IntrinsicSize.Max)
-                               ) {
-                                   Text(text=btnName2,color=Color.White)
-                               }
-                           }
-                       }
-       } } } }
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(20.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.are_you_sure),
+                        fontSize = 25.sp,
+                        fontFamily = FontFamily(Font(R.font.bold))
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(20.dp)
+                    )
+                    Text(text = warningText)
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(20.dp)
+                    )
+                    Box(
+                        contentAlignment = Alignment.BottomCenter,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 15.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Button(
+                                onClick = { shoutDownDialog.value = false },
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Color.Gray
+                                ),
+                                modifier = Modifier.width(IntrinsicSize.Min)
+                            ) {
+                                Text(text = btnName1, color = Color.White)
+                            }
+                            Spacer(
+                                modifier = Modifier
+                                    .width(5.dp)
+                            )
+                            Button(
+                                onClick = {
+                                    FirebaseDatabase.getInstance().getReference("Requests")
+                                        .child(request.value.requestId).removeValue()
+                                    shoutDownDialog.value = false
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Color.Red
+                                ),
+                                modifier = Modifier.width(IntrinsicSize.Max)
+                            ) {
+                                Text(text = btnName2, color = Color.White)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

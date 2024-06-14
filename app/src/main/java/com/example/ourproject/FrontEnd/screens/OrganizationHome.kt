@@ -38,31 +38,35 @@ fun organizationHome(navController: NavHostController) {
     requestsList = getRequests()
 
     Column(
-        modifier=Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
 
-        requestsNumber.value=requestsList.size
-        orHomeTopBar(requestsNumber,navController)
+        requestsNumber.value = requestsList.size
+        orHomeTopBar(requestsNumber, navController)
         Column() {
-            val context= LocalContext.current
-            val requests=stringResource(id = R.string.requests)
+            val context = LocalContext.current
+            val requests = stringResource(id = R.string.requests)
             var requestsList by remember { mutableStateOf(emptyList<RequestItems>()) }
             requestsList = getRequests()
-            if(requestsList.isEmpty()){
+            if (requestsList.isEmpty()) {
 
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
-                ){
-                    Text(text = stringResource(R.string.no_items),color=Color.Gray, fontSize = 15.sp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.no_items),
+                        color = Color.Gray,
+                        fontSize = 15.sp
+                    )
                 }
-            }else{
+            } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
 
                 ) {
-                    itemsIndexed(items = requestsList){ index,request->
+                    itemsIndexed(items = requestsList) { index, request ->
                         requestItem(
                             index,
                             requestsList,
@@ -75,7 +79,7 @@ fun organizationHome(navController: NavHostController) {
             }
         }
     }
-    val context= LocalContext.current
+    val context = LocalContext.current
     BackHandler() {
         // Exit the app when the back button is pressed
         (context as? Activity)?.finish()
@@ -90,23 +94,24 @@ fun orHomeTopBar(requestNumber: MutableState<Int>, navController: NavHostControl
     var selectLanguage = rememberSaveable { mutableStateOf(false) }
     var showMenu = rememberSaveable { mutableStateOf(false) }
 
-    if(selectLanguage.value==true){
+    if (selectLanguage.value == true) {
 
-        languageDialog(selectLanguage,language)
-        if(language.value.isNotEmpty())
-            MainActivity.sharedPreferences.edit().putString(MainActivity.SELECTED_LANGUAGE, language.value).apply()
+        languageDialog(selectLanguage, language)
+        if (language.value.isNotEmpty())
+            MainActivity.sharedPreferences.edit()
+                .putString(MainActivity.SELECTED_LANGUAGE, language.value).apply()
         //and look at main activity
     }
     // Load the saved language and apply it
 
-    if(language.value.isNotEmpty()){
+    if (language.value.isNotEmpty()) {
 
         setLocale1(lang = language.value)
     }
 
-    menuItems1(navController,showMenu,selectLanguage)
+    menuItems1(navController, showMenu, selectLanguage)
 
-    val requests=stringResource(id = R.string.requests)
+    val requests = stringResource(id = R.string.requests)
 
     showNotification.value = (requestNumber.value > 0)
     Card(
@@ -126,8 +131,12 @@ fun orHomeTopBar(requestNumber: MutableState<Int>, navController: NavHostControl
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = stringResource(R.string.home), color = Color.White,
-                        modifier = Modifier.padding(start=10.dp)) },
+                    title = {
+                        Text(
+                            text = stringResource(R.string.home), color = Color.White,
+                            modifier = Modifier.padding(start = 10.dp)
+                        )
+                    },
                     actions = {
                         //لوحبينا نرجع الاشعارات هنشيل الكومنت دا بس
 //                        IconButton(onClick = {
@@ -153,7 +162,7 @@ fun orHomeTopBar(requestNumber: MutableState<Int>, navController: NavHostControl
 //                        }
                         IconButton(
                             onClick = {
-                                showMenu.value=!showMenu.value
+                                showMenu.value = !showMenu.value
                             }
                         ) {
                             Icon(
@@ -171,29 +180,34 @@ fun orHomeTopBar(requestNumber: MutableState<Int>, navController: NavHostControl
         ) {}
     }
 }
+
 @Composable
-fun menuItems1(navController:NavHostController, showMenu:MutableState<Boolean>,selectLan:MutableState<Boolean>){
+fun menuItems1(
+    navController: NavHostController,
+    showMenu: MutableState<Boolean>,
+    selectLan: MutableState<Boolean>
+) {
 
 
-    val accepted_requests=stringResource(id = R.string.acceptedRequests)
-    val rejected_requests=stringResource(id = R.string.rejectedRequests)
+    val accepted_requests = stringResource(id = R.string.acceptedRequests)
+    val rejected_requests = stringResource(id = R.string.rejectedRequests)
     val context = LocalContext.current
 
-    if(showMenu.value){
-        Box(){
+    if (showMenu.value) {
+        Box() {
             DropdownMenu(
                 expanded = showMenu.value,
-                onDismissRequest = { showMenu.value=false },
+                onDismissRequest = { showMenu.value = false },
                 offset = DpOffset(x = (160).dp, y = (5).dp)
             )
             {
                 DropdownMenuItem(
                     onClick = {
-                        navController.navigate(ScreensRoute.RequestsScreen.route+"/${accepted_requests}")
-                        showMenu.value=false
+                        navController.navigate(ScreensRoute.RequestsScreen.route + "/${accepted_requests}")
+                        showMenu.value = false
                     }
                 ) {
-                    Row(){
+                    Row() {
                         Icon(
                             imageVector = Icons.Default.Done,
                             contentDescription = null,
@@ -201,17 +215,17 @@ fun menuItems1(navController:NavHostController, showMenu:MutableState<Boolean>,s
                         )
                         Text(
                             text = stringResource(R.string.acceptedRequests),
-                            modifier = Modifier.padding(start=4.dp)
+                            modifier = Modifier.padding(start = 4.dp)
                         )
                     }
                 }
                 DropdownMenuItem(
                     onClick = {
-                        navController.navigate(ScreensRoute.RequestsScreen.route+"/${rejected_requests}")
-                        showMenu.value=false
+                        navController.navigate(ScreensRoute.RequestsScreen.route + "/${rejected_requests}")
+                        showMenu.value = false
                     }
                 ) {
-                    Row(){
+                    Row() {
                         Icon(
                             imageVector = Icons.Default.Clear,
                             contentDescription = null,
@@ -219,14 +233,14 @@ fun menuItems1(navController:NavHostController, showMenu:MutableState<Boolean>,s
                         )
                         Text(
                             text = stringResource(R.string.rejectedRequests),
-                            modifier = Modifier.padding(start=4.dp)
+                            modifier = Modifier.padding(start = 4.dp)
                         )
                     }
                 }
                 DropdownMenuItem(
                     onClick = {
-                        selectLan.value=true
-                        showMenu.value=false
+                        selectLan.value = true
+                        showMenu.value = false
                     }
                 ) {
                     Row() {
@@ -245,7 +259,7 @@ fun menuItems1(navController:NavHostController, showMenu:MutableState<Boolean>,s
                     onClick = {
                         FirebaseAuth.getInstance().signOut()
                         (context as? Activity)?.finishAffinity()
-                        showMenu.value=false
+                        showMenu.value = false
                     }
                 ) {
                     Row() {

@@ -39,15 +39,15 @@ fun mainScreen(navController: NavHostController) {
     var showBottomBar by rememberSaveable { mutableStateOf(false) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     showBottomBar = when (navBackStackEntry?.destination?.route) {
-        BottomBarScreen.DonorHistory.route->true
-        BottomBarScreen.OrganizationHome.route->true
-        BottomBarScreen.Donation.route->true
-        ScreensRoute.DonorHome.route->true
-        else->false
+        BottomBarScreen.DonorHistory.route -> true
+        BottomBarScreen.OrganizationHome.route -> true
+        BottomBarScreen.Donation.route -> true
+        ScreensRoute.DonorHome.route -> true
+        else -> false
     }
     Scaffold(
         bottomBar = {
-            if(showBottomBar){
+            if (showBottomBar) {
                 val screens = listOf(
                     BottomBarScreen.OrganizationHome,
                     BottomBarScreen.Donation,
@@ -59,7 +59,7 @@ fun mainScreen(navController: NavHostController) {
                         .background(color = Color.White),
                     shape = RoundedCornerShape(
                         topEnd = 20.dp,
-                        topStart =20.dp,
+                        topStart = 20.dp,
                         bottomEnd = 0.dp,
                         bottomStart = 0.dp
                     ),
@@ -83,6 +83,7 @@ fun mainScreen(navController: NavHostController) {
         }
     ) { appNavGraph(navController = navController) }
 }
+
 @Composable
 fun RowScope.addItem(
     screen: BottomBarScreen,
@@ -90,10 +91,10 @@ fun RowScope.addItem(
     navController: NavHostController
 ) {
 
-    val home= stringResource(id = R.string.home)
-    val donation= stringResource(id = R.string.donation)
-    val history= stringResource(R.string.history)
-    if(screen== BottomBarScreen.DonorHistory) {
+    val home = stringResource(id = R.string.home)
+    val donation = stringResource(id = R.string.donation)
+    val history = stringResource(R.string.history)
+    if (screen == BottomBarScreen.DonorHistory) {
         BottomNavigationItem(
             modifier = Modifier.background(Color.White),
             label = { Text(text = history, color = Color.Black) },
@@ -106,14 +107,13 @@ fun RowScope.addItem(
             selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
             onClick = { selectHistory(navController) }
         )
-    }
-    else if(screen== BottomBarScreen.Donation){
+    } else if (screen == BottomBarScreen.Donation) {
         BottomNavigationItem(
             modifier = Modifier.background(Color.White),
             label = { Text(text = donation, color = Color.Black) },
             icon = {
                 Icon(
-                    modifier=Modifier.padding(top=20.dp),
+                    modifier = Modifier.padding(top = 20.dp),
                     painter = painterResource(id = R.drawable.donaton_icon),
                     contentDescription = "navigation icon"
                 )
@@ -121,7 +121,7 @@ fun RowScope.addItem(
             selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
             onClick = { navController.navigate(screen.route) }
         )
-    }else{
+    } else {
         BottomNavigationItem(
             modifier = Modifier.background(Color.White),
             label = { Text(text = home, color = Color.Black) },
@@ -130,7 +130,7 @@ fun RowScope.addItem(
             },
             selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
             onClick = {
-             selectHome(navController)
+                selectHome(navController)
             }
         )
     }

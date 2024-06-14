@@ -17,24 +17,25 @@ import com.example.ourproject.BackEnd.Files.*
 import com.example.ourproject.R
 
 @Composable
-fun responseImages(navController: NavHostController,requestId:String,requestType:String){
+fun responseImages(navController: NavHostController, requestId: String, requestType: String) {
 
     var requestsList by remember { mutableStateOf(emptyList<RequestItems>()) }
-    val accepted_requests= stringResource(id = R.string.acceptedRequests)
-    val rejected_requests= stringResource(id = R.string.rejectedRequests)
+    val accepted_requests = stringResource(id = R.string.acceptedRequests)
+    val rejected_requests = stringResource(id = R.string.rejectedRequests)
 
 
-    when(requestType){
+    when (requestType) {
 
-        accepted_requests-> requestsList= myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
-        rejected_requests->   requestsList= myRequests (typeInArabic = "مرفوض", typeInEnglish = "Rejected")
+        accepted_requests -> requestsList =
+            myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
+        rejected_requests -> requestsList =
+            myRequests(typeInArabic = "مرفوض", typeInEnglish = "Rejected")
     }
 
     var imageUris by remember { mutableStateOf(emptyList<String>()) }
-    for(item in requestsList)
-    {
-        if(item.requestId==requestId){
-            imageUris= getImages(imagesId = item.imagesList, item.donorId)
+    for (item in requestsList) {
+        if (item.requestId == requestId) {
+            imageUris = getImages(imagesId = item.imagesList, item.donorId)
         }
     }
 
@@ -44,22 +45,22 @@ fun responseImages(navController: NavHostController,requestId:String,requestType
 
         foodContentTopBar(navController)
 
-        if(imageUris.size==0){
+        if (imageUris.size == 0) {
 
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
-            ){
-                Text(text =  stringResource(R.string.waiting),color= Color.Gray)
+            ) {
+                Text(text = stringResource(R.string.waiting), color = Color.Gray)
             }
-        }else{
+        } else {
 
             LazyColumn(
 
                 modifier = Modifier.fillMaxSize()
-            ){
+            ) {
 
-                items(items=imageUris, itemContent = {item->
+                items(items = imageUris, itemContent = { item ->
                     AsyncImage(
                         modifier = Modifier.padding(20.dp),
                         model = item,

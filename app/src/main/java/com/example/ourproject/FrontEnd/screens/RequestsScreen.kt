@@ -40,44 +40,44 @@ import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.R
 
 @Composable
-fun requests(navController:NavHostController,type:String){
+fun requests(navController: NavHostController, type: String) {
 
-    val context= LocalContext.current
+    val context = LocalContext.current
 
     var requestsList by remember { mutableStateOf(emptyList<RequestItems>()) }
 
-    val requests=stringResource(id = R.string.requests)
-    val accepted_requests=stringResource(id = R.string.acceptedRequests)
-    val rejected_requests=stringResource(id = R.string.rejectedRequests)
+    val requests = stringResource(id = R.string.requests)
+    val accepted_requests = stringResource(id = R.string.acceptedRequests)
+    val rejected_requests = stringResource(id = R.string.rejectedRequests)
 
 
-    when(type){
+    when (type) {
 
-        requests-> requestsList = getRequests()
-        accepted_requests-> requestsList = getAcceptedRequested()
-        rejected_requests-> requestsList = getRejectedRequested()
+        requests -> requestsList = getRequests()
+        accepted_requests -> requestsList = getAcceptedRequested()
+        rejected_requests -> requestsList = getRejectedRequested()
     }
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        requestsTopBar(navController,type)
+        requestsTopBar(navController, type)
 
-        if(requestsList.isEmpty()){
+        if (requestsList.isEmpty()) {
 
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
-            ){
-                Text(text = stringResource(R.string.no_items),color=Color.Gray, fontSize = 15.sp)
+            ) {
+                Text(text = stringResource(R.string.no_items), color = Color.Gray, fontSize = 15.sp)
             }
-        }else{
+        } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
 
             ) {
-                itemsIndexed(items = requestsList){ index,request->
+                itemsIndexed(items = requestsList) { index, request ->
                     requestItem(
                         index,
                         requestsList,
@@ -90,13 +90,26 @@ fun requests(navController:NavHostController,type:String){
         }
     }
 }
-@Composable
-fun requestItem(index:Int,requests:List<RequestItems>,navController: NavHostController,requestType:String,context: Context){
 
-    var currRequest = remember { mutableStateOf(RequestItems())}
-    val shoutDownDialog= remember { mutableStateOf(false)}
-    if(shoutDownDialog.value)
-     requestDisplay(shoutDownDialog = shoutDownDialog, request = currRequest, navController, requestType, context )
+@Composable
+fun requestItem(
+    index: Int,
+    requests: List<RequestItems>,
+    navController: NavHostController,
+    requestType: String,
+    context: Context
+) {
+
+    var currRequest = remember { mutableStateOf(RequestItems()) }
+    val shoutDownDialog = remember { mutableStateOf(false) }
+    if (shoutDownDialog.value)
+        requestDisplay(
+            shoutDownDialog = shoutDownDialog,
+            request = currRequest,
+            navController,
+            requestType,
+            context
+        )
     Card(
         modifier = Modifier
             .padding(10.dp)
@@ -107,45 +120,46 @@ fun requestItem(index:Int,requests:List<RequestItems>,navController: NavHostCont
             },
         shape = RoundedCornerShape(10.dp),
         elevation = 10.dp
-    ){
+    ) {
         Row(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-        ){
+        ) {
             Icon(
                 painter = painterResource(id = R.drawable.food_donation_icon2),
                 contentDescription = "navigation icon",
-                tint= colorResource(id = R.color.mainColor),
+                tint = colorResource(id = R.color.mainColor),
                 modifier = Modifier
                     .weight(1f)
                     .padding(10.dp)
             )
-            Column (
-                   modifier = Modifier
-                       .weight(5f)
-                       .padding(5.dp)
-                    ){
+            Column(
+                modifier = Modifier
+                    .weight(5f)
+                    .padding(5.dp)
+            ) {
                 Text(
-                    text=requests[index].donorName,
+                    text = requests[index].donorName,
                     modifier = Modifier
                 )
                 Text(
-                    text=requests[index].donorPhone,
+                    text = requests[index].donorPhone,
                     modifier = Modifier
                 )
                 Text(
-                    text=requests[index].date_timeOfRequest,
+                    text = requests[index].date_timeOfRequest,
                     modifier = Modifier,
-                    color= Color.Gray
+                    color = Color.Gray
                 )
 
             }
         }
     }
 }
+
 @Composable
-fun requestsTopBar(navController: NavHostController,title:String) {
+fun requestsTopBar(navController: NavHostController, title: String) {
     Card(
         modifier = Modifier
             .background(color = Color.White)
@@ -187,31 +201,44 @@ fun requestsTopBar(navController: NavHostController,title:String) {
         ) {}
     }
 }
+
 @Composable
 fun requestDisplay(
-    shoutDownDialog:MutableState<Boolean>,
-    request:MutableState<RequestItems>,
+    shoutDownDialog: MutableState<Boolean>,
+    request: MutableState<RequestItems>,
     navController: NavHostController,
-    requestsType:String,
+    requestsType: String,
     context: Context
 ) {
 
-    var requestStatus= rememberSaveable{ mutableStateOf(request.value.status)}
-    var hint= rememberSaveable{ mutableStateOf("")}
-    var showDialogForOrganizationResponse= rememberSaveable{ mutableStateOf(false)}
-    if(showDialogForOrganizationResponse.value)
-        organizationResponse(showDialogForOrganizationResponse,hint,requestStatus,request.value.requestId,context)
+    var requestStatus = rememberSaveable { mutableStateOf(request.value.status) }
+    var hint = rememberSaveable { mutableStateOf("") }
+    var showDialogForOrganizationResponse = rememberSaveable { mutableStateOf(false) }
+    if (showDialogForOrganizationResponse.value)
+        organizationResponse(
+            showDialogForOrganizationResponse,
+            hint,
+            requestStatus,
+            request.value.requestId,
+            context
+        )
     val scrollState = rememberScrollState()
-    val rejectedReason=stringResource(id = R.string.ReasonForRejectedRequest)
-    val acceptResponse=stringResource(id = R.string.dateTimeForReceiveFood)
-    val accepted=stringResource(id = R.string.accepted)
-    val rejected=stringResource(id = R.string.rejected)
-    val confirmDialog= remember { mutableStateOf(false)}
-    val warningsText= stringResource(R.string.warningText)
-    val btnName1= stringResource(R.string.cancel)
-    val btnName2= stringResource(R.string.deletRequest)
-    if(confirmDialog.value)
-        deleteConfirming(shoutDownDialog = shoutDownDialog,request,warningsText,btnName1,btnName2)
+    val rejectedReason = stringResource(id = R.string.ReasonForRejectedRequest)
+    val acceptResponse = stringResource(id = R.string.dateTimeForReceiveFood)
+    val accepted = stringResource(id = R.string.accepted)
+    val rejected = stringResource(id = R.string.rejected)
+    val confirmDialog = remember { mutableStateOf(false) }
+    val warningsText = stringResource(R.string.warningText)
+    val btnName1 = stringResource(R.string.cancel)
+    val btnName2 = stringResource(R.string.deletRequest)
+    if (confirmDialog.value)
+        deleteConfirming(
+            shoutDownDialog = shoutDownDialog,
+            request,
+            warningsText,
+            btnName1,
+            btnName2
+        )
     Dialog(
         onDismissRequest = { shoutDownDialog.value = false }
     ) {
@@ -225,9 +252,9 @@ fun requestDisplay(
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.TopEnd
-                ){
+                ) {
                     IconButton(onClick = {
-                       confirmDialog.value=true
+                        confirmDialog.value = true
                     }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
@@ -241,7 +268,7 @@ fun requestDisplay(
                     Text(
                         text = stringResource(R.string.namee),
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier=Modifier.padding(end=5.dp)
+                        modifier = Modifier.padding(end = 5.dp)
                     )
                     Text(request.value.donorName)
                 }
@@ -251,7 +278,7 @@ fun requestDisplay(
                     Text(
                         text = stringResource(R.string.phone),
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier=Modifier.padding(end=5.dp)
+                        modifier = Modifier.padding(end = 5.dp)
                     )
                     Text(request.value.donorPhone)
                 }
@@ -261,7 +288,7 @@ fun requestDisplay(
                     Text(
                         text = stringResource(R.string.locationn),
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier=Modifier.padding(end=5.dp)
+                        modifier = Modifier.padding(end = 5.dp)
                     )
                     Text(request.value.location)
                 }
@@ -271,7 +298,7 @@ fun requestDisplay(
                     Text(
                         text = stringResource(R.string.mealsNumber),
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier=Modifier.padding(end=5.dp)
+                        modifier = Modifier.padding(end = 5.dp)
                     )
                     Text(request.value.mealNumber)
                 }
@@ -281,7 +308,7 @@ fun requestDisplay(
                     Text(
                         text = stringResource(R.string.foodContentt),
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier=Modifier.padding(end=5.dp)
+                        modifier = Modifier.padding(end = 5.dp)
                     )
                     Text(request.value.foodContent)
                 }
@@ -291,42 +318,42 @@ fun requestDisplay(
                     Text(
                         text = stringResource(R.string.imageListt),
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier=Modifier.padding(end=5.dp)
+                        modifier = Modifier.padding(end = 5.dp)
                     )
                     ClickableText(
                         AnnotatedString(stringResource(id = R.string.foodContent)),
                         onClick = {
-                                  navController.navigate(ScreensRoute.RequestImages.route+"/"+request.value.requestId+"/"+requestsType)
+                            navController.navigate(ScreensRoute.RequestImages.route + "/" + request.value.requestId + "/" + requestsType)
                         },
                         style = TextStyle(
-                            color=Color.Blue,
+                            color = Color.Blue,
                             textDecoration = TextDecoration.Underline
                         )
                     )
                 }
-               if(request.value.status!=""){
-                   Row(
-                       modifier = Modifier.padding(15.dp)
-                   ) {
-                       Text(
-                           text = stringResource(R.string.statuss),
-                           fontFamily = FontFamily(Font(R.font.bold)),
-                           modifier=Modifier.padding(end=5.dp)
-                       )
-                       if(requestStatus.value=="Accepted"||requestStatus.value=="مقبول")
-                           Text(requestStatus.value,color=Color.Green)
-                       else
-                           Text(requestStatus.value,color=Color.Red)
-                   }
-               }
-                if(request.value.organizationResponse.isNotEmpty()){
+                if (request.value.status != "") {
+                    Row(
+                        modifier = Modifier.padding(15.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.statuss),
+                            fontFamily = FontFamily(Font(R.font.bold)),
+                            modifier = Modifier.padding(end = 5.dp)
+                        )
+                        if (requestStatus.value == "Accepted" || requestStatus.value == "مقبول")
+                            Text(requestStatus.value, color = Color.Green)
+                        else
+                            Text(requestStatus.value, color = Color.Red)
+                    }
+                }
+                if (request.value.organizationResponse.isNotEmpty()) {
                     Row(
                         modifier = Modifier.padding(15.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.organizationResponse),
                             fontFamily = FontFamily(Font(R.font.bold)),
-                            modifier=Modifier.padding(end=5.dp)
+                            modifier = Modifier.padding(end = 5.dp)
                         )
                         Text(request.value.organizationResponse)
                     }
@@ -337,62 +364,66 @@ fun requestDisplay(
                     Text(
                         text = stringResource(R.string.comment),
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier=Modifier.padding(end=5.dp)
+                        modifier = Modifier.padding(end = 5.dp)
                     )
                     Text(request.value.comment)
                 }
-               if(request.value.status==""){
-                   Row(
-                       modifier = Modifier
-                           .padding(10.dp)
-                           .fillMaxWidth(),
-                       verticalAlignment = Alignment.CenterVertically,
-                       horizontalArrangement = Arrangement.Center
-                   ){
-                       Button(
-                           onClick = {
-                               requestStatus.value=rejected
-                               hint.value= rejectedReason
-                               showDialogForOrganizationResponse.value=true
-                           },
-                           colors = ButtonDefaults.buttonColors(
-                               contentColor = Color.White,
-                               backgroundColor =Color.Red),
-                           modifier = Modifier.padding(5.dp)
-                       ) {
-                           Text(text= stringResource(R.string.reject))
-                       }
-                       Button(
-                           onClick = {
-                               requestStatus.value=accepted
-                               hint.value= acceptResponse
-                               showDialogForOrganizationResponse.value=true
-                           },
-                           colors = ButtonDefaults.buttonColors(
-                               contentColor = Color.White,
-                               backgroundColor = colorResource(id = R.color.green)),
-                           modifier = Modifier.padding(5.dp)
-                       ) {
-                           Text(text= stringResource(R.string.accept))
-                       }
-                   }
+                if (request.value.status == "") {
+                    Row(
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Button(
+                            onClick = {
+                                requestStatus.value = rejected
+                                hint.value = rejectedReason
+                                showDialogForOrganizationResponse.value = true
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                contentColor = Color.White,
+                                backgroundColor = Color.Red
+                            ),
+                            modifier = Modifier.padding(5.dp)
+                        ) {
+                            Text(text = stringResource(R.string.reject))
+                        }
+                        Button(
+                            onClick = {
+                                requestStatus.value = accepted
+                                hint.value = acceptResponse
+                                showDialogForOrganizationResponse.value = true
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                contentColor = Color.White,
+                                backgroundColor = colorResource(id = R.color.green)
+                            ),
+                            modifier = Modifier.padding(5.dp)
+                        ) {
+                            Text(text = stringResource(R.string.accept))
+                        }
+                    }
 
-               }
+                }
             }
         }
     }
 }
+
 @Composable
-fun organizationResponse(shoutDownDialog: MutableState<Boolean>,
-   hint:MutableState<String>,
-   requestStatus:MutableState<String>,
-   requestId:String,context:Context
-){
+fun organizationResponse(
+    shoutDownDialog: MutableState<Boolean>,
+    hint: MutableState<String>,
+    requestStatus: MutableState<String>,
+    requestId: String, context: Context
+) {
 
     val response = rememberSaveable() { mutableStateOf("") }
-    if(shoutDownDialog.value){
+    if (shoutDownDialog.value) {
         Dialog(
-            onDismissRequest = {shoutDownDialog.value=false},
+            onDismissRequest = { shoutDownDialog.value = false },
             properties = DialogProperties(
                 usePlatformDefaultWidth = false // This allows the dialog to wrap content
             )
@@ -413,12 +444,12 @@ fun organizationResponse(shoutDownDialog: MutableState<Boolean>,
                         .padding(10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
-                ){
+                ) {
                     TextField(
-                        value =response.value,
-                        onValueChange ={response.value=it},
-                        label = { Text(text = hint.value)},
-                        colors=TextFieldDefaults.textFieldColors(
+                        value = response.value,
+                        onValueChange = { response.value = it },
+                        label = { Text(text = hint.value) },
+                        colors = TextFieldDefaults.textFieldColors(
                             backgroundColor = Color.White,
                             focusedIndicatorColor = colorResource(id = R.color.mainColor),
                             focusedLabelColor = colorResource(id = R.color.mainColor),
@@ -430,8 +461,8 @@ fun organizationResponse(shoutDownDialog: MutableState<Boolean>,
                     Spacer(modifier = Modifier.height(10.dp))
                     Button(
                         onClick = {
-                            shoutDownDialog.value=false
-                            updateRequest(requestStatus.value,requestId, response.value,context)
+                            shoutDownDialog.value = false
+                            updateRequest(requestStatus.value, requestId, response.value, context)
                         },
                         colors = ButtonDefaults.buttonColors(
                             contentColor = Color.White,
@@ -441,7 +472,7 @@ fun organizationResponse(shoutDownDialog: MutableState<Boolean>,
                             .fillMaxWidth()
                             .padding(start = 40.dp, end = 40.dp)
                     ) {
-                        Text(text= stringResource(id = R.string.done))
+                        Text(text = stringResource(id = R.string.done))
                     }
                 }
             }

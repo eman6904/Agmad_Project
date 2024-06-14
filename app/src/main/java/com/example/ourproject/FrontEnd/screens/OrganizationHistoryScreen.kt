@@ -42,107 +42,120 @@ import com.example.ourproject.R
 import java.util.Collections.addAll
 
 @Composable
-fun organizationHistory(navController: NavHostController){
+fun organizationHistory(navController: NavHostController) {
 
-    val acceptedRequestedNumber= rememberSaveable{ mutableStateOf(0) }
-    val rejectedRequestedNumber= rememberSaveable{ mutableStateOf(0) }
+    val acceptedRequestedNumber = rememberSaveable { mutableStateOf(0) }
+    val rejectedRequestedNumber = rememberSaveable { mutableStateOf(0) }
 
-    val accList= getAcceptedRequested()
-    val rejList= getRejectedRequested()
+    val accList = getAcceptedRequested()
+    val rejList = getRejectedRequested()
 
-    acceptedRequestedNumber.value=accList.size
-    rejectedRequestedNumber.value=rejList.size
+    acceptedRequestedNumber.value = accList.size
+    rejectedRequestedNumber.value = rejList.size
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        HistoryTopBar(navController,"Organizations")
+        HistoryTopBar(navController, "Organizations")
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(10.dp)
-        ){
+        ) {
 
             Row(
                 horizontalArrangement = Arrangement.Center
-            ){
-               if(getOrganizationData().profileImage=="") {
-                   Image(
-                       painterResource(R.drawable.user_icon),
-                       modifier = Modifier
-                           .clip(shape = CircleShape)
-                           .weight(1f)
-                           .padding(10.dp),
-                       contentDescription = "",
-                       colorFilter = ColorFilter.tint(colorResource(id = R.color.mainColor))
-                   )
-               }else{
-                   AsyncImage(
-                       model= getOrganizationData().profileImage,
-                       modifier = Modifier
-                           .clip(shape = CircleShape)
-                           .weight(1f)
-                           .padding(10.dp),
-                       contentDescription = "",
-                       colorFilter = ColorFilter.tint(colorResource(id = R.color.mainColor))
-                   )
-               }
+            ) {
+                if (getOrganizationData().profileImage == "") {
+                    Image(
+                        painterResource(R.drawable.user_icon),
+                        modifier = Modifier
+                            .clip(shape = CircleShape)
+                            .weight(1f)
+                            .padding(10.dp),
+                        contentDescription = "",
+                        colorFilter = ColorFilter.tint(colorResource(id = R.color.mainColor))
+                    )
+                } else {
+                    AsyncImage(
+                        model = getOrganizationData().profileImage,
+                        modifier = Modifier
+                            .clip(shape = CircleShape)
+                            .weight(1f)
+                            .padding(10.dp),
+                        contentDescription = "",
+                        colorFilter = ColorFilter.tint(colorResource(id = R.color.mainColor))
+                    )
+                }
                 Column(
-                    modifier= Modifier
+                    modifier = Modifier
                         .weight(3f)
                         .padding(10.dp)
-                ){
+                ) {
 
-                    Text(text= getOrganizationData().name, fontSize = 20.sp, fontStyle = FontStyle.Normal,
+                    Text(
+                        text = getOrganizationData().name,
+                        fontSize = 20.sp,
+                        fontStyle = FontStyle.Normal,
                         fontFamily = FontFamily(Font(R.font.bold)),
                         modifier = Modifier.padding(3.dp)
                     )
                     Row(
                         modifier = Modifier.padding(3.dp)
-                    ){
-                        Icon(painterResource(id = R.drawable.id_icon),null, modifier = Modifier.weight(1f))
+                    ) {
+                        Icon(
+                            painterResource(id = R.drawable.id_icon),
+                            null,
+                            modifier = Modifier.weight(1f)
+                        )
                         Text(
-                            text= getOrganizationData().taxNumber,
+                            text = getOrganizationData().taxNumber,
                             modifier = Modifier
                                 .weight(12f)
-                                .padding(start = 5.dp))
+                                .padding(start = 5.dp)
+                        )
                     }
                     Row(
                         modifier = Modifier.padding(3.dp)
-                    ){
-                        Icon(imageVector = Icons.Default.MyLocation,null)
-                        Text(text= getOrganizationData().location,modifier= Modifier.padding(start=5.dp))
+                    ) {
+                        Icon(imageVector = Icons.Default.MyLocation, null)
+                        Text(
+                            text = getOrganizationData().location,
+                            modifier = Modifier.padding(start = 5.dp)
+                        )
                     }
                 }
             }
 
-            Text(text= stringResource(R.string.my_impact),fontStyle = FontStyle.Normal,
+            Text(
+                text = stringResource(R.string.my_impact), fontStyle = FontStyle.Normal,
                 fontFamily = FontFamily(Font(R.font.bold)),
                 fontSize = 20.sp,
-                modifier= Modifier.padding(top=10.dp,start=10.dp),
+                modifier = Modifier.padding(top = 10.dp, start = 10.dp),
             )
-            Row (
-                modifier= Modifier
+            Row(
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp)
                     .height(IntrinsicSize.Min)
-            ){
+            ) {
 
                 Column(
-                    modifier= Modifier.weight(1f)
-                ){
+                    modifier = Modifier.weight(1f)
+                ) {
 
                     Text(
-                        text= stringResource(R.string.total_donations),
+                        text = stringResource(R.string.total_donations),
                         color = Color.Black,
-                        modifier= Modifier.padding(10.dp),
+                        modifier = Modifier.padding(10.dp),
                     )
                     Text(
-                        text="${acceptedRequestedNumber.value+rejectedRequestedNumber.value}",fontStyle = FontStyle.Normal,
+                        text = "${acceptedRequestedNumber.value + rejectedRequestedNumber.value}",
+                        fontStyle = FontStyle.Normal,
                         fontFamily = FontFamily(Font(R.font.bold)),
                         fontSize = 30.sp,
-                        color= Color.Gray,
-                        modifier= Modifier.padding(start=10.dp),
+                        color = Color.Gray,
+                        modifier = Modifier.padding(start = 10.dp),
                     )
                 }
                 Divider(
@@ -151,46 +164,50 @@ fun organizationHistory(navController: NavHostController){
                         .padding(top = 20.dp)
                         .weight(0.02f)
                         .fillMaxHeight(),
-                    color= Color.Gray
+                    color = Color.Gray
                 )
                 Column(
-                    modifier= Modifier
+                    modifier = Modifier
                         .weight(2f)
                         .padding(top = 20.dp, end = 25.dp)
-                ){
+                ) {
                     Text(
                         text = " ${rejectedRequestedNumber.value}",
-                        color= Color.Red,
+                        color = Color.Red,
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier= Modifier
+                        modifier = Modifier
                             .fillMaxWidth()
                             .background(Color.LightGray)
                     )
                     Divider(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        color= Color.White,
+                        color = Color.White,
                         thickness = 5.dp
                     )
                     Text(
                         text = " ${acceptedRequestedNumber.value}",
-                        color= Color.Green,
+                        color = Color.Green,
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier= Modifier
+                        modifier = Modifier
                             .fillMaxWidth()
                             .background(Color.LightGray)
                     )
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier= Modifier.padding(top=10.dp)
-                    ){
+                        modifier = Modifier.padding(top = 10.dp)
+                    ) {
 
-                        Icon(imageVector = Icons.Default.Circle, contentDescription = null,tint= Color.Red,
-                            modifier= Modifier.weight(1f))
+                        Icon(
+                            imageVector = Icons.Default.Circle,
+                            contentDescription = null,
+                            tint = Color.Red,
+                            modifier = Modifier.weight(1f)
+                        )
                         Text(
-                            text= stringResource(R.string.rejected_requests),
-                            modifier= Modifier
+                            text = stringResource(R.string.rejected_requests),
+                            modifier = Modifier
                                 .padding(start = 5.dp)
                                 .weight(20f)
                         )
@@ -198,13 +215,17 @@ fun organizationHistory(navController: NavHostController){
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
-                    ){
+                    ) {
 
-                        Icon(imageVector = Icons.Default.Circle, contentDescription = null,tint= Color.Green,
-                            modifier= Modifier.weight(1f))
+                        Icon(
+                            imageVector = Icons.Default.Circle,
+                            contentDescription = null,
+                            tint = Color.Green,
+                            modifier = Modifier.weight(1f)
+                        )
                         Text(
-                            text= stringResource(R.string.accepted_requests),
-                            modifier= Modifier
+                            text = stringResource(R.string.accepted_requests),
+                            modifier = Modifier
                                 .padding(start = 5.dp)
                                 .weight(20f)
                         )
@@ -229,28 +250,29 @@ fun organizationHistory(navController: NavHostController){
         }
     }
 }
+
 @Composable
-fun ratingBreakdown(donorsNumber:Double, maxRating:Double, starsNumber:Int){
+fun ratingBreakdown(donorsNumber: Double, maxRating: Double, starsNumber: Int) {
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 5.dp),
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
 
-        Text(text=starsNumber.toString())
+        Text(text = starsNumber.toString())
 
         Icon(
             contentDescription = null,
-            tint= Color.Black,
+            tint = Color.Black,
             imageVector = Icons.Rounded.Star,
             modifier = Modifier.size(20.dp)
         )
 
 
-        var average: Double =donorsNumber/maxRating
-        var progress by remember { mutableStateOf(average.toFloat())}
+        var average: Double = donorsNumber / maxRating
+        var progress by remember { mutableStateOf(average.toFloat()) }
         val size by animateFloatAsState(
             targetValue = progress,
             tween(
@@ -259,20 +281,20 @@ fun ratingBreakdown(donorsNumber:Double, maxRating:Double, starsNumber:Int){
                 easing = LinearOutSlowInEasing
             )
         )
-        Column (
+        Column(
             modifier = Modifier
                 .width(300.dp)
                 .padding(start = 10.dp, end = 10.dp)
                 .height(10.dp)
-        ){
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(20.dp)
-            ){
+            ) {
                 //background of progress bar
                 Box(
-                    modifier= Modifier
+                    modifier = Modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(9.dp))
                         .background(Color.Gray)
@@ -280,7 +302,7 @@ fun ratingBreakdown(donorsNumber:Double, maxRating:Double, starsNumber:Int){
                 )
                 //progress bar
                 Box(
-                    modifier= Modifier
+                    modifier = Modifier
                         .fillMaxWidth(size)
                         .fillMaxHeight()
                         .clip(RoundedCornerShape(9.dp))
@@ -290,6 +312,6 @@ fun ratingBreakdown(donorsNumber:Double, maxRating:Double, starsNumber:Int){
             }
 
         }
-        Text(text=donorsNumber.toString())
+        Text(text = donorsNumber.toString())
     }
 }

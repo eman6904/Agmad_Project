@@ -36,20 +36,20 @@ import com.example.ourproject.MainActivity
 import com.example.ourproject.R
 
 @Composable
-fun levels(navController: NavHostController){
+fun levels(navController: NavHostController) {
 
     val scrollState = rememberScrollState()
 
-    val acceptedRequestedNumber= rememberSaveable{ mutableStateOf(0)}
-    val rejectedRequestedNumber= rememberSaveable{ mutableStateOf(0)}
+    val acceptedRequestedNumber = rememberSaveable { mutableStateOf(0) }
+    val rejectedRequestedNumber = rememberSaveable { mutableStateOf(0) }
 
-    val accList= myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
-    val rejList= myRequests(typeInArabic = "مرفوض", typeInEnglish = "Rejected")
+    val accList = myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
+    val rejList = myRequests(typeInArabic = "مرفوض", typeInEnglish = "Rejected")
 
-    acceptedRequestedNumber.value=accList.size
-    rejectedRequestedNumber.value=rejList.size
+    acceptedRequestedNumber.value = accList.size
+    rejectedRequestedNumber.value = rejList.size
 
-    val selectedLevel= selectLevel(acceptedRequestedNumber.value)
+    val selectedLevel = selectLevel(acceptedRequestedNumber.value)
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -61,33 +61,35 @@ fun levels(navController: NavHostController){
                 .padding(top = 20.dp)
                 .fillMaxWidth()
                 .weight(2f)
-        ){
+        ) {
 
-            Icon(imageVector = Icons.Default.Circle, contentDescription = null,tint= colorResource(
-                id = selectedLevel.color
-            ),
-                modifier= Modifier
+            Icon(
+                imageVector = Icons.Default.Circle, contentDescription = null, tint = colorResource(
+                    id = selectedLevel.color
+                ),
+                modifier = Modifier
                     .padding(5.dp)
                     .fillMaxSize()
-                    .weight(2f))
-            Text(
-                text=selectedLevel.name,
-                fontSize =20.sp,
-                fontFamily = FontFamily(Font(R.font.bold)),
-                modifier=Modifier.weight(1f)
+                    .weight(2f)
             )
-            customProgressBar(selectedLevel,acceptedRequestedNumber.value.toDouble())
+            Text(
+                text = selectedLevel.name,
+                fontSize = 20.sp,
+                fontFamily = FontFamily(Font(R.font.bold)),
+                modifier = Modifier.weight(1f)
+            )
+            customProgressBar(selectedLevel, acceptedRequestedNumber.value.toDouble())
         }
 
         Column(
-            modifier= Modifier
+            modifier = Modifier
                 .weight(3f)
                 .verticalScroll(scrollState)
-        ){
+        ) {
 
-            val listsGroup=ListsGroup()
+            val listsGroup = ListsGroup()
             listsGroup.setLevels()
-            for(level in listsGroup.levels){
+            for (level in listsGroup.levels) {
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -95,52 +97,58 @@ fun levels(navController: NavHostController){
                         .padding(start = 20.dp, bottom = 10.dp, end = 20.dp)
                         .weight(1f)
 
-                ){
-                    Icon(imageVector = Icons.Default.Circle, contentDescription = null,
-                        tint= colorResource(id = level.color),
-                        modifier=Modifier)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Circle, contentDescription = null,
+                        tint = colorResource(id = level.color),
+                        modifier = Modifier
+                    )
                     Text(
-                        text=level.name,
-                        fontSize =10.sp,
+                        text = level.name,
+                        fontSize = 10.sp,
                         fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier=Modifier.padding(5.dp)
+                        modifier = Modifier.padding(5.dp)
                     )
                     Box(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.CenterEnd
-                    ){
+                    ) {
                         Text(text = level.startPoint.toString())
                     }
                 }
-                Divider(thickness = 3.dp,modifier= Modifier
-                    .clip(CircleShape)
-                    .padding(start = 20.dp, end = 20.dp), color = Color.LightGray)
+                Divider(
+                    thickness = 3.dp, modifier = Modifier
+                        .clip(CircleShape)
+                        .padding(start = 20.dp, end = 20.dp), color = Color.LightGray
+                )
             }
         }
     }
 }
+
 @Composable
-fun LevelsTopBar(navController:NavHostController) {
+fun LevelsTopBar(navController: NavHostController) {
 
     var showMenu = rememberSaveable { mutableStateOf(false) }
     var selectLanguage = rememberSaveable { mutableStateOf(false) }
     var language = rememberSaveable { mutableStateOf("") }
 
-    if(selectLanguage.value==true){
+    if (selectLanguage.value == true) {
 
-        languageDialog(selectLanguage,language)
-        if(language.value.isNotEmpty())
-            MainActivity.sharedPreferences.edit().putString(MainActivity.SELECTED_LANGUAGE, language.value).apply()
+        languageDialog(selectLanguage, language)
+        if (language.value.isNotEmpty())
+            MainActivity.sharedPreferences.edit()
+                .putString(MainActivity.SELECTED_LANGUAGE, language.value).apply()
         //and look at main activity
     }
     // Load the saved language and apply it
 
-    if(language.value.isNotEmpty()){
+    if (language.value.isNotEmpty()) {
 
         setLocale1(lang = language.value)
     }
 
-    menuItems2(showMenu,selectLanguage,navController)
+    menuItems2(showMenu, selectLanguage, navController)
     Card(
         modifier = Modifier
             .background(color = Color.White)
@@ -158,10 +166,13 @@ fun LevelsTopBar(navController:NavHostController) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title ={ Text(text = stringResource(R.string.levels),
-                        color = Color.White,
-                        modifier = Modifier.padding(start=10.dp))
-                            },
+                    title = {
+                        Text(
+                            text = stringResource(R.string.levels),
+                            color = Color.White,
+                            modifier = Modifier.padding(start = 10.dp)
+                        )
+                    },
                     navigationIcon = {
                         IconButton(
                             onClick = { navController.popBackStack() }) {
@@ -175,7 +186,7 @@ fun LevelsTopBar(navController:NavHostController) {
                     actions = {
                         IconButton(
                             onClick = {
-                                showMenu.value=!showMenu.value
+                                showMenu.value = !showMenu.value
                             }
                         ) {
                             Icon(
@@ -194,12 +205,13 @@ fun LevelsTopBar(navController:NavHostController) {
 
     }
 }
-@Composable
-fun customProgressBar(selectedLevel:LevelItems,donationsNumber:Double){
 
-    var currentLevel=selectedLevel.endPoint
-    var average: Double =(donationsNumber/currentLevel)+0.1
-    var progress by remember { mutableStateOf(average.toFloat())}
+@Composable
+fun customProgressBar(selectedLevel: LevelItems, donationsNumber: Double) {
+
+    var currentLevel = selectedLevel.endPoint
+    var average: Double = (donationsNumber / currentLevel) + 0.1
+    var progress by remember { mutableStateOf(average.toFloat()) }
     val size by animateFloatAsState(
         targetValue = progress,
         tween(
@@ -208,36 +220,36 @@ fun customProgressBar(selectedLevel:LevelItems,donationsNumber:Double){
             easing = LinearOutSlowInEasing
         )
     )
-    Column (
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp)
-                .height(IntrinsicSize.Min)
-            ){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp)
+            .height(IntrinsicSize.Min)
+    ) {
         Row(
-            modifier= Modifier
+            modifier = Modifier
                 .widthIn(min = 30.dp)
                 .fillMaxWidth(size),
             horizontalArrangement = Arrangement.End
-        ){
-            Text(text="${donationsNumber.toInt()}")
+        ) {
+            Text(text = "${donationsNumber.toInt()}")
         }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(20.dp)
-        ){
+        ) {
             //background of progress bar
-          Box(
-              modifier= Modifier
-                  .fillMaxSize()
-                  .clip(RoundedCornerShape(9.dp))
-                  .background(Color.Gray)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(9.dp))
+                    .background(Color.Gray)
 
-          )
+            )
             //progress bar
             Box(
-                modifier= Modifier
+                modifier = Modifier
                     .fillMaxWidth(size)
                     .fillMaxHeight()
                     .clip(RoundedCornerShape(9.dp))

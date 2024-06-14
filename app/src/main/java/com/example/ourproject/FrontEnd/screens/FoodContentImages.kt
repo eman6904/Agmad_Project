@@ -23,8 +23,7 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 
 @Composable
-fun foodContent(navController: NavHostController,imagesIdList:List<String>) {
-
+fun foodContent(navController: NavHostController, imagesIdList: List<String>) {
 
 
     var currentUserId = FirebaseAuth.getInstance()?.currentUser!!.uid
@@ -33,11 +32,11 @@ fun foodContent(navController: NavHostController,imagesIdList:List<String>) {
 
     // Function to fetch image URIs from Firebase Storage
     LaunchedEffect(true) {
-        val storageRef = FirebaseStorage.getInstance().reference.child(currentUserId+"/")
+        val storageRef = FirebaseStorage.getInstance().reference.child(currentUserId + "/")
         val images = mutableListOf<String>()
         storageRef.listAll().await().items.forEach { imageRef ->
 
-            if(imagesIdList.contains(imageRef.name)) {
+            if (imagesIdList.contains(imageRef.name)) {
                 val uri = imageRef.downloadUrl.await().toString()
                 images.add(uri)
             }
@@ -50,21 +49,21 @@ fun foodContent(navController: NavHostController,imagesIdList:List<String>) {
     ) {
         foodContentTopBar(navController)
 
-        if(imageUris.size==0) {
+        if (imageUris.size == 0) {
 
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = stringResource(R.string.waiting),color=Color.Gray)
+                Text(text = stringResource(R.string.waiting), color = Color.Gray)
             }
-        }else{
+        } else {
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
-            ){
+            ) {
 
-                items(items=imageUris, itemContent = {item->
+                items(items = imageUris, itemContent = { item ->
                     AsyncImage(
                         modifier = Modifier.padding(20.dp),
                         model = item,

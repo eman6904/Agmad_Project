@@ -50,23 +50,23 @@ import com.google.firebase.database.FirebaseDatabase
 
 
 @Composable
-fun donorHistory(navController: NavHostController){
+fun donorHistory(navController: NavHostController) {
 
 
-    val acceptedRequestedNumber= rememberSaveable{ mutableStateOf(0)}
-    val rejectedRequestedNumber= rememberSaveable{ mutableStateOf(0)}
+    val acceptedRequestedNumber = rememberSaveable { mutableStateOf(0) }
+    val rejectedRequestedNumber = rememberSaveable { mutableStateOf(0) }
 
-    val accList= myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
-    val rejList= myRequests(typeInArabic = "مرفوض", typeInEnglish = "Rejected")
+    val accList = myRequests(typeInArabic = "مقبول", typeInEnglish = "Accepted")
+    val rejList = myRequests(typeInArabic = "مرفوض", typeInEnglish = "Rejected")
 
-    acceptedRequestedNumber.value=accList.size
-    rejectedRequestedNumber.value=rejList.size
+    acceptedRequestedNumber.value = accList.size
+    rejectedRequestedNumber.value = rejList.size
 
-    val selectedLevel= selectLevel(acceptedRequestedNumber.value)
+    val selectedLevel = selectLevel(acceptedRequestedNumber.value)
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        HistoryTopBar(navController,"Donors")
+        HistoryTopBar(navController, "Donors")
 
         Row(
             horizontalArrangement = Arrangement.Center
@@ -89,210 +89,228 @@ fun donorHistory(navController: NavHostController){
                         .weight(1f)
                         .padding(10.dp),
                     contentDescription = "",
-                   // colorFilter = ColorFilter.tint(colorResource(id = R.color.mainColor))
+                    // colorFilter = ColorFilter.tint(colorResource(id = R.color.mainColor))
                 )
             }
-                Column(
-                    modifier= Modifier
-                        .weight(3f)
-                        .padding(10.dp)
-                ){
+            Column(
+                modifier = Modifier
+                    .weight(3f)
+                    .padding(10.dp)
+            ) {
 
-                    Text(text= getDonorData().name, fontSize = 20.sp, fontStyle = FontStyle.Normal,
-                        fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier = Modifier.padding(3.dp)
+                Text(
+                    text = getDonorData().name, fontSize = 20.sp, fontStyle = FontStyle.Normal,
+                    fontFamily = FontFamily(Font(R.font.bold)),
+                    modifier = Modifier.padding(3.dp)
+                )
+                Row(
+                    modifier = Modifier.padding(3.dp)
+                ) {
+                    Icon(
+                        painterResource(id = R.drawable.id_icon),
+                        null,
+                        modifier = Modifier.weight(1f)
                     )
-                    Row(
-                        modifier = Modifier.padding(3.dp)
-                    ){
-                        Icon(painterResource(id = R.drawable.id_icon),null, modifier = Modifier.weight(1f))
-                        Text(
-                            text= getDonorData().phone,
-                            modifier = Modifier
-                                .weight(12f)
-                                .padding(start = 5.dp))
-                    }
-                    Row(
-                        modifier = Modifier.padding(3.dp)
-                    ){
-                        Icon(imageVector = Icons.Default.MyLocation,null)
-                        Text(text= getDonorData().location,modifier=Modifier.padding(start=5.dp))
-                    }
-                    ratingBar(2.5)
+                    Text(
+                        text = getDonorData().phone,
+                        modifier = Modifier
+                            .weight(12f)
+                            .padding(start = 5.dp)
+                    )
                 }
+                Row(
+                    modifier = Modifier.padding(3.dp)
+                ) {
+                    Icon(imageVector = Icons.Default.MyLocation, null)
+                    Text(text = getDonorData().location, modifier = Modifier.padding(start = 5.dp))
+                }
+                ratingBar(2.5)
             }
+        }
 
-            Text(text= stringResource(R.string.my_impact),fontStyle = FontStyle.Normal,
-                fontFamily = FontFamily(Font(R.font.bold)),
-                fontSize = 20.sp,
-                modifier=Modifier.padding(top=10.dp,start=10.dp),
-            )
-            Row (
-                modifier= Modifier
-                    .fillMaxWidth()
+        Text(
+            text = stringResource(R.string.my_impact), fontStyle = FontStyle.Normal,
+            fontFamily = FontFamily(Font(R.font.bold)),
+            fontSize = 20.sp,
+            modifier = Modifier.padding(top = 10.dp, start = 10.dp),
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp)
+                .height(IntrinsicSize.Min)
+        ) {
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+
+                Text(
+                    text = stringResource(R.string.total_donations),
+                    color = Color.Black,
+                    modifier = Modifier.padding(10.dp),
+                )
+                Text(
+                    text = "${acceptedRequestedNumber.value + rejectedRequestedNumber.value}",
+                    fontStyle = FontStyle.Normal,
+                    fontFamily = FontFamily(Font(R.font.bold)),
+                    fontSize = 30.sp,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(start = 10.dp),
+                )
+            }
+            Divider(
+                modifier = Modifier
+                    .width(2.dp)
                     .padding(top = 20.dp)
-                    .height(IntrinsicSize.Min)
-            ){
-
-                Column(
-                    modifier=Modifier.weight(1f)
-                ){
-
-                    Text(
-                        text= stringResource(R.string.total_donations),
-                        color = Color.Black,
-                        modifier=Modifier.padding(10.dp),
-                    )
-                    Text(
-                        text="${acceptedRequestedNumber.value+rejectedRequestedNumber.value}",fontStyle = FontStyle.Normal,
-                        fontFamily = FontFamily(Font(R.font.bold)),
-                        fontSize = 30.sp,
-                        color=Color.Gray,
-                        modifier=Modifier.padding(start=10.dp),
-                    )
-                }
+                    .weight(0.02f)
+                    .fillMaxHeight(),
+                color = Color.Gray
+            )
+            Column(
+                modifier = Modifier
+                    .weight(2f)
+                    .padding(top = 20.dp, end = 25.dp)
+            ) {
+                Text(
+                    text = " ${rejectedRequestedNumber.value}",
+                    color = Color.Red,
+                    fontFamily = FontFamily(Font(R.font.bold)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.LightGray)
+                )
                 Divider(
                     modifier = Modifier
-                        .width(2.dp)
-                        .padding(top = 20.dp)
-                        .weight(0.02f)
-                        .fillMaxHeight(),
-                    color=Color.Gray
+                        .fillMaxWidth(),
+                    color = Color.White,
+                    thickness = 5.dp
                 )
-                Column(
-                    modifier= Modifier
-                        .weight(2f)
-                        .padding(top = 20.dp, end = 25.dp)
-                ){
-                   Text(
-                       text = " ${rejectedRequestedNumber.value}",
-                       color=Color.Red,
-                       fontFamily = FontFamily(Font(R.font.bold)),
-                       modifier= Modifier
-                           .fillMaxWidth()
-                           .background(Color.LightGray)
-                   )
-                   Divider(
-                       modifier =Modifier
-                           .fillMaxWidth(),
-                       color=Color.White,
-                       thickness = 5.dp
-                   )
-                    Text(
-                        text = " ${acceptedRequestedNumber.value}",
-                        color=Color.Green,
-                        fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier= Modifier
-                            .fillMaxWidth()
-                            .background(Color.LightGray)
-                    )
-                   Row(
-                       horizontalArrangement = Arrangement.Center,
-                       verticalAlignment = Alignment.CenterVertically,
-                       modifier=Modifier.padding(top=10.dp)
-                   ){
-
-                       Icon(imageVector = Icons.Default.Circle, contentDescription = null,tint=Color.Red,
-                           modifier=Modifier.weight(1f))
-                       Text(
-                           text= stringResource(R.string.rejected_requests),
-                           modifier= Modifier
-                               .padding(start = 5.dp)
-                               .weight(20f)
-                       )
-                   }
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ){
-
-                        Icon(imageVector = Icons.Default.Circle, contentDescription = null,tint=Color.Green,
-                            modifier=Modifier.weight(1f))
-                        Text(
-                            text= stringResource(R.string.accepted_requests),
-                            modifier= Modifier
-                                .padding(start = 5.dp)
-                                .weight(20f)
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(72.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                OutlinedButton(
-                    onClick = { navController.navigate(ScreensRoute.Levels.route) },
+                Text(
+                    text = " ${acceptedRequestedNumber.value}",
+                    color = Color.Green,
+                    fontFamily = FontFamily(Font(R.font.bold)),
                     modifier = Modifier
-                        .padding(5.dp)
-                        .weight(1f)
                         .fillMaxWidth()
+                        .background(Color.LightGray)
+                )
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = 10.dp)
                 ) {
+
                     Icon(
                         imageVector = Icons.Default.Circle,
                         contentDescription = null,
-                        tint= colorResource(id = selectedLevel.color)
+                        tint = Color.Red,
+                        modifier = Modifier.weight(1f)
                     )
                     Text(
-                        text= stringResource(R.string.my_level),
-                        modifier= Modifier.padding(start = 12.dp),
-                        color = Color.Black
+                        text = stringResource(R.string.rejected_requests),
+                        modifier = Modifier
+                            .padding(start = 5.dp)
+                            .weight(20f)
                     )
                 }
-
-                OutlinedButton(
-                    onClick = { navController.navigate(ScreensRoute.Plant.route) },
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .weight(1f)
-                        .fillMaxWidth()
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+
                     Icon(
-                        painterResource(id = R.drawable.plant),
+                        imageVector = Icons.Default.Circle,
                         contentDescription = null,
-                        modifier = Modifier.size(24.dp),
-                        tint = colorResource(id = R.color.mainColor)
+                        tint = Color.Green,
+                        modifier = Modifier.weight(1f)
                     )
                     Text(
-                        text=stringResource(R.string.my_plant),
-                        modifier= Modifier.padding(start = 12.dp),
-                        color = Color.Black
+                        text = stringResource(R.string.accepted_requests),
+                        modifier = Modifier
+                            .padding(start = 5.dp)
+                            .weight(20f)
                     )
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(72.dp))
+
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            OutlinedButton(
+                onClick = { navController.navigate(ScreensRoute.Levels.route) },
+                modifier = Modifier
+                    .padding(5.dp)
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Circle,
+                    contentDescription = null,
+                    tint = colorResource(id = selectedLevel.color)
+                )
+                Text(
+                    text = stringResource(R.string.my_level),
+                    modifier = Modifier.padding(start = 12.dp),
+                    color = Color.Black
+                )
+            }
+
+            OutlinedButton(
+                onClick = { navController.navigate(ScreensRoute.Plant.route) },
+                modifier = Modifier
+                    .padding(5.dp)
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                Icon(
+                    painterResource(id = R.drawable.plant),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = colorResource(id = R.color.mainColor)
+                )
+                Text(
+                    text = stringResource(R.string.my_plant),
+                    modifier = Modifier.padding(start = 12.dp),
+                    color = Color.Black
+                )
+            }
+        }
+    }
 }
+
 @Composable
-fun HistoryTopBar(navController: NavHostController,selectedUser:String) {
+fun HistoryTopBar(navController: NavHostController, selectedUser: String) {
 
     var showMenu = rememberSaveable { mutableStateOf(false) }
     var selectLanguage = rememberSaveable { mutableStateOf(false) }
     var language = rememberSaveable { mutableStateOf("") }
-    val profileImageDialog=remember{ mutableStateOf(false)}
+    val profileImageDialog = remember { mutableStateOf(false) }
 
     //for profile image
-    if(profileImageDialog.value)
+    if (profileImageDialog.value)
         changeProfileImage(shutdown = profileImageDialog, selectedUser = selectedUser)
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-   // for language
-    if(selectLanguage.value==true){
+    // for language
+    if (selectLanguage.value == true) {
 
-        languageDialog(selectLanguage,language)
-        if(language.value.isNotEmpty())
-            MainActivity.sharedPreferences.edit().putString(MainActivity.SELECTED_LANGUAGE, language.value).apply()
+        languageDialog(selectLanguage, language)
+        if (language.value.isNotEmpty())
+            MainActivity.sharedPreferences.edit()
+                .putString(MainActivity.SELECTED_LANGUAGE, language.value).apply()
         //and look at main activity
     }
     // Load the saved language and apply it
 
-    if(language.value.isNotEmpty()){
+    if (language.value.isNotEmpty()) {
 
         setLocale1(lang = language.value)
     }
-    menuItems2(showMenu,selectLanguage,navController)
+    menuItems2(showMenu, selectLanguage, navController)
     ////////////////////////////////////////////////////////////////////////////////////////////////
     Card(
         modifier = Modifier
@@ -311,9 +329,12 @@ fun HistoryTopBar(navController: NavHostController,selectedUser:String) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = stringResource(R.string.history),
-                        color = Color.White,
-                        modifier = Modifier.padding(start=10.dp))
+                    title = {
+                        Text(
+                            text = stringResource(R.string.history),
+                            color = Color.White,
+                            modifier = Modifier.padding(start = 10.dp)
+                        )
                     },
                     navigationIcon = {
                         IconButton(onClick = {
@@ -329,7 +350,7 @@ fun HistoryTopBar(navController: NavHostController,selectedUser:String) {
                     actions = {
                         IconButton(
                             onClick = {
-                                profileImageDialog.value=!profileImageDialog.value
+                                profileImageDialog.value = !profileImageDialog.value
                             }
                         ) {
                             Icon(
@@ -340,7 +361,7 @@ fun HistoryTopBar(navController: NavHostController,selectedUser:String) {
                         }
                         IconButton(
                             onClick = {
-                                showMenu.value=!showMenu.value
+                                showMenu.value = !showMenu.value
                             }
                         ) {
                             Icon(
@@ -359,26 +380,27 @@ fun HistoryTopBar(navController: NavHostController,selectedUser:String) {
 
     }
 }
+
 @Composable
-fun ratingBar(rating:Double=0.0, ){
+fun ratingBar(rating: Double = 0.0) {
 
-    Row(){
+    Row() {
 
-        var isHalfStar=(rating%1)!=0.0
-        for(index in 1..5){
+        var isHalfStar = (rating % 1) != 0.0
+        for (index in 1..5) {
 
             Icon(
                 contentDescription = null,
-                tint= colorResource(id = R.color.yellow),
-                imageVector = if(index<=rating){
+                tint = colorResource(id = R.color.yellow),
+                imageVector = if (index <= rating) {
                     Icons.Rounded.Star
-                }else{
+                } else {
 
-                    if(isHalfStar) {
+                    if (isHalfStar) {
 
-                        isHalfStar=false
+                        isHalfStar = false
                         Icons.Rounded.StarHalf
-                    }else{
+                    } else {
                         Icons.Rounded.StarOutline
                     }
                 }
@@ -386,40 +408,42 @@ fun ratingBar(rating:Double=0.0, ){
         }
     }
 }
+
 @Composable
-fun changeProfileImage(shutdown:MutableState<Boolean>,selectedUser:String){
+fun changeProfileImage(shutdown: MutableState<Boolean>, selectedUser: String) {
 
-    val selectedImage = remember{ mutableStateOf<Uri?>(null) }
-    var upload = remember{ mutableStateOf(false) }
+    val selectedImage = remember { mutableStateOf<Uri?>(null) }
+    var upload = remember { mutableStateOf(false) }
     val context = LocalContext.current
-    if(upload.value==true){
+    if (upload.value == true) {
 
-        updateProfileImage(selectedImage,selectedUser)
-        Toast.makeText(context, stringResource(R.string.images_are_uploaded), Toast.LENGTH_LONG).show()
-        upload.value=false
+        updateProfileImage(selectedImage, selectedUser)
+        Toast.makeText(context, stringResource(R.string.images_are_uploaded), Toast.LENGTH_LONG)
+            .show()
+        upload.value = false
     }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
         selectedImage.apply {
-            Log.d("uriiiiiiiiiiiiiiii",it.toString())
-            if(it!=null){
-                selectedImage.value=it
-                upload.value=true
+            Log.d("uriiiiiiiiiiiiiiii", it.toString())
+            if (it != null) {
+                selectedImage.value = it
+                upload.value = true
             }
         }
     }
-    if(shutdown.value){
+    if (shutdown.value) {
 
         Dialog(
-            onDismissRequest = {shutdown.value=false}
-        ){
+            onDismissRequest = { shutdown.value = false }
+        ) {
             Card(
-                shape= RoundedCornerShape(20.dp,20.dp,20.dp,20.dp),
+                shape = RoundedCornerShape(20.dp, 20.dp, 20.dp, 20.dp),
                 elevation = 10.dp,
                 modifier = Modifier
                     .width(IntrinsicSize.Max)
                     .height(IntrinsicSize.Max)
-            ){
+            ) {
                 Column(
                     modifier = Modifier.padding(20.dp),
                 ) {
@@ -431,7 +455,7 @@ fun changeProfileImage(shutdown:MutableState<Boolean>,selectedUser:String){
                             AnnotatedString(stringResource(R.string.set_new_image)),
                             onClick = {
                                 launcher.launch("image/*")
-                              //  shutdown.value = false
+                                //  shutdown.value = false
                             })
                     }
 
@@ -458,7 +482,7 @@ fun changeProfileImage(shutdown:MutableState<Boolean>,selectedUser:String){
 
                                     }?.addOnFailureListener {
 
-                                }
+                                    }
                             })
                     }
                 }

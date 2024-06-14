@@ -40,8 +40,8 @@ fun signIn(navController: NavHostController) {
     var shoutDownDialogE = rememberSaveable() { mutableStateOf(false) }
     var shoutDownDialogV = rememberSaveable() { mutableStateOf(false) }
     val shoutDownDialogR = rememberSaveable() { mutableStateOf(false) }
-    var emptyPassword = rememberSaveable() { mutableStateOf(false)}
-    var emptyEmail = rememberSaveable() { mutableStateOf(false)}
+    var emptyPassword = rememberSaveable() { mutableStateOf(false) }
+    var emptyEmail = rememberSaveable() { mutableStateOf(false) }
 
     val modifierForEmptyField = Modifier
         .fillMaxWidth()
@@ -96,15 +96,15 @@ fun signIn(navController: NavHostController) {
                 // contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxWidth()
             )
-            if(emptyEmail.value==false||email.value.isNotEmpty())
-                emailField(email,modifierForNotEmptyField)
+            if (emptyEmail.value == false || email.value.isNotEmpty())
+                emailField(email, modifierForNotEmptyField)
             else
-                emailField(email,modifierForEmptyField)
+                emailField(email, modifierForEmptyField)
 
-            if(emptyPassword.value==false||password.value.isNotEmpty())
-                passwordField(password,modifierForNotEmptyField)
+            if (emptyPassword.value == false || password.value.isNotEmpty())
+                passwordField(password, modifierForNotEmptyField)
             else
-                passwordField(password,modifierForEmptyField)
+                passwordField(password, modifierForEmptyField)
 
             ErrorDialog(shoutDownDialog = shoutDownDialogE)
             signInError(shoutDownDialog = shoutDownDialogD)
@@ -175,7 +175,7 @@ fun signIn(navController: NavHostController) {
                         color = colorResource(id = R.color.mainColor),
                     ), onClick = {
 
-                            navController.navigate(ScreensRoute.RegisterAs.route)
+                        navController.navigate(ScreensRoute.RegisterAs.route)
                     })
             }
         }
@@ -192,8 +192,8 @@ fun buttonSignIn(
     showError: MutableState<Boolean>,
     showMsgV: MutableState<Boolean>,
     navController: NavHostController,
-    emptyEmail:MutableState<Boolean>,
-    emptyPassword:MutableState<Boolean>
+    emptyEmail: MutableState<Boolean>,
+    emptyPassword: MutableState<Boolean>
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -203,21 +203,20 @@ fun buttonSignIn(
         Button(
             onClick = {
 
-                if(password.value.isEmpty()){
+                if (password.value.isEmpty()) {
 
-                    emptyPassword.value=true
+                    emptyPassword.value = true
+                } else
+                    emptyPassword.value = false
+
+                if (email.value.isEmpty()) {
+
+                    emptyEmail.value = true
+                } else {
+                    emptyEmail.value = false
                 }
-                else
-                    emptyPassword.value=false
 
-                if(email.value.isEmpty()){
-
-                    emptyEmail.value=true
-                }else{
-                    emptyEmail.value=false
-                }
-
-                if(email.value.isNotEmpty()&&password.value.isNotEmpty()){
+                if (email.value.isNotEmpty() && password.value.isNotEmpty()) {
                     shoutDownProgress.value = true
                     userSignIn(
                         email, password, shoutDownProgress,

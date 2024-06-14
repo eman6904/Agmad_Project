@@ -26,7 +26,7 @@ import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.R
 
 @Composable
-fun registerAs(navController:NavHostController){
+fun registerAs(navController: NavHostController) {
 
     Box(
         Modifier
@@ -65,7 +65,9 @@ fun registerAs(navController:NavHostController){
                 .padding(top = 50.dp)
                 .fillMaxSize()
         ) {
-            Text(text= stringResource(R.string.registeras),color= colorResource(id = R.color.mainColor),
+            Text(
+                text = stringResource(R.string.registeras),
+                color = colorResource(id = R.color.mainColor),
                 fontFamily = FontFamily(Font(R.font.bold)),
                 fontSize = 25.sp,
                 textDecoration = TextDecoration.Underline
@@ -82,33 +84,38 @@ fun registerAs(navController:NavHostController){
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start=20.dp,end=20.dp)
+                    .padding(start = 20.dp, end = 20.dp)
                     .weight(1f)
-            ){
+            ) {
                 Card(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(end=15.dp,top=5.dp,bottom=65.dp,start=35.dp)
+                        .padding(end = 15.dp, top = 5.dp, bottom = 65.dp, start = 35.dp)
                         .clickable { navController.navigate(ScreensRoute.OrganizationSignUp.route) },
-                    elevation=10.dp,
+                    elevation = 10.dp,
                     shape = RoundedCornerShape(16.dp),
-                ){
+                ) {
                     Column(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.weight(10f).padding(2.dp)
+                        modifier = Modifier
+                            .weight(10f)
+                            .padding(2.dp)
                     ) {
                         Image(
                             painterResource(R.drawable.or_ph2),
                             //  modifier = Modifier.size(100.dp),
                             contentDescription = "",
-                            modifier = Modifier.weight(7f).padding(5.dp)
+                            modifier = Modifier
+                                .weight(7f)
+                                .padding(5.dp)
                         )
-                        ClickableText(text = AnnotatedString(stringResource(R.string.organization)) ,
-                            onClick ={},
+                        ClickableText(
+                            text = AnnotatedString(stringResource(R.string.organization)),
+                            onClick = {},
                             modifier = Modifier.weight(3f),
                             style = TextStyle(
-                                 fontFamily = FontFamily(Font(R.font.bold2))
+                                fontFamily = FontFamily(Font(R.font.bold2))
                             )
                         )
                     }
@@ -116,15 +123,17 @@ fun registerAs(navController:NavHostController){
                 Card(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(end=35.dp,top=5.dp,bottom=65.dp,start=15.dp)
+                        .padding(end = 35.dp, top = 5.dp, bottom = 65.dp, start = 15.dp)
                         .clickable { navController.navigate(ScreensRoute.DonorSignUp.route) },
-                    elevation=10.dp,
+                    elevation = 10.dp,
                     shape = RoundedCornerShape(16.dp),
-                ){
+                ) {
                     Column(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.weight(10f).padding(2.dp)
+                        modifier = Modifier
+                            .weight(10f)
+                            .padding(2.dp)
                     ) {
                         Image(
                             painterResource(R.drawable.do_ph2),
@@ -134,11 +143,12 @@ fun registerAs(navController:NavHostController){
                                 .padding(5.dp),
                             contentDescription = "",
                         )
-                        ClickableText(text = AnnotatedString(stringResource(R.string.donor)),
-                            onClick ={},
+                        ClickableText(
+                            text = AnnotatedString(stringResource(R.string.donor)),
+                            onClick = {},
                             modifier = Modifier.weight(3f),
                             style = TextStyle(
-                                 fontFamily = FontFamily(Font(R.font.bold2))
+                                fontFamily = FontFamily(Font(R.font.bold2))
                             )
                         )
                     }

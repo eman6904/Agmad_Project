@@ -24,8 +24,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.ourproject.BackEnd.Files.selectHome
 import com.example.ourproject.FrontEnd.ScreensRoute
 import com.example.ourproject.R
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
 
 @Composable
@@ -86,29 +89,34 @@ fun face(navController:NavHostController) {
                 )
                  //Customize the delay time
                 delay(2000L)
-//                val user = Firebase.auth.currentUser
-//
-//                if(user==null)
-//                   navController.navigate(ScreensRoute.RegisterAs.route)
-//                else
-//                    userType(navController)
-                navController.navigate(ScreensRoute.RegisterAs.route)
+                val user = Firebase.auth.currentUser
+
+                if(user==null)
+                   navController.navigate(ScreensRoute.RegisterAs.route)
+                else
+                    selectHome(navController)
+               // navController.navigate(ScreensRoute.RegisterAs.route)
             }
             Box(
                 modifier = Modifier
-                    .weight(1f).fillMaxSize(),
+                    .weight(1f)
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ){
                 Text(text= stringResource(R.string.food_ssver),
                     color= colorResource(id = R.color.mainColor),
                     fontFamily = FontFamily(Font(R.font.font4)),
                     fontSize = 45.sp,
-                    modifier = Modifier.scale(scale.value).padding(top=20.dp),
+                    modifier = Modifier
+                        .scale(scale.value)
+                        .padding(top = 20.dp),
                     textDecoration = TextDecoration.Underline,
                 )
             }
             Box(
-                modifier = Modifier.weight(1.5f).fillMaxSize()
+                modifier = Modifier
+                    .weight(1.5f)
+                    .fillMaxSize()
             ){
                 Image(
                     painterResource(R.drawable.logo),
@@ -117,11 +125,15 @@ fun face(navController:NavHostController) {
                 )
             }
            Box(
-               modifier = Modifier.weight(1f).fillMaxSize(),
+               modifier = Modifier
+                   .weight(1f)
+                   .fillMaxSize(),
                contentAlignment = Alignment.TopCenter
            ){
                Column(
-                   modifier = Modifier.fillMaxSize().padding(top=20.dp),
+                   modifier = Modifier
+                       .fillMaxSize()
+                       .padding(top = 20.dp),
                    horizontalAlignment = Alignment.CenterHorizontally,
 
                ){
